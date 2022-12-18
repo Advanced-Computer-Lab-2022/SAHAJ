@@ -122,6 +122,11 @@ const courseSchema = new Schema({
                 type: String
             }
         }
+    },
+    No_subtitles:{
+        type:Number,
+        required:true,
+        default:0
     }
 
 }, { timestamps: true })

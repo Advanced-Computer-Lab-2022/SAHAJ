@@ -1,5 +1,5 @@
 import axios from 'axios'
-  import Iframe from 'react-iframe';
+import Iframe from 'react-iframe';
 //  import Iframe2 from 'react-iframe'
 import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom'
@@ -17,36 +17,39 @@ import {
 } from 'cdbreact';
 import { NavLink } from 'react-router-dom';
 import Course_Det from './CourseDetIndiv';
+import YoutubeVideo from './YoutubeVideo';
 
 const SubContent = () => {
 
     var jsonSub;
+    const [showVideo, setVideo] = useState(false)
     const params = useParams()
     const cid = params.cid
     const s = params.sid
-    const id =params.id
+    const id = params.id
     const [sid, setSid] = useState('')
     var prog = 0;
     // const params = new URLSearchParams(window.location.search);
     // const courseId = params.get('courseId');
     const [courses, setCourse] = useState([]);
-    const [Reviews,setReviews] = useState([])
-    const [IReviews,setReviews2] = useState([])
+    const [Reviews, setReviews] = useState([])
+    const [IReviews, setReviews2] = useState([])
     const [subtitle, setSub] = useState([]);
     const [show, setshow] = useState(false);
     const [show2, setshow2] = useState(false);
     const [subtitle2, setSub2] = useState([]);
-    const [Fname,setFname]= useState("")
-    const [instid,setinstid]= useState("")
-    const [Reviewerreview,setReviewerRev] = useState("")
-    const [Reviewerreview2,setReviewerRev2] = useState("")
+    const [Fname, setFname] = useState("")
+    const [instid, setinstid] = useState("")
+    const [Reviewerreview, setReviewerRev] = useState("")
+    const [Reviewerreview2, setReviewerRev2] = useState("")
     const examref = "/coorp/solveExam/" + cid + '/' + s
 
-    var [coorpoldrate , setcoorpoldrate] = useState(0)
-    var [coorpoldrate2 , setcoorpoldrate] = useState(0)
-    const [rated , setrated] = useState(false)
-    var [index , setindex] = useState(0)
+    var [coorpoldrate, setcoorpoldrate] = useState(0)
+    var [coorpoldrate2, setcoorpoldrate] = useState(0)
+    const [rated, setrated] = useState(false)
+    var [index, setindex] = useState(0)
     const [instructor, setinstructor] = useState(null)
+    const [coorp,setcoorp] = useState([])
 
 
     useEffect(() => {
@@ -58,9 +61,9 @@ const SubContent = () => {
             const json = await response.json()
 
             if (response.ok) {
-
+                setcoorp(json.filter(c => { return c._id === id }))
                 setFname(json.filter(c => { return c._id === id })[0].Fname)
-                
+
             }
 
 
@@ -79,13 +82,13 @@ const SubContent = () => {
                 setinstid(json.filter(c => { return c._id === cid })[0].Course_instructor_id)
                 setCourse(json.filter(c => { return c._id === cid }))
                 setReviews(json.filter(c => { return c._id === cid })[0].Reviews)
-                
+
                 console.log(Reviews)
-                
+
                 const response2 = await fetch('/api/instructor/' + json.filter(c => { return c._id === cid })[0].Course_instructor_id)
                 const json2 = await response2.json()
                 console.log(response2)
-                
+
                 setinstructor(json2)
                 setReviews2(json2.IReviews)
             }
@@ -153,7 +156,7 @@ const SubContent = () => {
 
     const handleRating = (rate) => { //course
         setshow(true)
-        
+
         if (courses) {
 
             console.log(courses)
@@ -162,23 +165,23 @@ const SubContent = () => {
 
             console.log(idx)
 
-            if(idx === -1){
+            if (idx === -1) {
 
                 const oldrating = courses[0].Course_overAllRate
 
                 const Num = courses[0].Course_NumberOfRatings
 
-                const thh = ((Num*oldrating)+rate) / (Num+1)
+                const thh = ((Num * oldrating) + rate) / (Num + 1)
 
-               
 
-                handleSubmitC1(thh , Num+1 , rate)
 
-           
+                handleSubmitC1(thh, Num + 1, rate)
+
+
 
             }
 
-            else{
+            else {
 
                 coorpoldrate = courses[0].Course_rating[idx].Rate
 
@@ -190,11 +193,11 @@ const SubContent = () => {
 
                 const oldrating = courses[0].Course_overAllRate
 
-                console.log("old: "+oldrating)
+                console.log("old: " + oldrating)
 
                 const Numb = courses[0].Course_NumberOfRatings
 
-                const thh = ((Numb*oldrating)-courses[0].Course_rating[idx].Rate)+(rate)
+                const thh = ((Numb * oldrating) - courses[0].Course_rating[idx].Rate) + (rate)
 
                 console.log(courses[0].Course_rating[idx].Rate)
 
@@ -202,35 +205,35 @@ const SubContent = () => {
 
                 console.log(vv)
 
- 
 
-                handleSubmitC2(vv , Numb , rate)
 
- 
+                handleSubmitC2(vv, Numb, rate)
+
+
 
             }
-        
-        
+
+
         }
     }
 
 
 
 
-    const handleSubmitC1 = async (rr , nn , newRate) => {
+    const handleSubmitC1 = async (rr, nn, newRate) => {
 
 
-        const addition = [...courses[0].Course_rating, {Rate: newRate , RaterType: "coorprate" , RaterId : id}]
+        const addition = [...courses[0].Course_rating, { Rate: newRate, RaterType: "coorprate", RaterId: id }]
 
         console.log(rr)
 
-        await fetch('/api/course/'+cid, {
+        await fetch('/api/course/' + cid, {
 
             method: 'PATCH',
 
             url: '/api/course',
 
-            body: JSON.stringify({Course_rating: addition , Course_overAllRate: rr , Course_NumberOfRatings: nn}),
+            body: JSON.stringify({ Course_rating: addition, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
 
             headers: {
 
@@ -246,24 +249,24 @@ const SubContent = () => {
     }
 
 
-    const handleSubmitC2 = async (rr , nn , newRate) => {
+    const handleSubmitC2 = async (rr, nn, newRate) => {
 
 
-         courses[0].Course_rating[index].Rate = newRate
+        courses[0].Course_rating[index].Rate = newRate
 
-         console.log("index "+index)
+        console.log("index " + index)
 
         const addition2 = courses[0].Course_rating
 
         console.log(rr)
 
-        await fetch('/api/course/'+cid, {
+        await fetch('/api/course/' + cid, {
 
             method: 'PATCH',
 
             url: '/api/course',
 
-            body: JSON.stringify({Course_rating: addition2 , Course_overAllRate: rr , Course_NumberOfRatings: nn}),
+            body: JSON.stringify({ Course_rating: addition2, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
 
             headers: {
 
@@ -284,7 +287,7 @@ const SubContent = () => {
 
     const handleRating2 = (rate) => { // instructor
         setshow2(true)
-        
+
         if (instructor) {
 
             console.log(instructor)
@@ -293,23 +296,23 @@ const SubContent = () => {
 
             console.log(idx)
 
-            if(idx === -1){
+            if (idx === -1) {
 
                 const oldrating = instructor.overAllRate
 
                 const Num = instructor.numberofratings
 
-                const thh = ((Num*oldrating)+rate) / (Num+1)
+                const thh = ((Num * oldrating) + rate) / (Num + 1)
 
                 console.log(thh)
 
-                handleSubmitI1(thh , Num+1 ,  rate)
+                handleSubmitI1(thh, Num + 1, rate)
 
-           
+
 
             }
 
-            else{
+            else {
 
                 coorpoldrate2 = instructor.rating[idx].Rate
 
@@ -321,11 +324,11 @@ const SubContent = () => {
 
                 const oldrating = instructor.overAllRate
 
-                console.log("old: "+oldrating)
+                console.log("old: " + oldrating)
 
                 const Numb = instructor.numberofratings
 
-                const thh = ((Numb*oldrating)-instructor.rating[idx].Rate)+(rate)
+                const thh = ((Numb * oldrating) - instructor.rating[idx].Rate) + (rate)
 
                 console.log(instructor.rating[idx].Rate)
 
@@ -333,11 +336,11 @@ const SubContent = () => {
 
                 console.log(vv)
 
- 
 
-                handleSubmitI2(vv , Numb , rate)
 
- 
+                handleSubmitI2(vv, Numb, rate)
+
+
 
             }
 
@@ -349,23 +352,23 @@ const SubContent = () => {
 
     }
 
-    const handleSubmitI1 = async (rr , nn , newRate) => {
+    const handleSubmitI1 = async (rr, nn, newRate) => {
 
         // e.preventDefault()
 
         //console.log(Currency)
 
-        const addition = [...instructor.rating, {Rate: newRate , RaterType: "coorprate" , RaterId : id}]
+        const addition = [...instructor.rating, { Rate: newRate, RaterType: "coorprate", RaterId: id }]
 
         console.log(rr)
 
-        await fetch('/api/instructor/'+instid, {
+        await fetch('/api/instructor/' + instid, {
 
             method: 'PATCH',
 
             url: '/api/instructor',
 
-            body: JSON.stringify({rating: addition , overAllRate: rr , numberofratings: nn}),
+            body: JSON.stringify({ rating: addition, overAllRate: rr, numberofratings: nn }),
 
             headers: {
 
@@ -380,23 +383,23 @@ const SubContent = () => {
 
     }
 
-    const handleSubmitI2 = async (rr , nn , newRate) => {
+    const handleSubmitI2 = async (rr, nn, newRate) => {
 
         instructor.rating[index].Rate = newRate
 
-         console.log("index "+index)
+        console.log("index " + index)
 
         const addition2 = instructor.rating
 
         console.log(rr)
 
-        await fetch('/api/instructor/'+instid, {
+        await fetch('/api/instructor/' + instid, {
 
             method: 'PATCH',
 
             url: '/api/instructor',
 
-            body: JSON.stringify({rating: addition2 , overAllRate: rr , numberofratings: nn}),
+            body: JSON.stringify({ rating: addition2, overAllRate: rr, numberofratings: nn }),
 
             headers: {
 
@@ -410,39 +413,40 @@ const SubContent = () => {
 
     }
 
-    const handleSave = async()=>{
-        const Reviewss = [...Reviews, {ReviewerID:id , ReviewerName:Fname , ReviewerReview: Reviewerreview  }]
+    const handleSave = async () => {
+        const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
         console.log(JSON.stringify(Reviewss))
         setReviews(Reviewss)
-        await fetch('/api/course/'+cid, {
+        await fetch('/api/course/' + cid, {
 
             method: 'PATCH',
-            body: JSON.stringify({Reviews:Reviewss}),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-        }) 
-    }
-
-    const handleSave2 = async()=>{
-        const Reviewss = [...IReviews, {ReviewerID:id , ReviewerName:Fname , ReviewerReview: Reviewerreview2  }]
-        console.log(JSON.stringify(Reviewss))
-        setReviews2(Reviewss)
-        await fetch('/api/instructor/'+instid, {
-
-            method: 'PATCH',
-            body: JSON.stringify({IReviews:Reviewss}),
+            body: JSON.stringify({ Reviews: Reviewss }),
             headers: {
                 'Content-Type': 'application/json'
             },
 
         })
     }
-    function video(){
+
+    const handleSave2 = async () => {
+        const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
+        console.log(JSON.stringify(Reviewss))
+        setReviews2(Reviewss)
+        await fetch('/api/instructor/' + instid, {
+
+            method: 'PATCH',
+            body: JSON.stringify({ IReviews: Reviewss }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+        })
+    }
+    function video() {
         // prog+=1;
         // alert(prog)
-        console.log('you clicked')
+        setVideo(true)
+        // alert('you clicked')
     }
 
 
@@ -453,8 +457,28 @@ const SubContent = () => {
         console.log(ct)
         return c
     }
+    function handleRefund(){
+        console.log(coorp[0].Registered_Course[0].Progress)
+        var i =0;
+        while(i<coorp[0].Registered_Course.length){
+         if(coorp[0].Registered_Course[i].Course_id === cid){
+             if(coorp[0].Registered_Course[i].Progress<50){
+                 alert("Refund Request Is Pending")
+                 break
+             }
+             else{
+                 alert("You Cant Refund Since You Have Completed "+coorp[0].Registered_Course[i].Progress+"%")
+                 break
+             }
+         }
+         else{
+             i++
+         }
+        }
+ 
+     }
 
-   
+
 
     return (
 
@@ -466,7 +490,7 @@ const SubContent = () => {
                 <CDBSidebar textColor="#fff" backgroundColor="#333">
                     <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
                         <a
-                           
+
                             className="text-decoration-none"
                             style={{ color: 'inherit' }}
                         >
@@ -474,18 +498,20 @@ const SubContent = () => {
                         </a><br />
                         Your Progress:{prog}
                     </CDBSidebarHeader>
-                    
+
 
                     <CDBSidebarContent className="sidebar-content">
                         <CDBSidebarMenu>
                             {subtitle2.map((sub) => (
-                                
-                                <a  onClick={() =>  window.location.href = `/${id}/${course._id}/${sub._id}/coorp` }><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+
+                                <a onClick={() => window.location.href = `/${id}/${course._id}/${sub._id}/coorp`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
 
                             ))}
 
                         </CDBSidebarMenu>
                     </CDBSidebarContent>
+
+                    <button data-bs-toggle="modal" data-bs-target="#exampleModal3" type="button" class="btn btn-danger">Refund Course</button>
 
                     <CDBSidebarFooter style={{ textAlign: 'center' }}>
                         <div
@@ -501,41 +527,59 @@ const SubContent = () => {
             ))}
             {/* onInferredClick={video} src={"https://www.youtube.com/embed/" + sub.Link} width="640px"
         height="320px" */}
-     {subtitle.map((sub) => (
+            {subtitle.map((sub) => (
 
                 <div>
-                    <div onClick={()=>alert("dsds")}>fdss
-                    <iframe onInferredClick={video} src={"https://www.youtube.com/embed/" + sub.Link} width="640px"
-        height="320px"></iframe></div>
-                   
-                    <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
-                        <div class="container-fluid">
-                            <a class="navbar-brand" href="#">E-learning</a>
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                                <ul class="navbar-nav">
-
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Rate Course⭐</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2">Rate Instructor⭐</a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a class="nav-link" href={examref}>Take Exam</a>
-                                    </li>
-                                    
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Reviews</a>
-                                    </li>
-                                 
-                                </ul>
+                    {/* <div class="row">*/}
+                    <div >
+                        {showVideo === false ? <div class="rightSideDiv" >efd</div> : <div></div>}
+                        {showVideo === false ? <div class="container2 glass">
+                            <div class="vertical-center">
+                                <button onClick={() => video()} type="button" class="btn btn-danger"> <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-play" viewBox="0 0 16 16">
+                                    <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
+                                </svg>
+                                </button>
                             </div>
+
                         </div>
-                    </nav>
+                            : <YoutubeVideo id={sub.Link} />}
+                        <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="#">E-learning</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                                    <ul class="navbar-nav">
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Rate Course⭐</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2">Rate Instructor⭐</a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" href={examref}>Take Exam</a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Reviews</a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="notes">
+                        Notes
+                    </div>
+
+                    {/* </div> */}
+
+
+
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -553,12 +597,12 @@ const SubContent = () => {
                                     <br /> <br />
                                     <div class="input-group">
                                         {/* <span class="input-group-text">With textarea</span> */}
-                                      {show === true?  <textarea onChange={(e) => setReviewerRev(e.target.value)}placeholder="Tell us about your own exprience taking this course. Was it a good match for you?" class="form-control" aria-label="With textarea"></textarea>:<p></p>}
+                                        {show === true ? <textarea onChange={(e) => setReviewerRev(e.target.value)} placeholder="Tell us about your own exprience taking this course. Was it a good match for you?" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={()=>handleSave()}type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave()} type="button" class="btn btn-primary">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -580,16 +624,38 @@ const SubContent = () => {
                                     <br /> <br />
                                     <div class="input-group">
                                         {/* <span class="input-group-text">With textarea</span> */}
-                                        {show2 === true?  <textarea onChange={(e) => setReviewerRev2(e.target.value)}placeholder="Tell us about your own exprience with this instructor?" class="form-control" aria-label="With textarea"></textarea>:<p></p>}
+                                        {show2 === true ? <textarea onChange={(e) => setReviewerRev2(e.target.value)} placeholder="Tell us about your own exprience with this instructor?" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={()=>handleSave2()}type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave2()} type="button" class="btn btn-primary">Save</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="sasadiv">
+                                        <h4>Are You Sure You Want To Refund This Course?</h4>
+                                    </div>
+                                    <br /> <br />
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    <button onClick={() => handleRefund()} type="button" class="btn btn-primary">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             ))

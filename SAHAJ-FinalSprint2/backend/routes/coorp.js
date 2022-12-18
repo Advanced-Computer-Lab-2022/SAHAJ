@@ -5,7 +5,7 @@ const{
     deletecorp,
     createcorp,
     updateCorp,
-    updateAllCoorp
+    updateAllCoorp,signUp
 }=require('../controllers/CoporateController')
 
 const router = express.Router()
@@ -16,6 +16,7 @@ router.get('/coorp/:id',getcorp)
 
 //POST requests
 router.post('/coorp',createcorp)
+router.post('/coorp/signup',signUp)
 
 //DELETE
 router.delete('/coorp/:id', deletecorp)

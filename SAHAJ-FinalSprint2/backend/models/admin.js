@@ -14,9 +14,12 @@ const adminSchema = new Schema({
     Refund_Requests:{
         type:Array,
         Refunds:{
-            Name:{
+            UserId:{
                 type:String
             } ,
+            UserType:{
+                type:Number
+            },
             Amount:{
                 type:Number
             }

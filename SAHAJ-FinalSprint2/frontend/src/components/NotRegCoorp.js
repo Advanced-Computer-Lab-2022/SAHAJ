@@ -7,6 +7,7 @@ const NotRegCoorp = () => {
     const id = params.id
     const [coursescoorp, setCoursescoorp] = useState([])
     const [courses, setCourses] = useState([])
+    const [price , setPrice] = useState(false)
     var [Registered_Course,setReg] = useState([])
     var [show,setshow] = useState(false)
     const loc = "coorp/mycourses/course/"+cid
@@ -21,6 +22,7 @@ const NotRegCoorp = () => {
             if (response.ok) {
 
                 setCourses(json.filter(c => { return c._id === cid }))
+                setPrice(json.filter(c => { return c._id === cid })[0].Course_price)
                 console.log(Registered_Course.findIndex(el => el.Course_id === cid) )
             }
 
@@ -61,7 +63,7 @@ const NotRegCoorp = () => {
 
         // console.log(Registered_Course.includes({Course_id:cid , Course_name:Registered_Course.find(el => el.Course_id ===cid).Course_name}))
         console.log(courses[0])
-        const abc = [...Registered_Course, {Course_id:cid , Course_name:courses[0].Course_subject   }]
+        const abc = [...Registered_Course, {Course_id:cid , Course_name:courses[0].Course_subject,   Amount_paid: price , Progress:0 }]
         console.log(abc)
         setshow(true)
         setReg(abc)

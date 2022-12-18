@@ -342,3 +342,47 @@ body {
   height: 150px;
   width: 150px;
 }
+
+.glass{
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* border-radius: 20px; */
+  border:1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+.container2{
+  width:640px;
+  height:320px;
+  
+}
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(200%);
+  transform: translateY(200%);
+  -ms-transform: translateX(170%);
+  transform: translateX(350%);
+}
+.rightSideDiv {
+  width:640px;
+  height:320px;
+  background-color: rgb(0, 0, 0);
+  float: left;
+
+}
+.notes{
+  width:595px ;
+  height:713px;
+  position: absolute;
+  top: 0%;
+  -ms-transform: translateY(200%);
+  transform: translateY(100%);
+  -ms-transform: translateX(100%);
+  transform: translateX(110%);
+  background-color: rgba(127, 127, 127, 0.999);
+  border-radius: 5px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+}

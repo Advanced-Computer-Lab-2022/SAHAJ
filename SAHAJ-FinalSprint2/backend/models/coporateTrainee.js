@@ -3,18 +3,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const coporateTraineeSchema = new Schema({
-    Country: {
-        type: String,
-        required: true
-    },
-    Username: {
-        type: String,
-        required: true
-    },
-    Password: {
-        type: String,
-        required: true
-    },
     Fname: {
         type: String,
         required: true
@@ -23,6 +11,20 @@ const coporateTraineeSchema = new Schema({
         type: String,
         required: true
     },
+    Email: {
+        type: String,
+        required: true
+    },
+    Password: {
+        type: String,
+        required: true
+    },
+    Country: {
+        type: String,
+        required: false
+    },
+  
+   
     Bio: {
         type: String,
         default: "My Bio",
@@ -36,6 +38,14 @@ const coporateTraineeSchema = new Schema({
             },
             Course_name:{
                 type:String
+            },
+            Amount_paid:{
+                type:Number
+            },
+            Progress:{
+                type:Number,
+                default:0,
+                required: true
             }
         }
     }
