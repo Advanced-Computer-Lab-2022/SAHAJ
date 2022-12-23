@@ -24,6 +24,40 @@ const adminSchema = new Schema({
                 type:Number
             }
         }
+    },
+    Reports:{
+        type:Array,
+        Refunds:{
+            UserId:{
+                type:String
+            } ,
+            UserType:{
+                type:Number
+            },
+            Report_title:{
+                type:String
+            },
+            Report_content:{
+                type:String
+            },
+            IsSeen:{
+                type:String
+            }
+        }
+    },
+    Course_requests:{
+        type:Array,
+        Refunds:{
+            UserId:{
+                type:String
+            } ,
+          
+            Course_id:{
+                type:String
+            },
+           
+          
+        }
     }
    
 })

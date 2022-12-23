@@ -14,7 +14,7 @@ const CreateSubtitle = () => {
     const [duration2,setduration2] = useState([])
     const [Course_duration,setCourse_duration] = useState(0)
     const [show,setshow] = useState(false)
-
+    var [No_subtitles,setnoSub] = useState(0)
     useEffect(() => {
         const fetchCourses = async () => {
 
@@ -23,7 +23,7 @@ const CreateSubtitle = () => {
             const json = await response.json()
 
             if (response.ok) {
-
+                setnoSub(json.filter(c => { return c._id === CourseId })[0].No_subtitles)
                 setduration2(json.filter(c => { return c._id === CourseId })[0].Course_duration)
                 console.log(duration2)
             }
@@ -98,11 +98,14 @@ const CreateSubtitle = () => {
 
         }
         if (response.ok) {
+            No_subtitles ++;
+            console.log(No_subtitles)
             setName("")
             setLink("")
             console.log(json)
             alert('added')
-            const Course = {Course_duration}
+            const Course = {No_subtitles}
+            console.log(Course)
             const response2 = await fetch('/api/course/'+ CourseId , {
                 method: 'PATCH',
                 body: JSON.stringify(Course),

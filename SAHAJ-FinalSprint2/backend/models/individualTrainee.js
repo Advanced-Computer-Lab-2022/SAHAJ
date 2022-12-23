@@ -47,4 +47,7 @@ const indvidualTraineeSchema = new Schema({
     }
 })
 
+
+
+
 module.exports = mongoose.model('Individual_trainee', indvidualTraineeSchema)

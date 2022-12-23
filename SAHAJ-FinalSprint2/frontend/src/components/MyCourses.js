@@ -1,13 +1,17 @@
 import { useParams } from 'react-router-dom'
 import NavbarCourse from './NavbarCourse'
 import { useState, useEffect } from 'react'
+import Nocourses from './Nocourses'
 const MyCourses = () => {
     const params = useParams()
     const cid = params.id
+    var count = 0;
     const [inst, setInst] = useState([]);
-    const [coorp, setcoorp] = useState([]);
+    const [coorp, setcoorp] = useState(null);
     const [courses, setcourse] = useState([]);
-    const [RegCourses, setReg] = useState([])
+    const [RegCourses, setReg] = useState([]);
+    var [notregatall , setnotregatall] = useState(false)
+    console.log(cid)
 
     useEffect(() => {
 
@@ -15,13 +19,20 @@ const MyCourses = () => {
 
         const fetchcoorp = async () => {
 
-            const response = await fetch('/api/coorp/')
+            const response = await fetch('/api/coorp/'+cid)
 
             const json = await response.json()
 
+            var count=0;
             if (response.ok) {
+                
+                setcoorp(json)
+                setReg(json.Registered_Course)
+                console.log(RegCourses.findIndex(el => el.IsApproved === true) === -1)
+                    
 
-                setcoorp(json.filter(c => { return c._id === cid }))
+               
+                console.log(json)
             }
 
 
@@ -38,6 +49,8 @@ const MyCourses = () => {
 
 
     }, [])
+
+    console.log(RegCourses)
     // if (coorp[0] !== null) {
     //     setReg(coorp[0].Registered_Course)
     // }   
@@ -75,15 +88,21 @@ const MyCourses = () => {
 
 
 
-
     // }, [])
 
 
     return (
 
         <div class='row'>
-            {coorp.map((corp) => (
-                corp.Registered_Course.map((x) => (
+             <nav class="navbar  navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h1">E-Learning</span>
+                </div>
+            </nav>
+            <br />
+                {RegCourses.findIndex(el => el.IsApproved === true) === -1? notregatall = true : <p></p>&&RegCourses.map((x) => (
+                    // {x.IsApproved? }
+                    x.IsApproved?
                     <div class='col-3'>
                         <div class='card'>
                             <img src="https://img.freepik.com/premium-vector/e-learning-innovative-online-education-internet-technology-concept-wireframe-hand-touching-digital-interface_127544-1189.jpg?w=2000" class="card-img-top" alt="..." />
@@ -93,9 +112,12 @@ const MyCourses = () => {
                                 <a onClick={() => window.location.href = `${cid}/course/${x.Course_id}`} class="btn btn-primary" key={x.Course_id} >To Course</a>
                             </div>
                         </div>
-                    </div>
+                    </div>:<p></p>
                 ))
-            ))}
+           }
+
+           {notregatall?  <h1 class = "abdo">No courses availabe<i class="bi bi-patch-exclamation-fill"></i></h1> : <p></p>}
+
         </div>
     )
 }

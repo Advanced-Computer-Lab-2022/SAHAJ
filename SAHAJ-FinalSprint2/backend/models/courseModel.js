@@ -95,6 +95,10 @@ const courseSchema = new Schema({
         type: String,
         required: false
     },
+       Course_photo: {
+        type: String,
+        required: false
+    },
     Reviews: {
         type: Array,
         Reviewer: {

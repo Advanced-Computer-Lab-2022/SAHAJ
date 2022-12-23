@@ -30,6 +30,9 @@ const coporateTraineeSchema = new Schema({
         default: "My Bio",
         required: true
     },
+    Watched:{
+        type:Array
+    },
     Registered_Course:{
         type: Array,
         Course_det:{
@@ -42,13 +45,37 @@ const coporateTraineeSchema = new Schema({
             Amount_paid:{
                 type:Number
             },
+            Watched:{
+                type:Number,
+                default:0,
+                required:true
+            },
             Progress:{
                 type:Number,
                 default:0,
                 required: true
+            },
+            IsApproved:{
+                type:Boolean,
+               
             }
         }
-    }
+    },
+    Wallet:{
+        type:Number,
+        default : 0 
+    },
+    My_Reports:{
+        Report_title:{
+            type:String
+        },
+        Report_content:{
+            type:String
+        }, 
+        Report_status:{
+            type:String
+        }
+    },
 })
 
 module.exports = mongoose.model('Coporate_trainee',coporateTraineeSchema)

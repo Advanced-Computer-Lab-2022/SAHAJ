@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react'
 import AllCourses from '../components/AllCourses'
+import { useLogout } from '../hooks/useLogout'
 
 const IndividualTrainee = () => {
     const params = useParams()
@@ -17,6 +18,7 @@ const IndividualTrainee = () => {
     const [searchname,setsearch] = useState("")
     const profilehref = "/individual/"+cid+"/profile" 
     const searchnameUrl = "/search/"+searchname
+    const { logout } = useLogout()
 
     useEffect(() => {
 
@@ -53,6 +55,10 @@ const IndividualTrainee = () => {
         console.log(searchname)
       navigate("/search/"+searchname)
     }
+    const handlelogout = () => {
+        logout()
+      }
+    
     return (
         <div>
             {/* <Country/>
@@ -73,6 +79,10 @@ const IndividualTrainee = () => {
                                 </li>
                                 <li class="nav-item">
                                     <button  class="btn btn-dark"onClick={() => window.location.href = `/indiv/mycourses/${indiv._id}#`}key={indiv._id} >My Courses</button>
+                                </li>
+
+                                <li class="nav-item">
+                                    <button  class="btn btn-dark"onClick={handlelogout}key={indiv._id} >Logout</button>
                                 </li>
                                 
                             </ul>

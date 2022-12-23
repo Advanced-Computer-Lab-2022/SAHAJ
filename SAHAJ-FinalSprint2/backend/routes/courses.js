@@ -9,9 +9,10 @@ const {
     getlastCourse
 } = require('../controllers/courseController')
 
-
+const requireAuth = require('../middleware/requireAuth')
 const router = express.Router()
 
+router.use(requireAuth)
 //GET requests
 router.get('/home',(req,res) => {
     res.json({mssg:'GET home page'})

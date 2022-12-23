@@ -14,6 +14,8 @@ const EditProfileC = () => {
     const [Fname, setFname] = useState("")
     const [Lname, setLname] = useState("")
     const [Bio, setBio] = useState("")
+    const[My_Reports,setmyrep] = useState([])
+    const [show2,setshow2] = useState(false)
     const profilehref = "/coorprate/"+cid+"/profile"
     useEffect(() => {
 
@@ -28,6 +30,7 @@ const EditProfileC = () => {
             if (response.ok) {
 
                 setcoorp(json.filter(c => { return c._id === cid }))
+                setmyrep(json.filter(c => { return c._id === cid })[0].My_Reports)
             }
             // console.log(coorp[0].Fname)
 
@@ -81,7 +84,9 @@ const EditProfileC = () => {
         setshow(true)
 
     }
-
+function setshowrep(){
+    setshow2(true)
+}
     console.log(show)
 
     return (
@@ -121,6 +126,8 @@ const EditProfileC = () => {
                 </div>
             </nav>
             ))}
+          
+          
             <div class="bg-light">
                 {coorp.map((coorp) => (
                     <div class="container">
@@ -142,6 +149,8 @@ const EditProfileC = () => {
                                         <Button onClick={() => handleClick()} variant="outlined" endIcon={<EditIcon />}>
                                             Edit
                                         </Button>
+                                        <br /> <br />
+                                        <strong>Wallet: {coorp.Wallet}</strong>
                                         <hr class="bagdge-primary mt-0 w-25" />
                                         <div class="row">
                                             <div class="col-sm-6">
@@ -185,12 +194,48 @@ const EditProfileC = () => {
                                     <hr class="bg-primary" />
                                     <div class="row">
                                         <div class="col-sm-6">
+                                            <button onClick={()=>setshowrep()}type="button" class="btn btn-primary">View my Reports</button>
+                                            {My_Reports.map((reports) => (
+                                                
+                                             show2 === true?   <div class='course-details'>
+                                                    <h4>{reports.Report_title}</h4>
+                                                    <hr class="bg-primary" />
 
+                                                    <p><strong>Your Report: {reports.Report_content}</strong></p>
+                                                    <hr class="bg-primary" />
+                                                    <h7>Status: { reports.Report_status  }</h7> <br /> <br />
+                                                    <button class="btn btn-primary"data-bs-toggle="modal" data-bs-target="#exampleModal4">Followup</button>
+                                                    
+                                                </div>:<p></p>
+                                            ))} 
                                         </div>
-                                        {/* <div class="col-sm-6">
-                                       efrwfe
-                                    </div> */}
+                                     
+                         <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Report</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="sasadiv">
+                                        {/* <h6><strong>Please type your problem so we can help you?</strong></h6> */}
+                                    </div>
+                                    <br />
+                                    <div class = "input-group">
+                                       <textarea placeholder = "Write your follow"class = "text1"></textarea>
+                                    </div>
+                                    <br /> <br />
 
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    <button type="button" class="btn btn-primary">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
                                     </div>
                                 </div>
                             </div>

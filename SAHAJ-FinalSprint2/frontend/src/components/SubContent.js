@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Iframe from 'react-iframe';
+import { Navigate } from 'react-router-dom';
 //  import Iframe2 from 'react-iframe'
 import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom'
@@ -18,6 +19,8 @@ import {
 import { NavLink } from 'react-router-dom';
 import Course_Det from './CourseDetIndiv';
 import YoutubeVideo from './YoutubeVideo';
+import { CompressOutlined } from '@mui/icons-material';
+
 
 const SubContent = () => {
 
@@ -43,13 +46,24 @@ const SubContent = () => {
     const [Reviewerreview, setReviewerRev] = useState("")
     const [Reviewerreview2, setReviewerRev2] = useState("")
     const examref = "/coorp/solveExam/" + cid + '/' + s
-
+    var prog1 = 0;
     var [coorpoldrate, setcoorpoldrate] = useState(0)
     var [coorpoldrate2, setcoorpoldrate] = useState(0)
     const [rated, setrated] = useState(false)
     var [index, setindex] = useState(0)
     const [instructor, setinstructor] = useState(null)
-    const [coorp,setcoorp] = useState([])
+    const [coorp, setcoorp] = useState([])
+    var [Watched, setwatched] = useState([])
+    var [Progress, setProgress] = useState(0)
+    var [Registered_Course,setRegCourse] = useState([])
+    var[No_subtitles,setNo] = useState(0)
+    var [Refund_Requests , setRef ] = useState([])
+    const [price,setPrice] = useState(0)
+    const [progress,setprog] = useState(0)
+    const[Report_content,setReport_content] = useState("")
+    const[Reports,setReports] = useState([])
+    const [Report_title,setReport_title] = useState("")
+    const [My_Reports,setMy_Reports] = useState([])
 
 
     useEffect(() => {
@@ -63,10 +77,27 @@ const SubContent = () => {
             if (response.ok) {
                 setcoorp(json.filter(c => { return c._id === id }))
                 setFname(json.filter(c => { return c._id === id })[0].Fname)
-
+                setwatched(json.filter(c => { return c._id === id })[0].Watched)
+                setRegCourse(json.filter(c => { return c._id === id })[0].Registered_Course)
+                setMy_Reports(json.filter(c => { return c._id === id })[0].My_Reports)
+                // var i =0
+                // while (i < coorp[0].Registered_Course.length) {
+                //     if (coorp[0].Registered_Course[i].Course_id === cid) {
+                //         // prog1 = coorp[0].Registered_Course[i].Progress 
+                //         //     break
+                        
+                //     }
+                // var i = 0;
+                // while(i <  coorp[0].Registered_Course.length){
+                //     if (coorp[0].Registered_Course[i].Course_id === cid){
+                //         prog1 = coorp[0].Registered_Course[i].Progress 
+                //         console.log(prog1)
+                //         break
+                //     }
+                // }
             }
 
-
+            
 
 
 
@@ -82,7 +113,10 @@ const SubContent = () => {
                 setinstid(json.filter(c => { return c._id === cid })[0].Course_instructor_id)
                 setCourse(json.filter(c => { return c._id === cid }))
                 setReviews(json.filter(c => { return c._id === cid })[0].Reviews)
-
+                setNo(json.filter(c => { return c._id === cid })[0].No_subtitles)
+                setPrice(json.filter(c => { return c._id === cid })[0].Course_price)
+                // console.log(json)
+                console.log("price"+" "+price)
                 console.log(Reviews)
 
                 const response2 = await fetch('/api/instructor/' + json.filter(c => { return c._id === cid })[0].Course_instructor_id)
@@ -129,7 +163,7 @@ const SubContent = () => {
             const response = await fetch('/api/subtitle')
             console.log('ffffffff')
             jsonSub = await response.json()
-            console.log(response)
+            console.log(jsonSub[0])
             if (response.ok) {
 
                 setSub2(jsonSub.filter(c => { return c.CourseId === cid }))
@@ -141,14 +175,27 @@ const SubContent = () => {
 
             }
 
-
+           
 
 
         }
 
 
+        const fetchAdmin = async ()=>{
+            const response = await fetch('/api/admin')
+            const json = await response.json()
+            setRef(json[0].Refund_Requests)
+            setReports(json[0].Reports)
+
+
+        }
+      
+       
+        
+
         fetchSubtitles2();
         fetchCourses();
+        fetchAdmin();
         fetchSubtitles();
         fetchcoorp();
 
@@ -442,11 +489,79 @@ const SubContent = () => {
 
         })
     }
-    function video() {
+    const video = async () => {
         // prog+=1;
         // alert(prog)
-        setVideo(true)
+        console.log(coorp[0].Registered_Course.filter(c => { return c.Course_id === cid }))
         // alert('you clicked')
+        var i = 0;
+        var flag = false
+   
+        while (i <= Watched.length) {
+
+            if (Watched[i] === s) {
+
+               
+                flag = true
+                i++
+            }
+            else {
+                i++
+            }
+
+        }
+        if(!flag){
+            const sub3 = [...Watched, s]
+
+        await fetch('/api/coorp/' + id, {
+
+            method: 'PATCH',
+            body: JSON.stringify({ Watched: sub3 }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+       const Registered_Course2 = Registered_Course.filter(c => {return c.Course_id === cid})
+      const name =  Registered_Course2[0].Course_name
+      alert("name: "+name)
+      const Amount = Registered_Course2[0].Amount_paid
+      alert("Amount: "+Amount)
+      const watched2 = Registered_Course2[0].Watched+1
+      alert("Watched: "+watched2)
+       prog = (watched2/No_subtitles)*100 
+       setprog(prog)
+       alert("Progress "+prog)
+        Registered_Course = Registered_Course.filter(c => {return c.Course_id != cid})
+        const Sub = [...Registered_Course, {Course_id: cid,Course_name:name,Amount_paid:Amount,Watched:watched2,Progress:prog}]
+
+        await fetch('/api/coorp/' + id, {
+
+            method: 'PATCH',
+            body: JSON.stringify({ Registered_Course: Sub }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+        // var j = 0;
+        // while(j<= Registered_Course.length){
+        //     if(Registered_Course[j].Course_id === cid)
+
+        // }
+        setVideo(true)
+        }
+        else{
+            setVideo(true)
+        }
+        
+     
+
+
+
+
     }
 
 
@@ -457,28 +572,85 @@ const SubContent = () => {
         console.log(ct)
         return c
     }
-    function handleRefund(){
+    const handleRefund = async() => {
         console.log(coorp[0].Registered_Course[0].Progress)
-        var i =0;
-        while(i<coorp[0].Registered_Course.length){
-         if(coorp[0].Registered_Course[i].Course_id === cid){
-             if(coorp[0].Registered_Course[i].Progress<50){
-                 alert("Refund Request Is Pending")
-                 break
-             }
-             else{
-                 alert("You Cant Refund Since You Have Completed "+coorp[0].Registered_Course[i].Progress+"%")
-                 break
-             }
-         }
-         else{
-             i++
-         }
+        var i = 0;
+        while (i < coorp[0].Registered_Course.length) {
+            if (coorp[0].Registered_Course[i].Course_id === cid) {
+                console.log(price)
+                if (coorp[0].Registered_Course[i].Progress < 50) {
+                    const problems = [... Refund_Requests,{UserId:id, UserType:"Coorprate",Amount:price}]
+                    await fetch('/api/admin', {
+
+                        method: 'PATCH',
+                        body: JSON.stringify({ Refund_Requests: problems }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+            
+            
+                    })
+                    alert("Refund Request Is Pending")
+                    Registered_Course = Registered_Course.filter(c => {return c.Course_id != cid})
+                    await fetch('/api/coorp/' + id, {
+
+                        method: 'PATCH',
+                        body: JSON.stringify({ Registered_Course }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+            
+            
+                    })
+                //   < Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93"/>
+            //    return( <Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93" />);
+            window.location.href = '/coorp/mycourses/'+id
+                    break
+                }
+                else {
+                    alert("You Cant Refund Since You Have Completed " + progress + "%")
+                    break
+                }
+            }
+            else {
+                i++
+            }
         }
- 
-     }
 
+    }
 
+    const handleReport = async() => {
+        console.log(coorp[0].Registered_Course[0].Progress)
+      
+    
+                const Reportato = [...Reports,{UserId:id,UserType:"Coorprate",Report_title:Report_title,Report_content:Report_content,IsSeen:"Unseen"}]
+                
+                    await fetch('/api/admin', {
+
+                        method: 'PATCH',
+                        body: JSON.stringify({ Reports: Reportato }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+            
+                        
+                    })
+                
+                   const My_reportato = [...My_Reports,{Report_title:Report_title,Report_content:Report_content,Report_status:"Pending"}]
+                    await fetch('/api/coorp/' + id, {
+
+                        method: 'PATCH',
+                        body: JSON.stringify({ My_Reports:My_reportato }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+            
+            
+                    })
+           
+        
+
+    }
 
     return (
 
@@ -510,8 +682,10 @@ const SubContent = () => {
 
                         </CDBSidebarMenu>
                     </CDBSidebarContent>
-
-                    <button data-bs-toggle="modal" data-bs-target="#exampleModal3" type="button" class="btn btn-danger">Refund Course</button>
+                   
+                    <button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-danger"><i class="bi bi-exclamation-circle-fill"></i> Report a problem </button>
+                    <br />
+                    <button data-bs-toggle="modal" data-bs-target="#exampleModal3" type="button" class="btn btn-danger"><i class="bi bi-wallet"></i> Refund Course</button>
 
                     <CDBSidebarFooter style={{ textAlign: 'center' }}>
                         <div
@@ -638,7 +812,7 @@ const SubContent = () => {
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Refund</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -654,6 +828,35 @@ const SubContent = () => {
                                 </div>
                             </div>
                         </div>
+                        
+                    </div>
+                    <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Report</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="sasadiv">
+                                        <h6><strong>Please type your problem so we can help you?</strong></h6>
+                                    </div>
+                                    <br />
+                                    <div class = "input-group">
+                                        <input onChange={(e)=>setReport_title(e.target.value)}placeholder = "Report title"/>
+                                        <br />
+                                        <textarea onChange={(e) => setReport_content(e.target.value)}class = "text1"placeholder='How can we help you?'></textarea>
+                                    </div>
+                                    <br /> <br />
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    <button onClick={() => handleReport()} type="button" class="btn btn-primary">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
 
 

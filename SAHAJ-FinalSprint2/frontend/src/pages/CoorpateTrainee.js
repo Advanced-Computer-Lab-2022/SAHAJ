@@ -2,11 +2,13 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import AllCourses from '../components/AllCourses'
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from '../hooks/useAuthContext'
 
 const CoorprateTrainee = () => {
     const params = useParams()
     const cid = params.id
-    console.log(cid)
+    const { user } = useAuthContext()
+    console.log(user)
     // const params = new URLSearchParams(window.location.search);
     // const courseId = params.get('courseId');
     const [coorp, setcoorp] = useState([]);
