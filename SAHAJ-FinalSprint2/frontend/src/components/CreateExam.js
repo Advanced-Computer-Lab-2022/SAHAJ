@@ -4,16 +4,20 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import QuestionForm from "./QuestionForm";
+import { useAuthContext } from "../hooks/useAuthContext";
 const CreateExam = ({ course }) => {
     var [show, setshow] = useState(false)
+    const {user} = useAuthContext()
 
     const params = useParams();
-    const insid = params.idinst
+    var insid = ""
     const courseid = params.idcourse
     var [ref, setref] = useState(0)
     var [Course_excrcise,setCourseExcercise] = useState(0)
     // const [Course_excrcise,setCourseExcercise] = useState(0)
-
+    if(user){
+        insid = user.id
+    }
 
 
     const [error, setError] = useState("")
@@ -39,8 +43,11 @@ const CreateExam = ({ course }) => {
 
 
         }
-        fetchCourses()
-    }, [])
+        if(user&&user.id!==null){
+            fetchCourses()
+        }
+       
+    }, [user])
 
     
     
@@ -357,10 +364,10 @@ const CreateExam = ({ course }) => {
 
             setError(null)
             if (ref === 10) {
-                window.location.href = '/instructor/' + insid
+                window.location.href = '/instructor'
             }
             else if (ref === 20) {
-                window.location.href = '/instructor/' + insid + '/createcourse/' + params.idcourse
+                window.location.href = '/instructor/createcourse/' + params.idcourse
             }
             console.log('new Exam added', json)
             alert('Your exam has been added')

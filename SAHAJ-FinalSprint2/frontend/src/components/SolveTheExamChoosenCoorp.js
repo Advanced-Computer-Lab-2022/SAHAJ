@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react"
 import NavbarInstructor from "./NavbarInstructor"
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams,useNavigate } from 'react-router-dom';
 import { Form, Button, Modal } from "react-bootstrap";
+import { useAuthContext } from "../hooks/useAuthContext";
 const SolveTheExamChoosenCoorp = () => {
+    const navigate = useNavigate()
     const params = useParams();
     const subid = params.ide
     const str = '/api/solveExam'
+    var id = ""
     const [exams, setexams] = useState(null)
     const [questions, setquestions] = useState([])
     const [options, setoptions] = useState([])
@@ -19,9 +22,47 @@ const SolveTheExamChoosenCoorp = () => {
     const [showbutts , setshowbutts] = useState(false)
     const cccid = params.idcourse
     const [forfunc , setforfunc] = useState(false)
+    const {user} = useAuthContext()
+    const [theuser , settheuser] = useState(null)
+    const [coorp , setcoorp] = useState(null)
+    const [indiv , setindiv] = useState(null)
+    var typeu = ""
+    var coursesReg = []
+    if(user){
+        id = user.id
+        typeu = user.UserType
+        coursesReg = user.courses
+    }
 
 
     useEffect(() => {
+        const fetchr = async () => {
+            
+            const response = await fetch('/api/coorp/' + id)
+
+            const json = await response.json()
+
+            if (response.ok) {
+
+                setcoorp(json)
+                
+            }
+
+        }
+
+        const fetchrindiv = async () => {
+            
+            const response = await fetch('/api/indiv/' + id)
+
+            const json = await response.json()
+
+            if (response.ok) {
+
+                setindiv(json)
+                
+            }
+
+        }
 
         const fetchexams = async () => {
 
@@ -37,10 +78,20 @@ const SolveTheExamChoosenCoorp = () => {
 
             }
         }
+        if(user&&user.id!==null){
+            fetchexams();
 
-        fetchexams();
+            if(typeu === "coorp"){
+                fetchr();
+            }
+            else if(typeu === "indiv"){
+                fetchrindiv();
+            }
+        }
 
-    }, [])
+
+    }, [user])
+
     if(forfunc){
         getquestions()
         setforfunc(false)
@@ -102,7 +153,27 @@ const SolveTheExamChoosenCoorp = () => {
         setshowmodal(false)
         setshowbutts(false)
     }
+    if(typeu === "indiv"){
+        if(indiv&&indiv.Registered_Course.findIndex(el => {return el.Course_id === cccid}) === -1){
+            navigate("/individual")
+        }
+    }
+    else if (typeu === "coorp"){
+        if(coorp&&coorp.Registered_Course&&coorp.Registered_Course.findIndex(el => {return el.Course_id === cccid && el.IsApproved === true}) === -1){
+            navigate("/coorprate");
+        }
+    }
 
+
+    // if(coursesReg&&coursesReg.findIndex(el => {return el.Course_id === cccid}) === -1){
+    //     if(typeu === "indiv"){
+    //         navigate("/individual");
+    //     }
+    //     else if(typeu === "coorp"){
+    //         navigate("/coorprate")
+    //     }
+        
+    // }
 
     return (
 
@@ -186,7 +257,7 @@ const SolveTheExamChoosenCoorp = () => {
                     <div>click Okay to return to the previous page or Click preview to view the correct solutions </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={event =>  window.location.href='/' + cccid + '/' + subid }>
+                    <Button variant="danger" onClick={event =>  window.location.href='/' + cccid + '/' + subid + '/' + typeu}>
                         Okay
                     </Button>
                     <Button variant="dark" onClick={viewres}>

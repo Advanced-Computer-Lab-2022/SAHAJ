@@ -3,6 +3,8 @@ const Requests = () => {
     var [Course_requests, setReq] = useState([])
     var [show,setshow] = useState(true)
     var [w,setw] = useState(0);
+    var  [Enrolled,setEnrolled] = useState(0)
+    var [Course,setCourses] = useState([])
     const [coorp, setcoorp] = useState([])
     useEffect(() => {
         const fetchAdmin = async () => {
@@ -19,8 +21,16 @@ const Requests = () => {
             console.log(json)
             // setRef(json[0].Refund_Requests)
         }           
+        const fetchCourses = async () => {
+            const response = await fetch('/api/course')
+            const json = await response.json()
+            setCourses(json)
+            console.log(json)
+            // setRef(json[0].Refund_Requests)
+        }     
         fetchAdmin();
         fetchcoorp();
+        fetchCourses();
 
     }, [])
     
@@ -64,7 +74,18 @@ const Requests = () => {
 
 
         })
-        
+        const xv= Course.filter(el => {return el._id === type})[0].Enrolled
+        console.log(xv)
+        const enrolled = 1+Enrolled
+        await fetch('/api/course/'+type , {
+            method: 'PATCH',
+            body: JSON.stringify({ Enrolled: xv+1 }),
+            headers: {
+                'Content-Type': 'application/json'  
+            },
+
+
+        })
     }
     return (
 

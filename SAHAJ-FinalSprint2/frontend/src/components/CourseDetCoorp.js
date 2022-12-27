@@ -12,21 +12,27 @@ import {
     CDBSidebarMenu,
     CDBSidebarMenuItem,
 } from 'cdbreact';
-import { NavLink } from 'react-router-dom';
+import { NavLink , useNavigate} from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const CourseDetCoorp = () => {
-
+    const {user} = useAuthContext()
     var jsonSub;
     const params = useParams()
     const cid = params.id
-    const id = params.idcoorp
+    var id = ""
     console.log(id)
     const [sid,setSid] = useState('')
     // const params = new URLSearchParams(window.location.search);
     // const courseId = params.get('courseId');
     const [courses, setCourse] = useState([]);
     const [subtitle, setSub] = useState([]);
+    const [coorp , setcoorp] = useState(null)
     const [show, setshow] = useState(false)
+    const navigate = useNavigate();
+    if(user){
+        id = user.id
+    }
 
     useEffect(() => {
 
@@ -52,7 +58,19 @@ console.log(id)
 
 
 
+        const fetchr = async () => {
 
+            const response = await fetch('/api/coorp/' + id)
+
+            const json = await response.json()
+
+            if (response.ok) {
+
+                setcoorp(json)
+             
+            }
+
+        }
 
         const fetchSubtitles = async () => {
 
@@ -78,12 +96,15 @@ console.log(id)
 
        
 
+if(user && user.id!==null){
+    fetchCourses();
+    fetchSubtitles();
+    fetchr();
+}
+      
 
-        fetchCourses();
-        fetchSubtitles();
 
-
-    }, [])
+    }, [user])
 
 
     function gett(c) {
@@ -97,6 +118,9 @@ console.log(id)
         // console.log(jsonSub)
         // setSub(jsonSub.filter(c => { return c._id === sid }))
         setshow(true)
+    }
+    if(coorp&&coorp.Registered_Course&&coorp.Registered_Course.findIndex(el => {return el.Course_id === cid && el.IsApproved === true}) === -1){
+        navigate("/coorprate");
     }
     
 
@@ -121,7 +145,7 @@ console.log(id)
                     <CDBSidebarContent className="sidebar-content">
                         <CDBSidebarMenu>
                             {subtitle.map((sub) => (
-                                <a onClick={() => window.location.href = `/${id}/${course._id}/${sub._id}/coorp`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+                                <a onClick={() => window.location.href = `/${course._id}/${sub._id}/coorp`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
 
                             ))}
 

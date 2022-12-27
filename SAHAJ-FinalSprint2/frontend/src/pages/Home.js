@@ -1,54 +1,60 @@
-import { useEffect , useState} from "react"
+import { useEffect, useState } from "react"
 //components
 import instructorDetails from '../components/CourseDetails'
 import Country from "../components/Country"
 import FilterSubjectRate from "../components/FilterSubjectRate"
+import { useNavigate } from "react-router-dom";
+import AllCourses from "../components/AllCourses";
+
 //import AddCourseForm from '../components/AddCourseForm'
-const Home = () =>{
+const Home = () => {
 
-    const [Inst, setInst] = useState(null)
-    useEffect(() => {
-
-        const fetchInstructor = async () => {
-
-            const response = await fetch('/api/instructor')
+    const [searchname, setsearch] = useState("")
+    const navigate = useNavigate();
 
 
+    function gotoSearch() {
+        console.log("ggf")
+        console.log(searchname)
+        navigate("/search/" + searchname)
+    }
+    return (
+        <div >
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/individual">E-Learning <i class="bi bi-book-half"></i></a>
+                    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 
-            const json = await response.json()
+                        <button class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Login
+                        </button>
+                        <button class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Signup
+                        </button>
+                    </div>
+                </div>
 
+                <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter <i class="bi bi-funnel-fill"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Popular Courses</a></li>
+                                    {/* <li><a onClick={()=>sort("Another action")}class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a onClick={()=>sort("Something else here")}class="dropdown-item" href="#">Something else here</a></li> */}
+                                </ul>
+                            </div>
+                <form class="d-flex" role="search">
+                    <input onChange={(e) => setsearch(e.target.value)} class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                    <button onClick={() => gotoSearch()} class="btn btn-outline-success" type="submit">Search</button>
+                </form>
 
-
-            if (response.ok) {
-
-                setInst(json)
-
-
-
-
-            }
-
-
-
-
-
-
-
-        }
-
-        fetchInstructor();
-
-    }, [])
-
-
-    return(
-        <div className="home"> 
-            <button onClick={() => window.location.href = `instructor/6355ae5e2e61c954f7251a07`}>Instructor</button>
-            <button onClick={() => window.location.href = `coorprate/635aded365c79ebb9cc7274d`}>CoorprateTrainee</button>
-            <button onClick={() => window.location.href = `individual/637d395e177d794eba38a053`}>IndividualTrainee</button>
+            </nav>
+            <br />
+            <AllCourses />
         </div>
-        
-        
+
+
     )
 }
 

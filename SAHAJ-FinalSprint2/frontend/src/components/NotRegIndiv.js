@@ -1,14 +1,27 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams , useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../hooks/useAuthContext'
 const NotRegIndiv = () => {
+    const {user} = useAuthContext()
     const params = useParams()
     const cid = params.idC
-    const id = params.id
+    var id = ""
     const [coursescoorp, setCoursescoorp] = useState([])
     const [courses, setCourses] = useState([])
+    const [price, setPrice] = useState(false)
     var [Registered_Course, setReg] = useState([])
     var [show, setshow] = useState(false)
+    var [Enrolled,setEnrolled] = useState(0)
     const [show3, setshow3] = useState(false)
+    const [mywallet,setmywallet] = useState(0)
+    const [inst ,setinst] = useState([])
+    // const {user} = useAuthContext()
+    const [cname , setcname] = useState("")
+    const [Course_instructor_id,setCourse_instructor_id] = useState("")
+    const navigate = useNavigate()
+    if(user){
+        id = user.id
+    }
     useEffect(() => {
         const fetchCourses = async () => {
 
@@ -20,6 +33,11 @@ const NotRegIndiv = () => {
 
                 setCourses(json.filter(c => { return c._id === cid }))
                 console.log(Registered_Course.findIndex(el => el.Course_id === cid))
+                setPrice(json.filter(c => { return c._id === cid })[0].Course_price)
+                setCourse_instructor_id(json.filter(c => { return c._id === cid })[0].Course_instructor_id)
+                setcname(json.filter(c => { return c._id === cid })[0].Course_subject)
+                setEnrolled(json.filter(c => { return c._id === cid })[0].Enrolled)
+
             }
 
         }
@@ -33,33 +51,73 @@ const NotRegIndiv = () => {
             if (response.ok) {
 
                 setReg(json.Registered_Course)
+                console.log("ewfgwrgrerge")
                 console.log("ffff")
                 console.log(Registered_Course)
             }
 
         }
+        const fetchrs = async () => {
 
-        fetchCourses();
-        fetchr();
+            const response = await fetch('/api/instructor/' )
+
+            const json = await response.json()
+
+            if (response.ok) {
+
+                setinst(json)
+            }
+
+        }
+
+        if(user&&user.id){
+            fetchCourses();
+            fetchr();
+            fetchrs();
+        }
+     
 
 
 
-    }, [])
+    }, [user])
 
 
     // console.log(courses.length)
     const handleSubmit = async (e) => {
+        
         // e.preventDefault()
         //console.log(Currency)
         // console.log(cid)
         // const red = Registered_Course.push(cid)
         // console.log(red)
         // setReg(red)
-
+        await fetch("http://localhost:3000/api/create-checkout-session", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              items: [
+                { id: cid , name : cname, priceInCents: price*100 , quantity:1 }
+                
+              ],
+            }),
+          })
+            .then(res => {
+              if (res.ok) return res.json()
+              return res.json().then(json => Promise.reject(json))
+            })
+            .then(({ url }) => {
+                console.log(url)
+              window.location = url
+            })
+            .catch(e => {
+              console.error(e.error)
+            })
 
         // console.log(Registered_Course.includes({Course_id:cid , Course_name:Registered_Course.find(el => el.Course_id ===cid).Course_name}))
         console.log(courses[0])
-        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject,Progress: 0 }]
+        const abc = [...Registered_Course, {  Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0 }]
         console.log(abc)
         setshow(true)
         setReg(abc)
@@ -75,12 +133,38 @@ const NotRegIndiv = () => {
 
 
         })
+        
+        const i = inst.findIndex(el => {return el._id === Course_instructor_id})
+        console.log(i)
+        console.log(inst[i])
+        const Wallet = inst[i].Wallet+price - (price*0.05)
+        await fetch('/api/instructor/' + Course_instructor_id, {
+            method: 'PATCH',
+            body: JSON.stringify({ Wallet: Wallet}),
+            headers: {
+                'Content-Type': 'application/json'
+            },
 
+
+        })
+        const enrolled = 1+Enrolled
+        await fetch('/api/course/' + cid, {
+            method: 'PATCH',
+            body: JSON.stringify({ Enrolled: enrolled }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+        
 
 
     }
 
-
+    function navto(ii){
+        navigate("/indiv/mycourses/course/"+ii)
+    }
 
 
     return (
@@ -102,7 +186,7 @@ const NotRegIndiv = () => {
                                         <strong class="d-inline-block mb-2 text-primary">Course Preview</strong>
                                         <iframe width="600" height="300" src={"https://www.youtube.com/embed/" + course.Preview_link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         <br />
-                                        {Registered_Course.findIndex(el => el.Course_id === cid) === -1 ? <button onClick={handleSubmit} type="button" class="btn btn-primary">Register</button> : <button onClick={() => window.location.href = `/indiv/mycourses/${id}`} type="button" class="btn btn-primary">View Course</button>}
+                                        {Registered_Course.findIndex(el => el.Course_id === cid) === -1 ? <button data-bs-toggle="modal" data-bs-target="#RefundPolicy"  type="button" class="btn btn-primary">Register</button> : <button onClick={() => navto(course._id)} type="button" class="btn btn-primary">View Course</button>}
 
 
                                     </div>
@@ -112,6 +196,32 @@ const NotRegIndiv = () => {
                         </div>
 
                     </div>
+                    
+                    <div class="modal fade" id="RefundPolicy" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Refund Policy</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                By Accepting this form you understand that:
+                                <p>If you wanted to request a refund for this course your request will only be approved if your course progress is less than 50%</p>
+                               
+                               
+                                <br /> <br />
+
+                            </div>
+                            <div class="modal-footer">
+                                <button onClick= {()=>handleSubmit()}type="button" class="btn btn-primary">Accept</button>
+                                <button type="button" class="btn btn-secondary" variant = "Warning" data-bs-dismiss="modal">Decline</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
 
 
                 </main>

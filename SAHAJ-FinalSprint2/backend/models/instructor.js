@@ -94,6 +94,10 @@ const instructorSchema = new Schema({
                 type: String
             }
         }
+    },
+    Wallet:{
+        type:Number,
+        default:0
     }
   
 })

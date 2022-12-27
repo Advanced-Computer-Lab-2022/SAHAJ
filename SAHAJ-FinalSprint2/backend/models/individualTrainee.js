@@ -29,22 +29,49 @@ const indvidualTraineeSchema = new Schema({
         default: "My Bio",
         required: true
     },
-    Registered_Course: {
+    Watched:{
+        type:Array
+    },
+    Registered_Course:{
         type: Array,
-        Course_det: {
-            Course_id: {
-                type: String
+        Course_det:{
+            Course_id:{
+                type:String
             },
-            Course_name: {
-                type: String
+            Course_name:{
+                type:String
             },
-            Progress: {
-                type: Number,
-                default: 0,
+            Amount_paid:{
+                type:Number
+            },
+            Watched:{
+                type:Number,
+                default:0,
                 required:true
-            }
+            },
+            Progress:{
+                type:Number,
+                default:0,
+                required: true
+            },
+         
         }
-    }
+    },
+    Wallet:{
+        type:Number,
+        default : 0 
+    },
+    My_Reports:{
+        Report_title:{
+            type:String
+        },
+        Report_content:{
+            type:String
+        }, 
+        Report_status:{
+            type:String
+        }
+    },
 })
 
 

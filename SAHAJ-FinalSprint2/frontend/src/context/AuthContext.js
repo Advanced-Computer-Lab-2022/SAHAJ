@@ -4,55 +4,60 @@ export const AuthContext = createContext()
 
 
 export const authReducer = (state, action) => {
-console.log(action.UserType)
+// console.log(action.UserType)
 
-  // switch (action.type) {
-  //   case 'LOGIN':
-  //     return { type: action.payload }
-  //   case 'LOGOUT':
-  //     return { type: null }
-  //   default:
-  //     return state
+  switch (action.type) {
+    case 'LOGIN':
+      return { user: action.payload }
+    case 'LOGOUT':
+      return { user: null };
+      
+    default:
+      return state
+  }
+
+  // if(action.type === 'LOGIN'){
+  //   if(action.UserType === 'indiv'){
+  //     return { user: action.payload }
+  //   }
+  //   else if(action.UserType === 'coorp'){
+  //     return { user: action.payload }
+  //   }
+  //   else{
+  //     return { user: action.payload }
+  //   }
   // }
-
-  if(action.type === 'LOGIN'){
-    if(action.UserType === 'indiv'){
-      return { indiv: action.payload }
-    }
-    else if(action.UserType === 'coorp'){
-      return { coorp: action.payload }
-    }
-    else{
-      return { instructor: action.payload }
-    }
-  }
-  else if(action.type === 'LOGOUT'){
-    if(action.UserType === 'indiv'){
-      return { indiv: null }
-    }
-    else if(action.UserType === 'coorp'){
-      return { coorp: null }
-    }
-    else{
-      return { instructor: null }
-    }
-  }
-  else{
-    return state
-  }
+  // else if(action.type === 'LOGOUT'){
+  //   if(action.UserType === 'indiv'){
+  //     return { user: null }
+  //   }
+  //   else if(action.UserType === 'coorp'){
+  //     return { user: null }
+  //   }
+  //   else{
+  //     return { user: null }
+  //   }
+  // }
+  // else{
+  //   return state
+  // }
 }
 
 export const AuthContextProvider = ({ children }) => {
-  console.log(children)
-  const [state, dispatch] = useReducer(authReducer, { UserType: null })
+  // console.log(children)
+  const [state, dispatch] = useReducer(authReducer, { user: null })
   const xtype = Object.keys(state)[0]
-  console.log(xtype)
+  // console.log(xtype)
+  // console.log(JSON.parse(localStorage.getItem('user')))
+  
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem(xtype))
-
+     
+    console.log("gffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+    const user = JSON.parse(localStorage.getItem('user'))
+    console.log("dsffsfgaer: "+user)
     if (user) {
-      dispatch({ type: 'LOGIN', payload: xtype }) 
+      dispatch({ type: 'LOGIN', payload: user }) 
     }
   }, [])
 

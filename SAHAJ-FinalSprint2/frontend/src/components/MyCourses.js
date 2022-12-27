@@ -2,9 +2,11 @@ import { useParams } from 'react-router-dom'
 import NavbarCourse from './NavbarCourse'
 import { useState, useEffect } from 'react'
 import Nocourses from './Nocourses'
+import { useAuthContext } from '../hooks/useAuthContext'
 const MyCourses = () => {
+    const {user} = useAuthContext()
     const params = useParams()
-    const cid = params.id
+    var cid = ""
     var count = 0;
     const [inst, setInst] = useState([]);
     const [coorp, setcoorp] = useState(null);
@@ -12,7 +14,9 @@ const MyCourses = () => {
     const [RegCourses, setReg] = useState([]);
     var [notregatall , setnotregatall] = useState(false)
     console.log(cid)
-
+if(user){
+    cid = user.id
+}
     useEffect(() => {
 
 
@@ -41,14 +45,16 @@ const MyCourses = () => {
         }
 
 
+        if(user&&user.id!==null){
+            fetchcoorp();
+        }
+        
 
-        fetchcoorp();
 
 
 
 
-
-    }, [])
+    }, [user])
 
     console.log(RegCourses)
     // if (coorp[0] !== null) {
@@ -109,7 +115,7 @@ const MyCourses = () => {
                             <div class='card-body'>
                                 <h5 class="card-title">{x.Course_name}</h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a onClick={() => window.location.href = `${cid}/course/${x.Course_id}`} class="btn btn-primary" key={x.Course_id} >To Course</a>
+                                <a onClick={() => window.location.href = "mycourses/course/"+x.Course_id} class="btn btn-primary" key={x.Course_id} >To Course</a>
                             </div>
                         </div>
                     </div>:<p></p>

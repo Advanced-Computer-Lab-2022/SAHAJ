@@ -3,6 +3,45 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const Indiv = require('../models/individualTrainee')
 const validator = require('validator')
+
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+
+// const storeItems = new Map([
+//   [1, { priceInCents: 10000, name: "Learn React Today" }],
+//   [2, { priceInCents: 20000, name: "Learn CSS Today" }],
+// ])
+
+const payment =  async (req, res) => {
+  try {
+    console.log(req.body)
+    var id = ""
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: req.body.items.map(item => {
+        // const storeItem = item.id
+        id = item.id
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: item.name,
+            },
+            unit_amount: item.priceInCents,
+          },
+          quantity: item.quantity,
+        }
+      }),
+      success_url: `http://localhost:3000/individual/course/${id}`,
+      cancel_url: `http://localhost:3000/individual/course/${id}`,
+    })
+    res.json({ url: session.url })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+}
+
+
 //function to get all instructors
 const getallindiv = async (req, res) => {
     const indiv = await Indiv.find({}).sort({ createdAt: -1 })
@@ -154,9 +193,9 @@ const signUp = async (req, res) => {
                 const token = createToken(user._id);
 
                 res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-                res.status(200).json(user)
+                res.status(200).json({id:user._id,Email,token,UserType:"indiv"})
                
-                console.log("token :  "+ token)
+                
                
             }
 
@@ -189,7 +228,7 @@ const login = async (req, res) => {
         if (await bcrypt.compare(Password, user.Password)) {
             const token = createToken(user._id);
             res.cookie('jwt', token, { httpOnly: false, maxAge: maxAge * 1000 });
-            res.status(200).json({ user })
+            res.status(200).json({ id:user._id,Email,token,UserType:"indiv" , courses: user.Registered_Course })
             console.log("LOGGED IN")
             // res.status(200).json({Email, token})
         }
@@ -205,10 +244,10 @@ const login = async (req, res) => {
     }
 }
 
-const logout = async (req, res) => {
-    // TODO Logout the user
-    res.cookie('jwt', token, { httpOnly: true, maxAge: 1 });
-}
+// const logout = async (req, res) => {
+//     // TODO Logout the user
+//     res.cookie('jwt', token, { httpOnly: true, maxAge: 1 });
+// }
 
 module.exports = {
     getallindiv,
@@ -216,7 +255,8 @@ module.exports = {
     deleteindiv,
     createindiv,
     updateindiv,
-    logout,
+    // logout,
     login,
-    signUp
+    signUp,
+    payment
 }

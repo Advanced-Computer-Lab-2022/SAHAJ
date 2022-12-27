@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { useParams } from "react-router-dom"
+import { useAuthContext } from "../hooks/useAuthContext"
 const Upload = () => {
     const params = useParams()
+    const {user} = useAuthContext()
     const SubID = params.idS
-    const InstId = params.id
+    var InstId = ""
     const [Link, setLink] = useState('')
     const [error, setError] = useState(null)
     var [youtubeId, setyouTubeid] = useState("")
@@ -18,6 +20,9 @@ const Upload = () => {
     var [duration3, setduration3] = useState(0)
     const [Course_duration, setCourse_duration] = useState(0)
     const [show, setshow] = useState(false)
+    if(user){
+        InstId=user.id
+    }
 
     // useEffect(() => {
     //     const fetchCourses = async () => {
@@ -88,7 +93,7 @@ const Upload = () => {
             console.log(Course_duration)
             console.log(minuets + 'm' + seconds + 's')
     //        alert('added')
-             window.location.href = '/instructor/' + InstId + '/createcourse/' + 'createexam/' + params.idC + '/' + SubID
+             window.location.href = '/instructor/createcourse/' + 'createexam/' + params.idC + '/' + SubID
 
 
 
@@ -136,13 +141,15 @@ const Upload = () => {
                 })
 
             }
+            
+        if(user&&user.id!==null){
             fetchduration();
             // fetchcourse();
-        
+        }
 
 
 
-    }, [])
+    }, [user])
 
 
 

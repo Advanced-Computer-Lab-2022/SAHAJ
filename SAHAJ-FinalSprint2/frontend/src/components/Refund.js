@@ -3,7 +3,7 @@ const Refund = () => {
     var [Refund_Requests, setRef] = useState([])
     var [show,setshow] = useState(true)
     var [w,setw] = useState(0);
-    const [coorp, setcoorp] = useState([])
+    const [indiv, setindiv] = useState([])
     useEffect(() => {
         const fetchAdmin = async () => {
             const response = await fetch('/api/admin')
@@ -12,15 +12,15 @@ const Refund = () => {
             // .filter(c => {return c.UserId != id && c.UserType === "Coorprate"})
             console.log(Refund_Requests)
         }
-        const fetchcoorp = async () => {
-            const response = await fetch('/api/coorp')
+        const fetchindiv = async () => {
+            const response = await fetch('/api/indiv')
             const json = await response.json()
-            setcoorp(json)
+            setindiv(json)
             console.log(json)
             // setRef(json[0].Refund_Requests)
         }           
         fetchAdmin();
-        fetchcoorp();
+        fetchindiv();
 
     }, [])
     
@@ -35,16 +35,17 @@ const Refund = () => {
     //     console.log(w)
     // }
     const toWallet = async(id,type,amount)=>{
-        // alert(id +  " "+ type +" " + amount  )
+        alert(id +  " "+ type +" " + amount  )
+
         console.log(Refund_Requests)
-        if(type === "Coorprate"){
+        if(type === "Individual"){
            
           
-            console.log(  coorp.filter(c => { return c._id === id })[0].Wallet)
+            console.log(  indiv)
            
-            await fetch('/api/coorp/' + id, {
+            await fetch('/api/indiv/' + id, {
                 method: 'PATCH',
-                body: JSON.stringify({ Wallet:(coorp.filter(c => { return c._id === id })[0].Wallet+amount) }),
+                body: JSON.stringify({ Wallet:(indiv.filter(c => { return c._id === id })[0].Wallet+amount) }),
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -52,7 +53,7 @@ const Refund = () => {
     
             })
             console.log(Refund_Requests)
-           const Refund_Requests2 = [...Refund_Requests.filter(c => {return c.UserId !== id && c.UserType === "Coorprate"})]
+           const Refund_Requests2 = [...Refund_Requests.filter(c => {return c.UserId !== id && c.UserType === "Individual"})]
            console.log(Refund_Requests2)
            await fetch('/api/admin/' , {
             method: 'PATCH',

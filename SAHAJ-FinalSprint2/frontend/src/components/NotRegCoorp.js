@@ -2,10 +2,12 @@ import { Alert } from 'bootstrap'
 import { useState, useEffect } from 'react'
 import { HiSaveAs } from 'react-icons/hi'
 import { Navigate, useParams } from 'react-router-dom'
+import { useAuthContext } from '../hooks/useAuthContext'
 const NotRegCoorp = () => {
+    const { user } = useAuthContext()
     const params = useParams()
     const cid = params.idC
-    const id = params.id
+    var id = ""
     const [coursescoorp, setCoursescoorp] = useState([])
     const [courses, setCourses] = useState([])
     const [price, setPrice] = useState(false)
@@ -13,7 +15,10 @@ const NotRegCoorp = () => {
     var [show, setshow] = useState(false)
     const loc = "coorp/mycourses/course/" + cid
     const [show3, setshow3] = useState(false)
-    const [admin , setadmin] = useState([])
+    const [admin, setadmin] = useState([])
+    if (user) {
+        id = user.id
+    }
     useEffect(() => {
         const fetchCourses = async () => {
 
@@ -54,23 +59,25 @@ const NotRegCoorp = () => {
             if (response.ok) {
 
                 setadmin(json)
-                
+
             }
 
         }
+        if (user && user.id !== null) {
+            fetchCourses();
+            fetchr();
+            fetchadmin();
+        }
 
-        fetchCourses();
-        fetchr();
-        fetchadmin();
 
 
-    }, [])
+    }, [user])
 
 
     // console.log(courses.length)
     const handleSubmit = async (e) => {
         console.log(courses[0])
-        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0, IsApproved:false }]
+        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0, IsApproved: false }]
         console.log(abc)
         setshow(true)
         setReg(abc)
@@ -89,8 +96,8 @@ const NotRegCoorp = () => {
 
         const reqs = admin[0].Course_requests
 
-        const Course_requests = [...reqs, { UserId: id, Course_id:cid }]
-        
+        const Course_requests = [...reqs, { UserId: id, Course_id: cid }]
+
 
         await fetch('/api/admin/', {
             method: 'PATCH',
@@ -110,7 +117,7 @@ const NotRegCoorp = () => {
         window.location.href = "indiv/mycourses/course/" + cid
     }
 
-
+    // console.log(Registered_Course.filter(el => { return el.Course_id === cid })[0].IsApproved === false )
 
     return (
         <div>
@@ -133,11 +140,11 @@ const NotRegCoorp = () => {
                                         <iframe width="600" height="300" src={"https://www.youtube.com/embed/" + course.Preview_link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         <br />
                                         {Registered_Course.findIndex(el => el.Course_id === cid) === -1 ?
-                                         <button onClick={handleSubmit} type="button" class="btn btn-primary">Register</button> 
-                                         :Registered_Course.filter(el => {return el.Course_id === cid})[0].IsApproved === false?
-                                         <div class = "alert alert-success" role="alert">Your request has been sent</div>
-                                         :Registered_Course.filter(el => {return el.Course_id === cid})[0].IsApproved === true? 
-                                         <button onClick={() => window.location.href = `/coorp/mycourses/${id}`} type="button" class="btn btn-primary">View Course</button>:<p></p>}
+                                            <button onClick={handleSubmit} type="button" class="btn btn-primary">Register</button>
+                                            : Registered_Course.filter(el => { return el.Course_id === cid })[0].IsApproved === false ?
+                                                <div class="alert alert-success" role="alert">Your request has been sent</div>
+                                                : Registered_Course.filter(el => { return el.Course_id === cid })[0].IsApproved === true ?
+                                                    <button onClick={() => window.location.href = `/coorp/mycourses/course/${cid}`} type="button" class="btn btn-primary">View Course</button> : <p></p>}
                                     </div>
 
                                 </div>

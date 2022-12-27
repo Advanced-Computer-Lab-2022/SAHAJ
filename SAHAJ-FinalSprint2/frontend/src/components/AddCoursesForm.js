@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { useParams, useSearchParams , RedirectFunction , Redirect} from 'react-router-dom';
+import { useAuthContext } from "../hooks/useAuthContext";
 const AddCoursesForm = () => {
     const params = useParams()
-    const Course_instructor_id = params.id
+    const {user} = useAuthContext()
+    var Course_instructor_id = ""
     const [Course_instructor_name, setCourse_instructor_name] = useState("")
     const [Course_subject, setCourse_subject] = useState("")
     const [Course_price, setCourse_price] = useState(0)
@@ -15,6 +17,9 @@ const AddCoursesForm = () => {
     var [dakhal,setdakhal] = useState(false)
     const [Course_description , setCourse_description] = useState("")
     const [Course_photo , setCourse_photo] = useState("")
+    if(user){
+        Course_instructor_id = user.id
+    }
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -32,10 +37,12 @@ const AddCoursesForm = () => {
 
         }
 
+        if(user&& user.id!==null){
+            fetchCourses();
+        }
         
-        fetchCourses();
 
-    }, [])
+    }, [user])
 
     // useEffect(() => {
     //     if(dakhal===true){
@@ -96,7 +103,7 @@ const AddCoursesForm = () => {
             alert('added')
             setNewcourseId(json._id)
            
-            window.location.href='/instructor/' + Course_instructor_id+ '/createcourse/' + json._id
+            window.location.href='/instructor/createcourse/' + json._id
            
             
 
@@ -114,6 +121,11 @@ const AddCoursesForm = () => {
     return (
 
         <div>
+             <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                <a class="navbar-brand" href="/instructor">E-Learning <i class="bi bi-book-half"></i></a>
+                </div>
+            </nav>
 
             <div class="my-3 p-3 bg-body rounded shadow-sm">
                 <div >

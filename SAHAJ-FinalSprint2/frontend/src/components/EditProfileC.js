@@ -3,34 +3,44 @@ import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import Stack from '@mui/material/Stack';
 import Country from './Country';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigation } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const EditProfileC = () => {
     const params = useParams()
-    const cid = params.id
+    const { user } = useAuthContext()
+    var cid = ""
+    if (user) {
+        cid = user.id
+    }
     const [show, setshow] = useState(false)
     const [coorp, setcoorp] = useState([]);
-    const [Username, setUsername] = useState("")
+    const [Email, setUsername] = useState("")
     const [Fname, setFname] = useState("")
     const [Lname, setLname] = useState("")
     const [Bio, setBio] = useState("")
-    const[My_Reports,setmyrep] = useState([])
-    const [show2,setshow2] = useState(false)
-    const profilehref = "/coorprate/"+cid+"/profile"
+    const [My_Reports, setmyrep] = useState([])
+    const [show2, setshow2] = useState(false)
+    const [follow,setFollow] = useState("")
+    const profilehref = "/coorprate/" + cid + "/profile"
     useEffect(() => {
 
 
 
         const fetchcoorp = async () => {
-
+            console.log(cid)
             const response = await fetch('/api/coorp/')
 
             const json = await response.json()
 
             if (response.ok) {
-
+                // console.log(json.filter(c => { return c._id === cid }))
                 setcoorp(json.filter(c => { return c._id === cid }))
                 setmyrep(json.filter(c => { return c._id === cid })[0].My_Reports)
+                setFname(json.filter(c => { return c._id === cid })[0].Fname)
+                setLname(json.filter(c => { return c._id === cid })[0].Lname)
+                setUsername(json.filter(c => { return c._id === cid })[0].Email)
+                setBio(json.filter(c => { return c._id === cid })[0].Bio)              
             }
             // console.log(coorp[0].Fname)
 
@@ -39,19 +49,21 @@ const EditProfileC = () => {
         }
 
 
-
-        fetchcoorp();
-
-
-
+        if (user && user.id !== null) {
+            fetchcoorp();
+        }
 
 
-    }, [])
+
+
+
+
+    }, [user])
 
     const handleClick2 = async (e) => {
         console.log("click2")
-        
-        if (Username === "") {
+
+        if (Email === "") {
             setUsername(coorp[0].Username)
         }
         if (Fname === "") {
@@ -63,7 +75,7 @@ const EditProfileC = () => {
         if (Bio === "") {
             setBio(coorp[0].Bio)
         }
-        const coorp = { Username, Fname, Lname, Bio }
+        const coorp = { Email, Fname, Lname, Bio }
         await fetch('/api/coorp/' + cid, {
             method: 'PATCH',
 
@@ -76,7 +88,7 @@ const EditProfileC = () => {
         })
         setshow(false)
 
-
+        window.location.reload()
 
     }
     function handleClick() {
@@ -84,52 +96,25 @@ const EditProfileC = () => {
         setshow(true)
 
     }
-function setshowrep(){
-    setshow2(true)
-}
+    function setshowrep() {
+        setshow2(true)
+    }
     console.log(show)
-
+    const handleFollwup = async ()=>{
+        // alert("!!!@@@###"+follow)
+     }
     return (
         <div>
-             {coorp.map((coorp) => (
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">E-learning</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href={profilehref}>Welcome {coorp.Username}</a>
-                            </li>
-                            <li class="nav-item">
-                                <button class="btn btn-dark" onClick={() => window.location.href = `/coorp/mycourses/${coorp._id}#`} key={coorp._id} >My Courses</button>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link">Pricing</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Pricing</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Pricing</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="container-fluid">
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
-                    </div>
+                    <a class="navbar-brand" href="/coorprate">E-Learning <i class="bi bi-book-half"></i></a>
                 </div>
             </nav>
-            ))}
-          
-          
+
+
+
             <div class="bg-light">
-                {coorp.map((coorp) => (
+               
                     <div class="container">
                         <div class="row-d flex justify-content-center">
                             <div class="col-md-10 mt-5 pt-5">
@@ -149,24 +134,22 @@ function setshowrep(){
                                         <Button onClick={() => handleClick()} variant="outlined" endIcon={<EditIcon />}>
                                             Edit
                                         </Button>
-                                        <br /> <br />
-                                        <strong>Wallet: {coorp.Wallet}</strong>
                                         <hr class="bagdge-primary mt-0 w-25" />
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">First name:</p>
-                                                {show === false ? <h6 class="text-muted">{coorp.Fname}</h6> : <input placeholder={coorp.Fname} onChange={(e) => setFname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Fname}</h6> : <input placeholder={Fname} onChange={(e) => setFname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">Email:</p>
-                                                {show === false ? <h6 class="text-muted">{coorp.Username}</h6> : <input placeholder={coorp.Username} onChange={(e) => setUsername(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Email}</h6> : <input placeholder={Email} onChange={(e) => setUsername(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Last name :</p>
-                                                {show === false ? <h6 class="text-muted">{coorp.Lname}</h6> : <input placeholder={coorp.Lname} onChange={(e) => setLname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Lname}</h6> : <input placeholder={Lname} onChange={(e) => setLname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
@@ -176,7 +159,7 @@ function setshowrep(){
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Biograhy</p>
-                                                {show === false ? <h6 class="text-muted">{coorp.Bio}</h6> : <input placeholder={coorp.Bio} onChange={(e) => setBio(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Bio}</h6> : <input placeholder={Bio} onChange={(e) => setBio(e.target.value)} />}
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm-6">
@@ -194,54 +177,54 @@ function setshowrep(){
                                     <hr class="bg-primary" />
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <button onClick={()=>setshowrep()}type="button" class="btn btn-primary">View my Reports</button>
-                                            {My_Reports.map((reports) => (
-                                                
-                                             show2 === true?   <div class='course-details'>
+                                            <button onClick={() => setshowrep()} type="button" class="btn btn-primary">View my Reports</button>
+                                            {My_Reports && My_Reports.map((reports) => (
+
+                                                show2 === true ? <div class='course-details'>
                                                     <h4>{reports.Report_title}</h4>
                                                     <hr class="bg-primary" />
 
                                                     <p><strong>Your Report: {reports.Report_content}</strong></p>
                                                     <hr class="bg-primary" />
-                                                    <h7>Status: { reports.Report_status  }</h7> <br /> <br />
-                                                    <button class="btn btn-primary"data-bs-toggle="modal" data-bs-target="#exampleModal4">Followup</button>
-                                                    
-                                                </div>:<p></p>
-                                            ))} 
-                                        </div>
-                                     
-                         <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Report</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="sasadiv">
-                                        {/* <h6><strong>Please type your problem so we can help you?</strong></h6> */}
-                                    </div>
-                                    <br />
-                                    <div class = "input-group">
-                                       <textarea placeholder = "Write your follow"class = "text1"></textarea>
-                                    </div>
-                                    <br /> <br />
+                                                    <h7>Status: {reports.Report_status}</h7> <br /> <br />
+                                                  {reports.Report_status !== "Resolved"?  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal4">Send a Followup</button>:<p></p>}
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                                    <button type="button" class="btn btn-primary">Yes</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
+                                                </div> : <p></p>
+                                            ))}
+                                        </div>
+
+                                        <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Followup on A Report</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="sasadiv">
+                                                            {/* <h6><strong>Please type your problem so we can help you?</strong></h6> */}
+                                                        </div>
+                                                        <br />
+                                                        <div class="input-group">
+                                                            <textarea onChange={(e)=>setFollow(e.target.value)} placeholder="Followup..." class="text1"></textarea>
+                                                        </div>
+                                                        <br /> <br />
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button onClick={()=>handleFollwup()} type="button" class="btn btn-primary"data-bs-dismiss="modal">Send</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                ))}
+            
             </div>
         </div>
 

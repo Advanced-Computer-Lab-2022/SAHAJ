@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Sidebar from './Sidebar';
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/js/bootstrap.min'
 import { useState, useEffect } from 'react'
 import SubContent from './SubContent';
@@ -13,26 +13,45 @@ import {
     CDBSidebarMenuItem,
 } from 'cdbreact';
 import { NavLink } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const CourseDetIndiv = () => {
-
+    const { user } = useAuthContext()
     var jsonSub;
     const params = useParams()
     const cid = params.id
-    const id = params.idindiv
+    var id = ""
     console.log(id)
-    const [sid,setSid] = useState('')
+    const [sid, setSid] = useState('')
     // const params = new URLSearchParams(window.location.search);
     // const courseId = params.get('courseId');
     const [courses, setCourse] = useState([]);
     const [subtitle, setSub] = useState([]);
     const [show, setshow] = useState(false)
-
+    const [indiv , setindiv] = useState(null)
+    const navigate = useNavigate()
+    if (user) {
+        id = user.id
+    }
     useEffect(() => {
 
+        const fetchindiv = async () => {
+            const response = await fetch('/api/indiv/'+id)
+            const json = await response.json()
 
-console.log(id)
+            if (response.ok) {
+                setindiv(json)
+              
+
+
+                // setprogress(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
+                // console.log(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
+            }
+
+        }
+        console.log(id)
         const fetchCourses = async () => {
+           
 
             const response = await fetch('/api/course')
             console.log(response.json)
@@ -49,6 +68,8 @@ console.log(id)
 
 
         }
+        
+       
 
 
 
@@ -58,12 +79,12 @@ console.log(id)
 
             const response = await fetch('/api/subtitle')
             console.log('ffffffff')
-             jsonSub = await response.json()
+            jsonSub = await response.json()
             console.log(response)
             if (response.ok) {
 
                 setSub(jsonSub.filter(c => { return c.CourseId === cid }))
-                
+
             }
             if (!response.ok) {
 
@@ -76,14 +97,18 @@ console.log(id)
 
         }
 
+
        
+        if (user && user.id !== null) {
+            fetchCourses();
+            fetchSubtitles();
+            fetchindiv();
+        }
 
 
-        fetchCourses();
-        fetchSubtitles();
 
-
-    }, [])
+    }, [user])
+    
 
 
     function gett(c) {
@@ -92,13 +117,16 @@ console.log(id)
         console.log(ct)
         return c
     }
-    function handleClick(sid){
+    function handleClick(sid) {
         setSid(sid)
         // console.log(jsonSub)
         // setSub(jsonSub.filter(c => { return c._id === sid }))
         setshow(true)
     }
     
+    if(indiv&&indiv.Registered_Course&&indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) === -1){
+        navigate("/individual");
+    }
 
     return (
 
@@ -121,7 +149,7 @@ console.log(id)
                     <CDBSidebarContent className="sidebar-content">
                         <CDBSidebarMenu>
                             {subtitle.map((sub) => (
-                                <a onClick={() => window.location.href = `/${id}/${course._id}/${sub._id}/indiv`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+                                <a onClick={() => window.location.href = `/${course._id}/${sub._id}/indiv`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
 
                             ))}
 
@@ -140,7 +168,7 @@ console.log(id)
                 </CDBSidebar>
 
             ))}
-            
+
         </div>
 
 

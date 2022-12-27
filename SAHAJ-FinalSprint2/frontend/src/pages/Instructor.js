@@ -11,11 +11,14 @@ import CourseDetails from "../components/CourseDetails"
 import { subjectexported } from "../components/NavbarInstructor"
 import { Form, Button, Modal } from "react-bootstrap";
 import AllCourses from "../components/AllCourses"
-
+import { useAuthContext } from "../hooks/useAuthContext"
+import { useLogout } from '../hooks/useLogout'
+import { useNavigate } from "react-router-dom";
 const Instructor = () => {
-
+    const { user } = useAuthContext()
     const params = useParams();
-    const insid = params.id
+    const navigate = useNavigate();
+    var insid = ""
     console.log(insid)
     const [show, setshow] = useState(false)
     const [CourseFlag, setCourseFlag] = useState(false)
@@ -25,10 +28,15 @@ const Instructor = () => {
     const pricefilterloc = "/instructor/" + insid + "/pricefilter"
     const createCourseloc = "/instructor/" + insid + "/createcourse"
     const [subject, setsubject] = useState('')
-    const [showModal , setshowModal] = useState(false)
-    const [instructor , setinstructor] = useState(null)
-    const profilehref = "/instructor/"+insid+"/profile" 
-
+    const [showModal, setshowModal] = useState(false)
+    const [instructor, setinstructor] = useState(null)
+    const profilehref = "/instructor/profile"
+    const [searchname, setsearch] = useState("")
+    var [ filterrr , setfilterrr] = useState("")
+    const { logout } = useLogout()
+    if (user) {
+        insid = user.id
+    }
     useEffect(() => {
 
         const fetchCourses = async () => {
@@ -43,7 +51,7 @@ const Instructor = () => {
         }
 
         const fetchtheinstructor = async () => {
-            const response = await fetch('/api/instructor/'+insid)
+            const response = await fetch('/api/instructor/' + insid)
             const json = await response.json()
             if (response.ok) {
 
@@ -51,12 +59,14 @@ const Instructor = () => {
 
             }
         }
+        if (user && user.id !== null) {
+            fetchtheinstructor();
+            fetchCourses();
+        }
 
-        fetchtheinstructor();
-        fetchCourses();
 
 
-    }, [])
+    }, [user])
     //const filtered = employees.filter(employee => {
     //  return employee.country === 'Canada';
     console.log(subject)
@@ -64,13 +74,13 @@ const Instructor = () => {
     console.log(instructor)
 
 
-    function setmodal(){
+    function setmodal() {
         setshowModal(true)
     }
 
 
-    function logoutfunc(){
-        
+    function logoutfunc() {
+
     }
 
     function clicked() {
@@ -85,16 +95,99 @@ const Instructor = () => {
     function clicked2() {
         setCourses2(courses.filter(course => { return course.Course_subject.toLowerCase() === subject.toLowerCase() }))
     }
-    function Flag(){
-        setCourseFlag(true)
-        setCourses2(courses.filter(course => { return course.Course_instructor_id === insid }))
+    function Flag() {
+        navigate('/instructor/mycourses')
 
+    }
+    function gotoSearch() {
+        console.log("ggf")
+        console.log(searchname)
+        navigate("/search/" + searchname)
+    }
+    const handlelogout = () => {
+
+        logout()
+        navigate("/log")
+    }
+    function sort(){
+        
+        
+        setfilterrr("Popular Courses"  )        
+        // window.location.reload() 
     }
     return (
 
         <div className="Instructor">
-            
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+
+
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">E-Learning <i class="bi bi-book-half"></i></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle btn btn-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                                </svg></button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href={profilehref}>Edit Profile</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="#" onClick={handlelogout} key={insid}>LOG OUT <i class="bi bi-box-arrow-left"></i></a></li>
+                                </ul>
+                            </li>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter <i class="bi bi-funnel-fill"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a onClick={()=>sort()} class="dropdown-item" href="#">Popular Courses</a></li>
+                                    
+                                </ul>
+                            </div>
+                            <li class="nav-item">
+                                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createCourse" >Create new course</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="btn btn-dark" onClick={setmodal} key={insid} >Filter Courses</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="btn btn-dark" onClick={Flag} key={insid} >View My Courses</button>
+                            </li>
+
+                        </ul>
+                        <form class="d-flex" role="search">
+                            <input onChange={(e) => setsearch(e.target.value)} class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                            <button onClick={() => gotoSearch()} class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+            <br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            {/* <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
                 <div class="container-fluid">
                     <a class="navbar-brand" href="#">E-learning</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,9 +205,7 @@ const Instructor = () => {
                                     <li><a class="dropdown-item" href="#">Something else here</a></li>
                                 </ul>
 
-                            {/* <li class="nav-item">
-                                {instructor?<a class="nav-link active" aria-current="page" href={profilehref}>Welcome: {instructor.Fname}</a>:<div></div>}
-                            </li> */}
+                           
                             <li class="nav-item">
                                 <a class="nav-link" onClick={setmodal} >Create new course</a>
                             </li>
@@ -138,16 +229,41 @@ const Instructor = () => {
                         </div>
                     </div>
                 </div>
-            </nav>
+            </nav> */}
 
-          <br />
 
-            
+
+
 
             {/* <button onClick={clicked}>Click to view</button> */}
 
             <>
-            <Modal show={showModal}>
+                <div class="modal fade" id="createCourse" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Contract</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                By Accepting this form you are willing to commit to these following conditions:
+                                <div>1- All videos and meterials copyrights are transfered to SAHAJ learning and must not be shared with any one</div>
+                                <div>2- 5% of the net profits made by instructor: {insid} belong to SAHAJ learning </div>
+                               
+                                <br /> <br />
+
+                            </div>
+                            <div class="modal-footer">
+                                <button onClick= {()=>window.location.href='/instructor/createcourse'}type="button" class="btn btn-primary">Accept</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Decline</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* <Modal show={showModal}>
                 <Modal.Header>
                     <Modal.Title>Contract</Modal.Title>
                 </Modal.Header>
@@ -160,18 +276,18 @@ const Instructor = () => {
                     <Button variant="danger" onClick={event =>  window.location.href='/instructor/' + insid + '/createcourse' }>
                         Accept
                     </Button>
-                    <Button variant="dark" onClick={event =>  window.location.href='/instructor/' + insid}>
+                    <Button variant="dark" type="button" class="btn btn-secondary" data-bs-dismiss="modal" >
                         Decline
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal> */}
 
             </>
 
-            {CourseFlag === false?<AllCourses/>:
-             courses2 && courses2.map((course) => (
-                <CourseDetails key={course._id} course={course} />
-            ))}
+            {CourseFlag === false ?  <AllCourses filterCourse = {filterrr}/> :
+                courses2 && courses2.map((course) => (
+                    <CourseDetails key={course._id} course={course} />
+                ))}
 
 
             {/* <button onClick={event =>  window.location.href='/'} >View All Courses</button>

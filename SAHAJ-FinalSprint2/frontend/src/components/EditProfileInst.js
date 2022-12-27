@@ -4,21 +4,29 @@ import EditIcon from '@mui/icons-material/Edit';
 import Stack from '@mui/material/Stack';
 import Country from './Country';
 import { useParams } from 'react-router-dom';
-
+import { useAuthContext } from '../hooks/useAuthContext';
+import { Email } from '@mui/icons-material';
 const EditProfileInst = () => {
+    const {user} = useAuthContext()
     const params = useParams()
-    const cid = params.id
+    var cid = ""
     const [show, setshow] = useState(false)
     const [showmessage, setshowmessage] = useState(false)
     const [inst, setinst] = useState([]);
-    const [Username, setUsername] = useState("")
+    const [Email, setEmail] = useState("")
     //var [course, setcourse] = useState([])
-    const [Fname, setFname] = useState("")
-    const [Lname, setLname] = useState("")
-    const [Bio, setBio] = useState("")
+    var [Fname, setFname] = useState("")
+    var [Lname, setLname] = useState("")
+    var [Bio, setBio] = useState("")
+    var [overAllRate,setoverAllRate] = useState(0)
     var [review, setreview] = useState([])
+    var [ Wallet , setWallet] = useState(0)
     const [showReview,setshowreview] = useState(false)
-    const profilehref = "/individual/" + cid + "/profile"
+    // const profilehref = "/individual/"  + "/profile"
+    if(user){
+        cid = user.id
+    }
+    console.log(user)
     useEffect(() => {
 
 
@@ -32,30 +40,37 @@ const EditProfileInst = () => {
             if (response.ok) {
 
                 setinst(json.filter(c => { return c._id === cid }))
+          
                 console.log(json.filter(c => { return c._id === cid })[0])
+                setFname(json.filter(c => { return c._id === cid })[0].Fname)
+                setLname(json.filter(c => { return c._id === cid })[0].Lname)
+                setEmail(json.filter(c => { return c._id === cid })[0].Email)
+                setoverAllRate(json.filter(c => { return c._id === cid })[0].overAllRate)
+                setBio(json.filter(c => { return c._id === cid })[0].Bio)
+                setWallet(json.filter(c => { return c._id === cid })[0].Wallet)
                 // console.log(json.filter(c => { return c._id === cid })[0].IReviews)
                 setreview(json.filter(c => { return c._id === cid })[0].IReviews)
-                console.log(review)
+             
             }
             // console.log(coorp[0].Fname)
 
 
 
         }
-
+        if(user&&user.id!==null)
         fetchinst();
 
 
 
 
 
-    }, [])
+    }, [user])
 
     const handleClick2 = async (e) => {
         console.log("click2")
         setshow(false)
-        if (Username === "") {
-            setUsername(inst[0].Username)
+        if (Email === "") {
+            setEmail(inst[0].Email)
         }
         if (Fname === "") {
             setFname(inst[0].Fname)
@@ -66,7 +81,7 @@ const EditProfileInst = () => {
         if (Bio === "") {
             setBio(inst[0].Bio)
         }
-        const inst = { Username, Fname, Lname, Bio }
+        const inst = { Email, Fname, Lname, Bio }
         await fetch('/api/instructor/' + cid, {
             method: 'PATCH',
             body: JSON.stringify(inst),
@@ -78,7 +93,7 @@ const EditProfileInst = () => {
         })
 
 
-
+        // window.location.reload()
 
     }
     function handleClick() {
@@ -108,43 +123,17 @@ const EditProfileInst = () => {
     console.log(review)
     return (
         <div>
-            {inst.map((inst) => (
+            
 
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
-                    <div class="container-fluid">
-                        <a class="navbar-brand" href="#">E-learning</a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href={profilehref}>Welcome: {inst.Fname}</a>:<div></div>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" onClick={"setmodal"} >Create new course</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href={"pricefilterloc"}>filter by price</a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" onClick={"Flag"}>View my courses</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="container-fluid">
-                            <div class="d-flex" role="search">
-                                <input class="form-control me-2" type="search" placeholder="Search for a Subject" aria-label="Search" onChange={""} />
-                                <button class="btn btn-outline-success" type="submit" onClick={"clicked2"}>Search</button>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+            <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                <a class="navbar-brand" href="/instructor">E-Learning <i class="bi bi-book-half"></i></a>
+                </div>
+            </nav>
     
-            ))}
+         
             <div class="bg-light">
-                {inst.map((inst) => (
+               
 
                     <div class="container">
                         <div class="row-d flex justify-content-center">
@@ -162,7 +151,8 @@ const EditProfileInst = () => {
                                     </div>
                                     <div class="col-sm-8 bg-white rounded-right">
                                         <h3 class=" text-center">Profile Information</h3>
-                                        <h6 class=" text-center">Your Rating: {inst.overAllRate}⭐</h6>
+                                        <h6 class=" text-center">Your Rating: {overAllRate}⭐</h6>
+                                        <h6 class=" text-center">Wallet: {Wallet} <i class="bi bi-cash-stack"></i></h6>
                                         <Button onClick={() => handleClick()} variant="outlined" endIcon={<EditIcon />}>
                                             Edit
                                         </Button>
@@ -170,18 +160,18 @@ const EditProfileInst = () => {
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">First name:</p>
-                                                {show === false ? <h6 class="text-muted">{inst.Fname}</h6> : <input placeholder={inst.Fname} onChange={(e) => setFname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Fname}</h6> : <input placeholder={Fname} onChange={(e) => setFname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">Email:</p>
-                                                {show === false ? <h6 class="text-muted">{inst.Username}</h6> : <input placeholder={inst.Username} onChange={(e) => setUsername(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Email}</h6> : <input placeholder={Email} onChange={(e) => setEmail(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Last name :</p>
-                                                {show === false ? <h6 class="text-muted">{inst.Lname}</h6> : <input placeholder={inst.Lname} onChange={(e) => setLname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Lname}</h6> : <input placeholder={Lname} onChange={(e) => setLname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
@@ -191,12 +181,12 @@ const EditProfileInst = () => {
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Biograhy</p>
-                                                {show === false ? <h6 class="text-muted">{inst.Bio}</h6> : <input placeholder={inst.Bio} onChange={(e) => setBio(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Bio}</h6> : <input placeholder={Bio} onChange={(e) => setBio(e.target.value)} />}
                                             </div>
                                             <div class="col-sm-6">
                                                 <br />
                                                 {showmessage === true ? <h6>Email has been sent to {inst.Username}</h6> : <p></p>}
-                                                <button onClick={() => SendEmail(inst.Username)} type="button" class="btn btn-primary">Change Password</button>
+                                                <button onClick={() => SendEmail(Email)} type="button" class="btn btn-primary">Change Password</button>
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm-6">
@@ -215,7 +205,7 @@ const EditProfileInst = () => {
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <button onClick={()=>setshowreviewf()}type="button" class="btn btn-primary">View my reviews</button>
-                                            {review.map((inst) => (
+                                            {review&&review.map((inst) => (
                                                 
                                              showReview === true?   <div class='course-details'>
                                                     <h4>{inst.ReviewerName}</h4>
@@ -242,7 +232,7 @@ const EditProfileInst = () => {
                         </div>
                     </div>
 
-                ))}
+             
             </div>
 
 

@@ -3,32 +3,48 @@ import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import Stack from '@mui/material/Stack';
 import Country from './Country';
-import { useParams } from 'react-router-dom';
-
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 const EditProfileIndiv = () => {
+
     const params = useParams()
-    const cid = params.id
+    const { user } = useAuthContext()
+    var cid = ""
+    if (user) {
+        cid = user.id
+    }
     const [show, setshow] = useState(false)
     const [indiv, setindiv] = useState([]);
-    const [Username, setUsername] = useState("")
+    const [Email, setUsername] = useState("")
     const [Fname, setFname] = useState("")
     const [Lname, setLname] = useState("")
     const [Bio, setBio] = useState("")
-    const profilehref = "/individual/"+cid+"/profile"
+    const [Wallet, setWallet] = useState(0)
+    const [My_Reports, setmyrep] = useState([])
+    const [show2, setshow2] = useState(false)
+    const [follow,setFollow] = useState("")
+    const profilehref = "/coorprate/" + cid + "/profile"
     useEffect(() => {
 
 
 
         const fetchindiv = async () => {
-
+            console.log(cid)
             const response = await fetch('/api/indiv/')
 
             const json = await response.json()
 
             if (response.ok) {
-
+                // console.log(json.filter(c => { return c._id === cid }))
                 setindiv(json.filter(c => { return c._id === cid }))
-               
+                setmyrep(json.filter(c => { return c._id === cid })[0].My_Reports)
+                setFname(json.filter(c => { return c._id === cid })[0].Fname)
+                setLname(json.filter(c => { return c._id === cid })[0].Lname)
+                setUsername(json.filter(c => { return c._id === cid })[0].Email)
+                setBio(json.filter(c => { return c._id === cid })[0].Bio)
+                setWallet(json.filter(c => { return c._id === cid })[0].Wallet)
+                console.log(json.filter(c => { return c._id === cid })[0].Fname)
+                console.log(My_Reports)
             }
             // console.log(coorp[0].Fname)
 
@@ -37,19 +53,21 @@ const EditProfileIndiv = () => {
         }
 
 
-
-        fetchindiv();
-
-
-
+        if (user && user.id !== null) {
+            fetchindiv();
+        }
 
 
-    }, [])
+
+
+
+
+    }, [user])
 
     const handleClick2 = async (e) => {
         console.log("click2")
-        setshow(false)
-        if (Username === "") {
+
+        if (Email === "") {
             setUsername(indiv[0].Username)
         }
         if (Fname === "") {
@@ -61,9 +79,10 @@ const EditProfileIndiv = () => {
         if (Bio === "") {
             setBio(indiv[0].Bio)
         }
-        const indiv = { Username, Fname, Lname, Bio }
+        const indiv = { Email, Fname, Lname, Bio }
         await fetch('/api/indiv/' + cid, {
             method: 'PATCH',
+
             body: JSON.stringify(indiv),
             headers: {
                 'Content-Type': 'application/json'
@@ -71,9 +90,9 @@ const EditProfileIndiv = () => {
 
 
         })
+        setshow(false)
 
-
-
+        // window.location.reload()
 
     }
     function handleClick() {
@@ -81,48 +100,26 @@ const EditProfileIndiv = () => {
         setshow(true)
 
     }
-
+    function setshowrep() {
+        setshow2(true)
+    }
     console.log(show)
+    const handleFollwup = async ()=>{
+       alert("!!!@@@###"+follow)
+    }
 
     return (
         <div>
-             {indiv.map((indiv) => (
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">E-learning</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href={profilehref}>Welcome {indiv.Username}</a>
-                            </li>
-                            <li class="nav-item">
-                                <button class="btn btn-dark" onClick={() => window.location.href = `/indiv/mycourses/${indiv._id}#`} key={indiv._id} >My Courses</button>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link">Pricing</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Pricing</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Pricing</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="container-fluid">
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
-                    </div>
+                    <a class="navbar-brand" href="/individual">E-Learning <i class="bi bi-book-half"></i></a>
                 </div>
             </nav>
-            ))}
+
+
+
             <div class="bg-light">
-                {indiv.map((indiv) => (
+               
                     <div class="container">
                         <div class="row-d flex justify-content-center">
                             <div class="col-md-10 mt-5 pt-5">
@@ -142,22 +139,24 @@ const EditProfileIndiv = () => {
                                         <Button onClick={() => handleClick()} variant="outlined" endIcon={<EditIcon />}>
                                             Edit
                                         </Button>
+                                        <br /> <br />
+                                        <strong>Wallet: {Wallet} <i class="bi bi-cash-stack"></i></strong>
                                         <hr class="bagdge-primary mt-0 w-25" />
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">First name:</p>
-                                                {show === false ? <h6 class="text-muted">{indiv.Fname}</h6> : <input placeholder={indiv.Fname} onChange={(e) => setFname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Fname}</h6> : <input placeholder={Fname} onChange={(e) => setFname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <p class="font-weight-bold">Email:</p>
-                                                {show === false ? <h6 class="text-muted">{indiv.Username}</h6> : <input placeholder={indiv.Username} onChange={(e) => setUsername(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Email}</h6> : <input placeholder={Email} onChange={(e) => setUsername(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Last name :</p>
-                                                {show === false ? <h6 class="text-muted">{indiv.Lname}</h6> : <input placeholder={indiv.Lname} onChange={(e) => setLname(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Lname}</h6> : <input placeholder={Lname} onChange={(e) => setLname(e.target.value)} />}
                                             </div>
 
                                             <div class="col-sm-6">
@@ -167,7 +166,7 @@ const EditProfileIndiv = () => {
                                             <div class="col-sm-6">
                                                 <br />
                                                 <p class="font-weight-bold">Biograhy</p>
-                                                {show === false ? <h6 class="text-muted">{indiv.Bio}</h6> : <input placeholder={indiv.Bio} onChange={(e) => setBio(e.target.value)} />}
+                                                {show === false ? <h6 class="text-muted">{Bio}</h6> : <input placeholder={Bio} onChange={(e) => setBio(e.target.value)} />}
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm-6">
@@ -185,22 +184,296 @@ const EditProfileIndiv = () => {
                                     <hr class="bg-primary" />
                                     <div class="row">
                                         <div class="col-sm-6">
+                                            <button onClick={() => setshowrep()} type="button" class="btn btn-primary">View my Reports</button>
+                                            {My_Reports && My_Reports.map((reports) => (
+
+                                                show2 === true ? <div class='course-details'>
+                                                    <h4>{reports.Report_title}</h4>
+                                                    <hr class="bg-primary" />
+
+                                                    <p><strong>Your Report: {reports.Report_content}</strong></p>
+                                                    <hr class="bg-primary" />
+                                                    <h7>Status: {reports.Report_status}</h7> <br /> <br />
+                                                    {reports.Report_status !== "Resolved"?  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal4">Send a Followup</button>:<p></p>}
+
+                                                </div> : <p></p>
+                                            ))}
+                                        </div>
+
+                                        <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Followup on A Report</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="sasadiv">
+                                                            {/* <h6><strong>Please type your problem so we can help you?</strong></h6> */}
+                                                        </div>
+                                                        <br />
+                                                        <div class="input-group">
+                                                            <textarea onChange={(e)=>setFollow(e.target.value)}placeholder="Followup..." class="text1"></textarea>
+                                                        </div>
+                                                        <br /> <br />
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button onClick={()=>handleFollwup()}type="button" class="btn btn-primary" data-bs-dismiss="modal">Send</button>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
-                                        {/* <div class="col-sm-6">
-                                       efrwfe
-                                    </div> */}
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                ))}
+            
             </div>
         </div>
 
     );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // const params = useParams()
+    // var [cid, setcid] = useState("")
+    // const [show, setshow] = useState(false)
+    // const [indiv, setindiv] = useState([]);
+    // const [Email, setUsername] = useState("")
+    // const [Fname, setFname] = useState("")
+    // const [Lname, setLname] = useState("")
+    // const [Bio, setBio] = useState("")
+    // const profilehref = "/individual/profile"
+    // const [My_Reports, setmyrep] = useState([])
+    // const [show2, setshow2] = useState(false)
+    // const { user } = useAuthContext()
+    // if (user) {
+    //     console.log(user)
+    //     cid = user.id
+    //     console.log(cid)
+    // }
+    // console.log(cid)
+    // useEffect(() => {
+    //     console.log(cid)
+    //     const fetchindiv = async () => {
+    //         console.log(cid)
+    //         const response = await fetch('/api/indiv/' + cid)
+
+    //         const json = await response.json()
+
+    //         if (response.ok) {
+    //             console.log(cid)
+    //             setindiv(json)
+    //             console.log(indiv)
+    //             console.log(json.filter(c => { return c._id === cid }))
+    //             setmyrep(json.filter(c => { return c._id === cid })[0].My_Reports)
+
+    //         }
+    //         else {
+    //             alert("dh")
+    //         }
+    //         // console.log(coorp[0].Fname)
+
+
+
+    //     }
+    //     if (user !== null) {
+    //         if (user.id !== null)
+    //             fetchindiv();
+    //     }
+
+
+    // }, [user])
+
+
+    // console.log(indiv)
+
+
+    // const handleClick2 = async (e) => {
+    //     console.log("click2")
+    //     setshow(false)
+    //     if (Email === "") {
+    //         setUsername(indiv[0].Email)
+    //     }
+    //     if (Fname === "") {
+    //         setFname(indiv[0].Fname)
+    //     }
+    //     if (Lname === "") {
+    //         setLname(indiv[0].Lname)
+    //     }
+    //     if (Bio === "") {
+    //         setBio(indiv[0].Bio)
+    //     }
+    //     const indiv = { Email, Fname, Lname, Bio }
+    //     await fetch('/api/indiv/' + cid, {
+    //         method: 'PATCH',
+    //         body: JSON.stringify(indiv),
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+
+
+    //     })
+
+
+    //     window.location.reload()
+
+    // }
+    // function handleClick() {
+    //     console.log("click1")
+    //     setshow(true)
+
+    // }
+
+    // console.log(show)
+
+    // return (
+    //     <div>
+    //         {/* {indiv&&indiv.map((indiv) => ( */}
+    //         <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
+    //             <div class="container-fluid">
+    //             <a class="navbar-brand" href="/individual">E-Learning <i class="bi bi-book-half"></i></a>
+    //             </div>
+    //         </nav>
+    //         {/* ))} */}
+    //         <div class="bg-light">
+    //             {/* {indiv.map((indiv) => ( */}
+    //             <div class="container">
+    //                 <div class="row-d flex justify-content-center">
+    //                     <div class="col-md-10 mt-5 pt-5">
+    //                         <div class="row z-depth-3">
+    //                             <div class="col-sm-4 bg-info rounded-left">
+    //                                 <div class="card-block text-center text-white">
+    //                                     <i class="fas fa-user-tie fa-7x mt-5"></i>
+    //                                     <h2 class="font-weight-bold mt">{indiv.Fname}</h2>
+    //                                     <p>Indivdual Trainee</p>
+    //                                     <i class="far fa-edit fa-2x mb-4"></i>
+
+    //                                 </div>
+
+    //                             </div>
+    //                             <div class="col-sm-8 bg-white rounded-right">
+    //                                 <h3 class=" text-center">Profile Information</h3>
+    //                                 <Button onClick={() => handleClick()} variant="outlined" endIcon={<EditIcon />}>
+    //                                     Edit
+    //                                 </Button>
+    //                                 <br /> <br />
+    //                                 <strong>Wallet: {indiv.Wallet}</strong>
+    //                                 <hr class="bagdge-primary mt-0 w-25" />
+    //                                 <div class="row">
+    //                                     <div class="col-sm-6">
+    //                                         <p class="font-weight-bold">First name:</p>
+    //                                         {show === false ? <h6 class="text-muted">{indiv.Fname}</h6> : <input placeholder={indiv.Fname} onChange={(e) => setFname(e.target.value)} />}
+    //                                     </div>
+
+    //                                     <div class="col-sm-6">
+    //                                         <p class="font-weight-bold">Email:</p>
+    //                                         {show === false ? <h6 class="text-muted">{indiv.Email}</h6> : <input placeholder={indiv.Email} onChange={(e) => setUsername(e.target.value)} />}
+    //                                     </div>
+
+    //                                     <div class="col-sm-6">
+    //                                         <br />
+    //                                         <p class="font-weight-bold">Last name :</p>
+    //                                         {show === false ? <h6 class="text-muted">{indiv.Lname}</h6> : <input placeholder={indiv.Lname} onChange={(e) => setLname(e.target.value)} />}
+    //                                     </div>
+
+    //                                     <div class="col-sm-6">
+    //                                         <br />
+    //                                         <Country />
+    //                                     </div>
+    //                                     <div class="col-sm-6">
+    //                                         <br />
+    //                                         <p class="font-weight-bold">Biograhy</p>
+    //                                         {show === false ? <h6 class="text-muted">{indiv.Bio}</h6> : <input placeholder={indiv.Bio} onChange={(e) => setBio(e.target.value)} />}
+    //                                     </div>
+    //                                     <div class="row">
+    //                                         <div class="col-sm-6">
+    //                                             <br />
+
+
+    //                                             {show === true ? <button onClick={handleClick2} type="button" class="btn btn-danger">Update</button> : <p></p>}
+
+    //                                         </div>
+    //                                     </div>
+
+    //                                 </div>
+    //                             </div>
+    //                             <h4 class="mt-3"></h4>
+    //                                 <hr class="bg-primary" />
+    //                                 <div class="row">
+    //                                     <div class="col-sm-6">
+    //                                         <button onClick={() => setshowrep()} type="button" class="btn btn-primary">View my Reports</button>
+    //                                         {My_Reports && My_Reports.map((reports) => (
+
+    //                                             show2 === true ? <div class='course-details'>
+    //                                                 <h4>{reports.Report_title}</h4>
+    //                                                 <hr class="bg-primary" />
+
+    //                                                 <p><strong>Your Report: {reports.Report_content}</strong></p>
+    //                                                 <hr class="bg-primary" />
+    //                                                 <h7>Status: {reports.Report_status}</h7> <br /> <br />
+    //                                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal4">Followup</button>
+
+    //                                             </div> : <p></p>
+    //                                         ))}
+    //                                     </div>
+
+    //                                     <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    //                                         <div class="modal-dialog">
+    //                                             <div class="modal-content">
+    //                                                 <div class="modal-header">
+    //                                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Report</h1>
+    //                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    //                                                 </div>
+    //                                                 <div class="modal-body">
+    //                                                     <div class="sasadiv">
+    //                                                         {/* <h6><strong>Please type your problem so we can help you?</strong></h6> */}
+    //                                                     </div>
+    //                                                     <br />
+    //                                                     <div class="input-group">
+    //                                                         <textarea placeholder="Write your follow" class="text1"></textarea>
+    //                                                     </div>
+    //                                                     <br /> <br />
+
+    //                                                 </div>
+    //                                                 <div class="modal-footer">
+    //                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+    //                                                     <button type="button" class="btn btn-primary">Yes</button>
+    //                                                 </div>
+    //                                             </div>
+    //                                         </div>
+
+    //                                     </div>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //         </div>
+    //     </div>
+
+
+    // );
 }
 
 export default EditProfileIndiv

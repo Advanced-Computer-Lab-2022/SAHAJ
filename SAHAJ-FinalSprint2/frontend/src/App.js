@@ -1,9 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route , Navigate } from 'react-router-dom'
 //pages and components
 import Home from './pages/Home'
-
+import { useAuthContext } from './hooks/useAuthContext'
+import InstructorCourses from './components/InstructorCourses'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import NavbarGuest from './components/NavbarGuest'
+import Popper from 'popper.js'
 import AddCourseForm from './components/AddCourseForm';
 import AddAdminForm from './components/AddAdminForm';
 import FilterInstructor from './components/FilterInstructor';
@@ -54,7 +56,31 @@ import Admin3 from './pages/Admin2';
 import restProvider from 'ra-data-simple-rest'
 import PostList from './components/PostList';
 import Login2 from './components/login';
+import { useState } from 'react'
 function App() {
+   var f = true
+  const {user} = useAuthContext()
+  var userId= ""
+  if(user){
+    userId = user.id
+    console.log(user.UserType === "indiv")
+  }
+  console.log(useAuthContext().user)
+
+  const redirectAfterLogin = () => {
+    console.log(user.UserType)
+    if (user.UserType == "instructor")
+      return "/instructor"
+    else if (user.UserType == "admin")
+      return "/adminViewProblems"
+    else if (user.UserType == "indiv")
+      return "/individual"
+    else if (user.UserType == "coorp")
+      return "/coorprate"
+    else
+      return "/home"
+  }
+
   return (
 
     <div className="App"  >
@@ -65,15 +91,16 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<SignIn />}
+            element={<Home />}
 
           />
 
           <Route
-            path="/coorprate/:id/course/:idC"
+            path="/coorprate/course/:idC"
             element={<NotRegCoorp />}
 
           />
+
           <Route
             path="/search/:name"
             element={<Search />}
@@ -81,13 +108,13 @@ function App() {
           />
 
           <Route
-            path="/individual/:id/course/:idC"
+            path="/individual/course/:idC"
             element={<NotRegIndiv />}
 
           />
 
           <Route
-            path="/instructor/:id/course/:idC"
+            path="/instructor/course/:idC"
             element={<InstuctorViewCourse />}
 
           />
@@ -110,32 +137,32 @@ function App() {
 
           />
           <Route
-            path="/coorp/mycourses/:id"
+            path="/coorp/mycourses"
             element={<MyCourses />}
 
           />
           <Route
-            path="/indiv/mycourses/:id"
+            path="/indiv/mycourses"
             element={<MyCoursesIndiv />}
 
           />
           <Route
-            path="coorp/mycourses/:idcoorp/course/:id"
+            path="coorp/mycourses/course/:id"
             element={<CourseDetCoorp />}
 
           />
           <Route
-            path="indiv/mycourses/:idindiv/course/:id"
+            path="indiv/mycourses/course/:id"
             element={<CourseDetIndiv />}
 
           />
           <Route
-            path="/instructor/:id/createcourse/:idC/:idS"
+            path="/instructor/createcourse/:idC/:idS"
             element={<Upload />}
 
           />
           <Route
-            path="/:id/:cid/:sid/coorp"
+            path="/:cid/:sid/coorp"
             element={<SubContent />}
 
           />
@@ -145,7 +172,12 @@ function App() {
 
           />
           <Route
-            path="/:id/:cid/:sid/indiv"
+            path="/instructor/mycourses"
+            element={<InstructorCourses />}
+
+          />
+          <Route
+            path="/:cid/:sid/indiv"
             element={<SubContent2 />}
 
           />
@@ -160,12 +192,12 @@ function App() {
 
           />
           <Route
-            path="/instructor/:id/createcourse"
+            path="/instructor/createcourse"
             element={<AddCoursesForm />}
 
           />
           <Route
-            path="/instructor/:id/createcourse/:idC"
+            path="/instructor/createcourse/:idC"
             element={<CreateSubtitle />}
 
           />
@@ -177,42 +209,43 @@ function App() {
           /> */}
 
           <Route
-            path="/instructor/:id"
+            path="/instructor"
             element={<Instructor />}
 
           />
           <Route
             path="/log"
-            element={<Login2 />}
+            element={!user ? <Login2 /> : <Navigate to={redirectAfterLogin()} />}
+
 
           />
 
           <Route
-            path="/coorprate/:id/profile"
+            path="/coorprate/profile"
             element={<EditProfileC />}
 
           />
 
           <Route
-            path="/individual/:id/profile"
-            element={<EditProfileIndiv />}
+            path="/individual/profile"
+            element={<EditProfileIndiv id = {userId} />}
 
           />
 
           <Route
-            path="/instructor/:id/profile"
+            path="/instructor/profile"
             element={<EditProfileInst />}
 
           />
 
           <Route
-            path="/coorprate/:id"
+            path="/coorprate"
             element={<CoorprateTrainee />}
 
           />
           <Route
-            path="/individual/:id"
-            element={<IndividualTrainee />}
+            path="/individual"
+            element={<IndividualTrainee /> }
 
           />
           <Route
@@ -262,7 +295,7 @@ function App() {
           /> */}
 
           <Route
-            path="/instructor/:idinst/createcourse/createexam/:idcourse/:idsub"
+            path="/instructor/createcourse/createexam/:idcourse/:idsub"
             element={<CreateExam />}
 
           />
@@ -272,8 +305,8 @@ function App() {
 
           />
 
-          <Route
-            path="/indiv/:idi/:idc/solveExam"
+          {/* <Route
+            path="/indiv/solveExam/cid/sid"
             element={<SolveExam />}
 
           />
@@ -282,7 +315,7 @@ function App() {
             path="/coorp/:idi/:idc/solveExam"
             element={<SolveExamCoorp />}
 
-          />
+          /> */}
 
           <Route
             path="/coorp/solveExam/:idcourse/:ide"
@@ -291,7 +324,7 @@ function App() {
           />
 
           <Route
-            path="/individual/solveExam/:idcourse/:ide"
+            path="/indiv/solveExam/:idcourse/:ide"
             element={<SolveTheExamChoosenCoorp />}
 
           />

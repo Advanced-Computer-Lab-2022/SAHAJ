@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export const useLogin = () => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(null)
   const { dispatch } = useAuthContext()
+  const {user } = useAuthContext()
+  const navigate = useNavigate()
 
   const login = async (Email, Password, UserType) => {
     setIsLoading(true)
@@ -13,8 +16,9 @@ export const useLogin = () => {
     console.log("Email:  " + Email)
     console.log("Pass: "+ Password)
     console.log("Type: "+ UserType)
+    console.log(user)
 
-    const response = await fetch('/api/indiv/login', {
+    const response = await fetch('/api/'+UserType+'/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ Email, Password })
@@ -28,13 +32,17 @@ export const useLogin = () => {
     }
     if (response.ok) {
       // save the user to local storage
-      localStorage.setItem(UserType, JSON.stringify(json))
+      localStorage.setItem('user', JSON.stringify(json))
+      console.log(json.UserType)
 
       // update the auth context
       dispatch({type: 'LOGIN' , payload: json , UserType:UserType})
 
       // update loading state
       setIsLoading(false)
+
+     
+     
     }
   }
 

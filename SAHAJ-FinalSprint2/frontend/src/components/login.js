@@ -119,6 +119,9 @@ const Login = () => {
 
         await login(Email, Password, type)
 
+
+        
+
         // const inst = {Email,Password}
         // const response = await fetch('/api/instructor/login' , {
         //     method: 'POST',
@@ -236,7 +239,7 @@ const Login = () => {
                             <a href="!#">Forgot password?</a>
                         </div>
 
-                        <MDBBtn onClick={(e) => handleSigin(e)} className="mb-4 w-100">Sign in</MDBBtn>
+                        <MDBBtn disabled = {isLoadingL} onClick={(e) => handleSigin(e)} className="mb-4 w-100">Sign in</MDBBtn>
                         <p className="text-center">Not a member? <a href="#!">Register</a></p>
 
                     </MDBTabsPane>
@@ -262,7 +265,7 @@ const Login = () => {
                             <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
                         </div>
 
-                        <MDBBtn onClick={(e) => handleSignup(e)} className="mb-4 w-100">Sign up</MDBBtn>
+                        <MDBBtn disabled = {isLoading} onClick={(e) => handleSignup(e)} className="mb-4 w-100">Sign up</MDBBtn>
 
                     </MDBTabsPane>
 

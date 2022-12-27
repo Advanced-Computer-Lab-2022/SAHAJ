@@ -56,25 +56,27 @@ const coporateTraineeSchema = new Schema({
                 required: true
             },
             IsApproved:{
+                default:false,
                 type:Boolean,
                
             }
         }
     },
-    Wallet:{
-        type:Number,
-        default : 0 
-    },
+   
     My_Reports:{
-        Report_title:{
-            type:String
-        },
-        Report_content:{
-            type:String
-        }, 
-        Report_status:{
-            type:String
+        type: Array,
+        Reportato:{
+            Report_title:{
+                type:String
+            },
+            Report_content:{
+                type:String
+            }, 
+            Report_status:{
+                type:String
+            }
         }
+       
     },
 })
 

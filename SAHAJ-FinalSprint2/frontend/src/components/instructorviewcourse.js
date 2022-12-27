@@ -36,37 +36,7 @@ const InstuctorViewCourse = () => {
 
 
     // console.log(courses.length)
-    const handleSubmit = async (e) => {
-        // e.preventDefault()
-        //console.log(Currency)
-        // console.log(cid)
-        // const red = Registered_Course.push(cid)
-        // console.log(red)
-        // setReg(red)
-
-
-        // console.log(Registered_Course.includes({Course_id:cid , Course_name:Registered_Course.find(el => el.Course_id ===cid).Course_name}))
-        console.log(courses[0])
-        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject }]
-        console.log(abc)
-        setshow(true)
-        setReg(abc)
-        console.log("REG " + Registered_Course)
-        console.log(abc)
-        const re = { Registered_Course }
-        await fetch('/api/indiv/' + id, {
-            method: 'PATCH',
-            body: JSON.stringify({ Registered_Course: abc }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-
-        })
-
-
-
-    }
+    
 
 
 

@@ -5,21 +5,21 @@ const Indiv = require('../models/individualTrainee')
 const requireAuth = async (req, res, next) => {
   // verify user is authenticated
   
-  console.log(!req.headers)
-  const { authorization } = req.headers
+  // console.log(!req.headers)
+  const { cookie } = req.headers
 
-  console.log(authorization)
-  console.log(req.headers)
+  // console.log(authorization)
+  // console.log(req.headers)
 
-  if (!req.headers) {
+  if (!cookie) {
     return res.status(401).json({error: 'Authorization token required'})
   }
 
-  const token = req.headers.cookie.split('=')[1]
+  const token = cookie.split('=')[1]
   console.log(token)
   try {
     const { _id } = jwt.verify(token, process.env.SECRET)
-
+    console.log("ID:   " +_id)
     req.user = await Indiv.findOne({ _id }).select('_id')
     next()
     

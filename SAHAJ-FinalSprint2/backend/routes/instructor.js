@@ -7,7 +7,6 @@ const {
     updateinstructor,
     updateAllInstructors,
     sendEmail,
-    signUp,
     login,
     logout
 
@@ -26,7 +25,6 @@ router.get('/instructor/:id', getinstructor)
 
 //POST requests
 router.post('/instructor', createinstructor)
-router.post('/instructor/signup', signUp)
 router.post('/instructor/login',login)
 
 //DELETE

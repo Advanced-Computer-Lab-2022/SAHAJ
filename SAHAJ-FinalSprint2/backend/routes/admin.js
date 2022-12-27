@@ -1,6 +1,6 @@
 const express = require('express')
 const {
-    addAdmin,updateAllAdmin, getalladmin
+    addAdmin,updateAllAdmin, getalladmin,updateAdmin
 } = require('../controllers/adminController')
 
 const router = express.Router()
@@ -9,6 +9,8 @@ const router = express.Router()
 router.post('/admin',addAdmin)
 //PATCH requests
 router.patch('/admin',updateAllAdmin)
+
+router.patch('/admin/:id',updateAllAdmin)
 //GET requests
 router.get('/admin',getalladmin)
 module.exports = router

@@ -2,10 +2,12 @@ import { useState, useEffect } from "react"
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { useParams, useSearchParams, RedirectFunction, Redirect } from 'react-router-dom';
 import axios from "axios";
+import { useAuthContext } from "../hooks/useAuthContext";
 const CreateSubtitle = () => {
+    const {user} = useAuthContext()
     const params = useParams()
     const CourseId = params.idC
-    const Course_instructor_id = params.id
+    var Course_instructor_id = ""
     const [Name, setName] = useState("")
     var [Link, setLink] = useState("")
     const [error, setError] = useState("")
@@ -15,6 +17,9 @@ const CreateSubtitle = () => {
     const [Course_duration,setCourse_duration] = useState(0)
     const [show,setshow] = useState(false)
     var [No_subtitles,setnoSub] = useState(0)
+    if(user){
+        Course_instructor_id = user.id
+    }
     useEffect(() => {
         const fetchCourses = async () => {
 
@@ -48,9 +53,12 @@ const CreateSubtitle = () => {
             })
 
         }
-        fetchCourses();
-        fetchduration();
-    }, [])
+        if(user&&user.id!==null){
+            fetchCourses();
+            fetchduration();
+        }
+   
+    }, [user])
         // const fetchduration = async () => {
             
         // console.log("DAKHAL2")
@@ -116,7 +124,7 @@ const CreateSubtitle = () => {
                 
             })
            
-            window.location.href='/instructor/' + Course_instructor_id+ '/createcourse/' + CourseId+'/'+json._id
+            window.location.href='/instructor/createcourse/' + CourseId+'/'+json._id
            
             
 
@@ -127,6 +135,11 @@ const CreateSubtitle = () => {
     console.log(Link2)
     return (
         <div>
+             <nav class="navbar bg-body-tertiary  navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                <a class="navbar-brand" href="/instructor">E-Learning <i class="bi bi-book-half"></i></a>
+                </div>
+            </nav>
 
             <div class="my-3 p-3 bg-body rounded shadow-sm">
                 <div >

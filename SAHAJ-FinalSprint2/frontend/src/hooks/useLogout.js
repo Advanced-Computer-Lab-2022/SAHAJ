@@ -4,10 +4,11 @@ import { useCoursesContext } from './useCoursesContext'
 export const useLogout = () => {
   const { dispatch } = useAuthContext()
   const { dispatch: dispatchCourses } = useCoursesContext()
+  const{user} = useAuthContext()
 
   const logout = () => {
     // remove user from storage
-    localStorage.removeItem('indiv')
+    localStorage.removeItem('user')
 
     // dispatch logout action
     dispatch({ type: 'LOGOUT' })

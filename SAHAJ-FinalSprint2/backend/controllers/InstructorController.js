@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const Inst = require('../models/instructor')
 var isLogged = false;
+const validator = require('validator')
 //function to get all instructors
 const getallinstructors = async(req,res) =>{
     const instructors = await Inst.find({}).sort({createdAt: -1})
@@ -36,14 +37,54 @@ const deleteinstructor = async (req,res) =>{
 }
 //function to create a instructor
 const createinstructor = async (req,res) => {
-    const{ Country ,  Username ,  Password  ,Fname , Lname } = req.body
-    //add course to db
-    try{
-        const instructor = await Inst.create({Country ,  Username ,  Password  ,Fname , Lname})
-        res.status(200).json(instructor)
-    }catch(error){
-        res.status(400).json({error: error.message})
+    const { Fname, Lname, Email, Password} = req.body;
+    // console.log(req.body)
+    try {
+       
+        if (!Email || !Password || !Fname || !Lname ) {
+            throw Error('All fields must be filled')
+          }
+          if (!validator.isEmail(Email)) {
+            throw Error('Email not valid')
+          }
+          if (!validator.isStrongPassword(Password)) {
+            throw Error('Password not strong enough')
+          }
+        
+          else{
+
+          
+       await Inst.findOne({ Email: req.body.Email }).then (async(user)=> {
+            console.log(user)
+          
+            if (user) {
+                throw Error('User already exist')
+                // return res.status(400).json({ msg: "User already exist" })
+               
+                //  return res.status(400).json({ msg: "User not exist" })
+
+            }
+            else {
+                const salt = await bcrypt.genSalt();
+                const hashedPassword = await bcrypt.hash(Password, salt);
+                const user = await Inst.create({ Fname: Fname, Lname: Lname, Email: Email, Password: hashedPassword });
+               
+
+               
+               
+                
+               
+            }
+
+        })
     }
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: error.message })
+    }
+
  
 }
  
@@ -114,46 +155,40 @@ const createToken = (name) => {
     });
 };
 
-const signUp = async (req, res) => {
-    const { Fname, Lname, Email ,Password } = req.body;
-    try {
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(Password, salt);
-        const user = await Inst.create({ Fname: Fname, Lname: Lname ,Email:Email,Password: hashedPassword});
-        const token = createToken(user.Email);
 
-        console.log(token)
-
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-
-        res.status(200).json(user)
-        isLogged = true
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-}
 
 const login = async (req, res) => {
     // TODO: Login the user
-    const {Email,Password} = req.body
+    try {
+        const { Email, Password } = req.body
     console.log(req.body)
-    const user = await Inst.findOne({Email:Email})
-    if(user ==null){
-        return res.status(400)
-      console.log("dd")
+    if (!Email || !Password) {
+        throw Error('All fields must be filled')
+      }
+    console.log(req.body)
+    const user = await Inst.findOne({ Email: Email })
+    if (user == null) {
+        throw Error('Email not correct')
+      
+        
     }
-   try{
-    if( await bcrypt.compare(Password,user.Password)){
-        const token = createToken(user.Email);
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).json({user})
-        isLogged = true;
+        if (await bcrypt.compare(Password, user.Password)) {
+            const token = createToken(user._id);
+            res.cookie('jwt', token, { httpOnly: false, maxAge: maxAge * 1000 });
+            res.status(200).json({ id:user._id,Email,token,UserType:"instructor" , courses: user.Registered_Course })
+            console.log("LOGGED IN")
+            // res.status(200).json({Email, token})
+        }
+        else{
+            console.log("wkjebdekjbdkj")
+            throw Error('Password not correct')
+
+        }
     }
-   }
-   catch (error) {
-    console.log("dd")
-    res.status(400).json({ error: error.message })
-}
+    catch (error) {
+        console.log("NOT hhh CORRECT")
+        res.status(400).json({ error: error.message })
+    }
 }
 
 const logout = async (req, res) => {
@@ -173,7 +208,7 @@ module.exports = {
     sendEmail,
     logout,
     login,
-    signUp,
+   
     
  
 }

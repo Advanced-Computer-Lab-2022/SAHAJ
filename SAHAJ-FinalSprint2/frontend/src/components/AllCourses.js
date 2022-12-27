@@ -2,12 +2,23 @@ import axios from 'axios'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../hooks/useAuthContext'
+import { GolfCourse } from '@mui/icons-material'
 
-const AllCourses = () => {
+const AllCourses = (props) => {
+    console.log(props)
+    const {user} = useAuthContext()
     const params = useParams()
-    const id = params.id
+    var id = ""
+    var type = ""
     const [courses, setCourses] = useState(null)
+    const navigate = useNavigate()
+    const arr = [5,8,7,3,2]
+    if(user){
+        id = user.id
+        type = user.UserType
+    }
     useEffect(() => {
 
         const fetchCourses = async () => {
@@ -21,11 +32,17 @@ const AllCourses = () => {
 
 
             if (response.ok) {
+                console.log(props.filterCourse)
+                if(props.filterCourse === "Popular Courses" ){
+                    setCourses(json.sort((a,b) => b.Enrolled-a.Enrolled))
+                }
+                else{
+                    setCourses(json)
+                }
+               
 
-                setCourses(json)
 
-
-
+                
 
             }
 
@@ -39,8 +56,17 @@ const AllCourses = () => {
 
         fetchCourses();
 
-    }, [])
-
+    }, [props.filterCourse])
+    function Gol(course_id){
+        if(type === "indiv")
+        navigate("/individual/course/"+course_id)
+        else if(type == "coorp"){
+            navigate("/coorprate/course/"+course_id)
+        }
+        else{
+            navigate("/instructor/course/"+course_id)
+        }
+    }
 
     return (
         <div className='row'>
@@ -51,7 +77,7 @@ const AllCourses = () => {
                         <div className='card-body'>
                             <h5 class="card-title">{course.Course_subject}</h5>
                             <p class="card-text">Instructor:{course.Course_instructor_name} <br /> Duration:{course.Course_minuets} minuets <br /> Excercises:{course.Course_excrcise} <br /> Price:{course.Course_price} <br /> Rating:{course.Course_overAllRate}</p>
-                            <a onClick={() => window.location.href = `${id}/course/${course._id}`} class="btn btn-primary" key={course._id}>View Course</a>
+                            <a onClick={() =>Gol(course._id)} class="btn btn-primary" key={course._id}>View Course</a>
                         </div>
                     </div>
                 </div>

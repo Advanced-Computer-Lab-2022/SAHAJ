@@ -5,9 +5,10 @@ const{
     deleteindiv,
     createindiv,
     updateindiv,
-    logout,
+    // logout,
     login,
-    signUp
+    signUp,
+    payment
 }=require('../controllers/IndividualController')
 
 const router = express.Router()
@@ -20,6 +21,7 @@ router.get('/indiv/:id',getindiv)
 router.post('/indiv',createindiv)
 router.post('/indiv/signup', signUp)
 router.post('/indiv/login',login)
+router.post("/create-checkout-session",payment)
 //DELETE
 router.delete('/indiv/:id', deleteindiv)
 

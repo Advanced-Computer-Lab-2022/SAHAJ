@@ -5,6 +5,7 @@ const Reports = () => {
     var [show, setshow] = useState(true)
     var [w, setw] = useState([]);
     const [coorp, setcoorp] = useState([])
+    const [indiv, setindiv] = useState([])
     var [isResolved , setisResolved] = useState(false)
     const [idiii , setidiii] = useState('')
     const [typeiii , settypeiii] = useState('')
@@ -26,8 +27,17 @@ const Reports = () => {
 
             // setRef(json[0].Refund_Requests)
         }
+        const fetchindiv = async () => {
+            const response = await fetch('/api/indiv')
+            const json = await response.json()
+            setindiv(json)
+            console.log(json)
+
+            // setRef(json[0].Refund_Requests)
+        }
         fetchAdmin();
         fetchcoorp();
+        fetchindiv();
 
     }, [])
     const handleResolved = async(id , type, title,content)=>{
@@ -52,6 +62,77 @@ const Reports = () => {
     
     
             })
+        }
+        else{
+            const Myrep =  indiv.filter(c => { return c._id === id })[0].My_Reports
+            console.log("BEFOREEEEE      " + Myrep)
+            const myfinalrep =  Myrep.findIndex(c => { return c.Report_title === title })
+            console.log(title)
+            console.log(myfinalrep)
+              Myrep[myfinalrep].Report_status = "Resolved"
+              console.log("BEFOREEEEE      " + Myrep)
+             // const repo = [...My]
+             
+             await fetch('/api/indiv/' + id, {
+ 
+                 method: 'PATCH',
+                 body: JSON.stringify({ My_Reports : Myrep }),
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+     
+     
+             })
+        }
+        
+        
+        
+    }
+    const handlePending = async(id , type, title,content)=>{
+
+        if(type === "Coorprate"){
+           const Myrep =  coorp.filter(c => { return c._id === id })[0].My_Reports
+           console.log("BEFOREEEEE      " + Myrep)
+           const myfinalrep =  Myrep.findIndex(c => { return c.Report_title === title })
+           console.log(title)
+           console.log(myfinalrep)
+             Myrep[myfinalrep].Report_status = "Pending"
+             console.log("BEFOREEEEE      " + Myrep)
+            // const repo = [...My]
+            
+            await fetch('/api/coorp/' + id, {
+
+                method: 'PATCH',
+                body: JSON.stringify({ My_Reports : Myrep }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+    
+    
+            })
+        }
+        else{
+            
+                const Myrep =  indiv.filter(c => { return c._id === id })[0].My_Reports
+                console.log("BEFOREEEEE      " + Myrep)
+                const myfinalrep =  Myrep.findIndex(c => { return c.Report_title === title })
+                console.log(title)
+                console.log(myfinalrep)
+                  Myrep[myfinalrep].Report_status = "Pending"
+                  console.log("BEFOREEEEE      " + Myrep)
+                 // const repo = [...My]
+                 
+                 await fetch('/api/indiv/' + id, {
+     
+                     method: 'PATCH',
+                     body: JSON.stringify({ My_Reports : Myrep }),
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+         
+         
+                 })
+        
         }
         
         
@@ -136,7 +217,7 @@ const Reports = () => {
                                                     {/* handleResolved(report.UserId,report.UserType,report.Report_title,report.Report_content) */}
                                                 </div>
                                                 <button onClick={()=>handleResolved(idiii , typeiii , titleiii , contentiii )}type="button" class="btn btn-success">Resolved</button><br /> <br />
-                                                <button type="button" class="btn btn-warning">Pending</button>
+                                                <button onClick={()=>handlePending(idiii , typeiii , titleiii , contentiii )}type="button" class="btn btn-warning">Pending</button>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -16,37 +16,49 @@ import {
     CDBSidebarMenu,
     CDBSidebarMenuItem,
 } from 'cdbreact';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Course_Det from './CourseDetIndiv';
 import YoutubeVideo from './YoutubeVideo';
 import { CompressOutlined } from '@mui/icons-material';
+import { useAuthContext } from '../hooks/useAuthContext';
+import PDF from './PDF';
+
+import { Button } from 'react-bootstrap';
+
+import PDFcertificate from './PDFcertificate';
+
+import PDFmail from './PDFmail';
 
 
 const SubContent = () => {
 
     var jsonSub;
     const [showVideo, setVideo] = useState(false)
+    const { user } = useAuthContext()
     const params = useParams()
     const cid = params.cid
     const s = params.sid
-    const id = params.id
+    var id = ""
     const [sid, setSid] = useState('')
     var prog = 0;
+    const navigate = useNavigate()
     // const params = new URLSearchParams(window.location.search);
     // const courseId = params.get('courseId');
     const [courses, setCourse] = useState([]);
     const [Reviews, setReviews] = useState([])
     const [IReviews, setReviews2] = useState([])
+    const[course_name,setcourse_name] = useState("")
     const [subtitle, setSub] = useState([]);
     const [show, setshow] = useState(false);
     const [show2, setshow2] = useState(false);
     const [subtitle2, setSub2] = useState([]);
     const [Fname, setFname] = useState("")
+    const [Lname, setLname] = useState("")
     const [instid, setinstid] = useState("")
     const [Reviewerreview, setReviewerRev] = useState("")
     const [Reviewerreview2, setReviewerRev2] = useState("")
     const examref = "/coorp/solveExam/" + cid + '/' + s
-    var prog1 = 0;
+    var [prog2, setprog2] = useState(prog2);
     var [coorpoldrate, setcoorpoldrate] = useState(0)
     var [coorpoldrate2, setcoorpoldrate] = useState(0)
     const [rated, setrated] = useState(false)
@@ -55,15 +67,25 @@ const SubContent = () => {
     const [coorp, setcoorp] = useState([])
     var [Watched, setwatched] = useState([])
     var [Progress, setProgress] = useState(0)
-    var [Registered_Course,setRegCourse] = useState([])
-    var[No_subtitles,setNo] = useState(0)
-    var [Refund_Requests , setRef ] = useState([])
-    const [price,setPrice] = useState(0)
-    const [progress,setprog] = useState(0)
-    const[Report_content,setReport_content] = useState("")
-    const[Reports,setReports] = useState([])
-    const [Report_title,setReport_title] = useState("")
-    const [My_Reports,setMy_Reports] = useState([])
+    var [Registered_Course, setRegCourse] = useState([])
+    var [No_subtitles, setNo] = useState(0)
+    var [Refund_Requests, setRef] = useState([])
+    const [price, setPrice] = useState(0)
+    const [progress, setprog] = useState(0)
+    const [Report_content, setReport_content] = useState("")
+    const [Reports, setReports] = useState([])
+    const [Report_title, setReport_title] = useState("")
+    const [My_Reports, setMy_Reports] = useState([])
+    const [savepdf, setsavepdf] = useState(false)
+    const [notes, setnotes] = useState('')
+    const [notestitle, setnotestitle] = useState('')
+    const[coursename,setcoursenamw] = useState('')
+    var usermail = "";
+    const [mailsent , setmailsent] = useState(false);
+    if (user) {
+        id = user.id
+        usermail = user.Email
+    }
 
 
     useEffect(() => {
@@ -77,15 +99,17 @@ const SubContent = () => {
             if (response.ok) {
                 setcoorp(json.filter(c => { return c._id === id }))
                 setFname(json.filter(c => { return c._id === id })[0].Fname)
+                setLname(json.filter(c => { return c._id === id })[0].Lname)
                 setwatched(json.filter(c => { return c._id === id })[0].Watched)
                 setRegCourse(json.filter(c => { return c._id === id })[0].Registered_Course)
                 setMy_Reports(json.filter(c => { return c._id === id })[0].My_Reports)
+                setprog2(json.filter(c => { return c._id === id })[0].Registered_Course.filter(c => { return c.Course_id === cid })[0].Progress)
                 // var i =0
                 // while (i < coorp[0].Registered_Course.length) {
                 //     if (coorp[0].Registered_Course[i].Course_id === cid) {
                 //         // prog1 = coorp[0].Registered_Course[i].Progress 
                 //         //     break
-                        
+
                 //     }
                 // var i = 0;
                 // while(i <  coorp[0].Registered_Course.length){
@@ -97,7 +121,7 @@ const SubContent = () => {
                 // }
             }
 
-            
+
 
 
 
@@ -115,8 +139,9 @@ const SubContent = () => {
                 setReviews(json.filter(c => { return c._id === cid })[0].Reviews)
                 setNo(json.filter(c => { return c._id === cid })[0].No_subtitles)
                 setPrice(json.filter(c => { return c._id === cid })[0].Course_price)
+                setcoursenamw(json.filter(c => { return c._id === cid })[0].Course_subject)
                 // console.log(json)
-                console.log("price"+" "+price)
+                console.log("price" + " " + price)
                 console.log(Reviews)
 
                 const response2 = await fetch('/api/instructor/' + json.filter(c => { return c._id === cid })[0].Course_instructor_id)
@@ -175,13 +200,13 @@ const SubContent = () => {
 
             }
 
-           
+
 
 
         }
 
 
-        const fetchAdmin = async ()=>{
+        const fetchAdmin = async () => {
             const response = await fetch('/api/admin')
             const json = await response.json()
             setRef(json[0].Refund_Requests)
@@ -189,17 +214,24 @@ const SubContent = () => {
 
 
         }
-      
-       
-        
 
-        fetchSubtitles2();
-        fetchCourses();
-        fetchAdmin();
-        fetchSubtitles();
-        fetchcoorp();
 
-    }, [])
+
+        if (user && user.id !== null) {
+            fetchSubtitles2();
+            fetchCourses();
+            fetchAdmin();
+            fetchSubtitles();
+            fetchcoorp();
+        }
+
+
+    }, [user])
+
+
+    if (coorp[0] && coorp[0].Registered_Course && coorp[0].Registered_Course.findIndex(el => { return el.Course_id === cid && el.IsApproved === true }) === -1) {
+        navigate("/coorprate");
+    }
 
     const handleRating = (rate) => { //course
         setshow(true)
@@ -491,17 +523,17 @@ const SubContent = () => {
     }
     const video = async () => {
         // prog+=1;
-        // alert(prog)
-        console.log(coorp[0].Registered_Course.filter(c => { return c.Course_id === cid }))
+        alert(No_subtitles)
+        console.log(coorp[0].Registered_Course.filter(c => { return c.Course_id === cid })[0].Progress)
         // alert('you clicked')
         var i = 0;
         var flag = false
-   
+
         while (i <= Watched.length) {
 
             if (Watched[i] === s) {
 
-               
+
                 flag = true
                 i++
             }
@@ -510,54 +542,55 @@ const SubContent = () => {
             }
 
         }
-        if(!flag){
+        if (!flag) {
             const sub3 = [...Watched, s]
 
-        await fetch('/api/coorp/' + id, {
+            await fetch('/api/coorp/' + id, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ Watched: sub3 }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-
-        })
-       const Registered_Course2 = Registered_Course.filter(c => {return c.Course_id === cid})
-      const name =  Registered_Course2[0].Course_name
-      alert("name: "+name)
-      const Amount = Registered_Course2[0].Amount_paid
-      alert("Amount: "+Amount)
-      const watched2 = Registered_Course2[0].Watched+1
-      alert("Watched: "+watched2)
-       prog = (watched2/No_subtitles)*100 
-       setprog(prog)
-       alert("Progress "+prog)
-        Registered_Course = Registered_Course.filter(c => {return c.Course_id != cid})
-        const Sub = [...Registered_Course, {Course_id: cid,Course_name:name,Amount_paid:Amount,Watched:watched2,Progress:prog}]
-
-        await fetch('/api/coorp/' + id, {
-
-            method: 'PATCH',
-            body: JSON.stringify({ Registered_Course: Sub }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ Watched: sub3 }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
 
-        })
-        // var j = 0;
-        // while(j<= Registered_Course.length){
-        //     if(Registered_Course[j].Course_id === cid)
+            })
+            const Registered_Course2 = Registered_Course.filter(c => { return c.Course_id === cid })
+            const name = Registered_Course2[0].Course_name
+            alert("name: " + name)
+            const Amount = Registered_Course2[0].Amount_paid
+            alert("Amount: " + Amount)
+            const app = Registered_Course2[0].IsApproved
+            const watched2 = Registered_Course2[0].Watched + 1
+            alert("Watched: " + watched2)
+            prog = (watched2 / No_subtitles) * 100
+            setprog2(prog)
+            alert("Progress " + prog)
+            Registered_Course = Registered_Course.filter(c => { return c.Course_id != cid })
+            const Sub = [...Registered_Course, { Course_id: cid, Course_name: name, Amount_paid: Amount, Watched: watched2, Progress: prog, IsApproved: app }]
 
-        // }
-        setVideo(true)
-        }
-        else{
+            await fetch('/api/coorp/' + id, {
+
+                method: 'PATCH',
+                body: JSON.stringify({ Registered_Course: Sub }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+
+            })
+            // var j = 0;
+            // while(j<= Registered_Course.length){
+            //     if(Registered_Course[j].Course_id === cid)
+
+            // }
             setVideo(true)
         }
-        
-     
+        else {
+            setVideo(true)
+        }
+
+
 
 
 
@@ -572,14 +605,14 @@ const SubContent = () => {
         console.log(ct)
         return c
     }
-    const handleRefund = async() => {
+    const handleRefund = async () => {
         console.log(coorp[0].Registered_Course[0].Progress)
         var i = 0;
         while (i < coorp[0].Registered_Course.length) {
             if (coorp[0].Registered_Course[i].Course_id === cid) {
                 console.log(price)
                 if (coorp[0].Registered_Course[i].Progress < 50) {
-                    const problems = [... Refund_Requests,{UserId:id, UserType:"Coorprate",Amount:price}]
+                    const problems = [...Refund_Requests, { UserId: id, UserType: "Coorprate", Amount: price }]
                     await fetch('/api/admin', {
 
                         method: 'PATCH',
@@ -587,11 +620,11 @@ const SubContent = () => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-            
-            
+
+
                     })
                     alert("Refund Request Is Pending")
-                    Registered_Course = Registered_Course.filter(c => {return c.Course_id != cid})
+                    Registered_Course = Registered_Course.filter(c => { return c.Course_id != cid })
                     await fetch('/api/coorp/' + id, {
 
                         method: 'PATCH',
@@ -599,16 +632,16 @@ const SubContent = () => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-            
-            
+
+
                     })
-                //   < Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93"/>
-            //    return( <Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93" />);
-            window.location.href = '/coorp/mycourses/'+id
+                    //   < Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93"/>
+                    //    return( <Navigate to = "http://localhost:3000/coorp/mycourses/639ee3146c190af7688e1f93" />);
+                    window.location.href = '/coorp/mycourses/' + id
                     break
                 }
                 else {
-                    alert("You Cant Refund Since You Have Completed " + progress + "%")
+                    alert("You Cant Refund Since You Have Completed " + prog2 + "%")
                     break
                 }
             }
@@ -619,36 +652,78 @@ const SubContent = () => {
 
     }
 
-    const handleReport = async() => {
+    const handleReport = async () => {
         console.log(coorp[0].Registered_Course[0].Progress)
-      
+
+
+        const Reportato = [...Reports, { UserId: id, UserType: "Coorprate", Report_title: Report_title, Report_content: Report_content, IsSeen: "Unseen" }]
+
+        await fetch('/api/admin', {
+
+            method: 'PATCH',
+            body: JSON.stringify({ Reports: Reportato }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+
+        const My_reportato = [...My_Reports, { Report_title: Report_title, Report_content: Report_content, Report_status: "Report Sent!" }]
+        await fetch('/api/coorp/' + id, {
+
+            method: 'PATCH',
+            body: JSON.stringify({ My_Reports: My_reportato }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+
+
+
+    }
+   
+    console.log("MAILSENT  :   " + mailsent)
+    console.log(usermail)
+    // if(prog2 === 100){
+    //     if(mailsent === false){
+    //         SendEmail()
+    //         alert("email sent")
+    //     }
+    //     else{
+    //         setmailsent(true);
+    //     }
     
-                const Reportato = [...Reports,{UserId:id,UserType:"Coorprate",Report_title:Report_title,Report_content:Report_content,IsSeen:"Unseen"}]
-                
-                    await fetch('/api/admin', {
-
-                        method: 'PATCH',
-                        body: JSON.stringify({ Reports: Reportato }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
             
-                        
-                    })
-                
-                   const My_reportato = [...My_Reports,{Report_title:Report_title,Report_content:Report_content,Report_status:"Pending"}]
-                    await fetch('/api/coorp/' + id, {
-
-                        method: 'PATCH',
-                        body: JSON.stringify({ My_Reports:My_reportato }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-            
-            
-                    })
-           
         
+    // }
+    const SendEmail = async () => {
+        // const email =  usermail 
+        console.log("sdFsrgGsGrsgs")
+
+        await fetch('/api/sendemail/' + id + '/'+ coursename , {
+            method: 'POST',
+            body: JSON.stringify({email: usermail}),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+
+        })
+    }
+    function savenotes() {
+
+        setsavepdf(true);
+
+    }
+
+
+
+    function savenotesNot() {
+
+        setsavepdf(false);
 
     }
 
@@ -668,7 +743,7 @@ const SubContent = () => {
                         >
                             {course.Course_subject}
                         </a><br />
-                        Your Progress:{prog}
+                        Your Progress: {prog2}%
                     </CDBSidebarHeader>
 
 
@@ -676,16 +751,20 @@ const SubContent = () => {
                         <CDBSidebarMenu>
                             {subtitle2.map((sub) => (
 
-                                <a onClick={() => window.location.href = `/${id}/${course._id}/${sub._id}/coorp`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+                                <a onClick={() => window.location.href = `/${course._id}/${sub._id}/coorp`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
 
                             ))}
 
                         </CDBSidebarMenu>
                     </CDBSidebarContent>
-                   
+
+                   {prog2===100?  <Button data-bs-toggle="modal" data-bs-target="#cetificateModal" type="button" variant="warning">View your certificate</Button> :<p></p>} 
+                    <br></br>
+
+
                     <button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-danger"><i class="bi bi-exclamation-circle-fill"></i> Report a problem </button>
                     <br />
-                    <button data-bs-toggle="modal" data-bs-target="#exampleModal3" type="button" class="btn btn-danger"><i class="bi bi-wallet"></i> Refund Course</button>
+                    {/* <button data-bs-toggle="modal" data-bs-target="#exampleModal3" type="button" class="btn btn-danger"><i class="bi bi-wallet"></i> Refund Course</button> */}
 
                     <CDBSidebarFooter style={{ textAlign: 'center' }}>
                         <div
@@ -746,13 +825,90 @@ const SubContent = () => {
                             </div>
                         </nav>
                     </div>
+
                     <div class="notes">
-                        Notes
+
+                        <h3 align="center">Your Notes 📝:</h3>
+
+
+
+                        <div>
+
+                            <br></br>
+
+                            {savepdf ? <div class="scroll">
+
+
+
+                                <PDF title={notestitle} content={notes} />
+
+                                <button onClick={() => savenotesNot()} type="button" class="btn btn-primary">Back to notes</button>
+
+                            </div> : <div>
+
+                                <div class="input-group">
+
+                                    <input value={notestitle} onChange={(e) => setnotestitle(e.target.value)} class="form-control" aria-label="With textarea" placeholder='title of your notes'></input>
+
+                                    <br></br>
+
+                                </div>
+
+                                <div class="input-group" >
+
+
+
+                                    <textarea value={notes} onChange={(e) => setnotes(e.target.value)} class="form-control" aria-label="With textarea" rows="7" placeholder='write your notes'></textarea>
+
+                                </div></div>}
+
+                            <br></br>
+
+                        </div>
+
+
+
+                        {!savepdf ? <Button variant="info" onClick={() => savenotes()} type="button">Review Notes</Button> :
+
+
+
+                            <p></p>}
+
+
+
                     </div>
 
-                    {/* </div> */}
+                    <div class="modal fade" id="cetificateModal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true" >
 
+                        <div class="modal-dialog modal-xl" >
 
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Your certificate</h1>
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <PDFcertificate cname={coursename} sname={Fname + " " + Lname} />
+                                    
+
+                                </div>
+                              
+                                <div class="modal-footer">
+                                <Button variant = "info" onClick={()=>SendEmail()}>Get Certificate by mail</Button>
+                                </div>
+                                
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -781,6 +937,15 @@ const SubContent = () => {
                             </div>
                         </div>
                     </div>
+
+
+
+
+
+
+
+
+
                     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -828,7 +993,7 @@ const SubContent = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
                         <div class="modal-dialog">
@@ -842,10 +1007,10 @@ const SubContent = () => {
                                         <h6><strong>Please type your problem so we can help you?</strong></h6>
                                     </div>
                                     <br />
-                                    <div class = "input-group">
-                                        <input onChange={(e)=>setReport_title(e.target.value)}placeholder = "Report title"/>
+                                    <div class="input-group">
+                                        <input onChange={(e) => setReport_title(e.target.value)} placeholder="Report title" />
                                         <br />
-                                        <textarea onChange={(e) => setReport_content(e.target.value)}class = "text1"placeholder='How can we help you?'></textarea>
+                                        <textarea onChange={(e) => setReport_content(e.target.value)} class="text1" placeholder='How can we help you?'></textarea>
                                     </div>
                                     <br /> <br />
 
@@ -856,7 +1021,7 @@ const SubContent = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
 
 
