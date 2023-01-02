@@ -24,7 +24,40 @@ In our E-learning system user interface and experience is **Crusial**, Making th
 The website is Highly secured and safe for the user to put sensitive information.
 Our Database can handle a large amount of courses which means a lot of new things to learn.
 
-### ==> Code Examples:
+### ==> Code Example:
+**Here is a page example from our project which is the error page :**
+**////////////////////////////////////////// CODE ///////////////////////////////////////////////////////////////**
+const ErrorPage = () => {
+
+    return (
+       
+       
+        <div >
+            
+            <div class="container bootstrap snippets bootdey"/>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right" >
+                <div class="col-md-10 col-md-offset-1 pull-right">
+                    <img class="img-error" src="https://bootdey.com/img/Content/fdfadfadsfadoh.png"/>
+                    <h2 align = "center">404 Not Found</h2>
+                    <p align = "center">Sorry, an error has occured, Requested page not found or cnat be accessed!</p>
+                    <div >
+                       
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+
+    )
+}
+
+export default ErrorPage
+**////////////////////////////////////////// CODE ///////////////////////////////////////////////////////////////**
 
 
 ### ==> installations :
@@ -47,14 +80,18 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 => Nodemailer for sending E-mails API: https://nodemailer.com/about/
 
 
-### ==> Tests:
-
-
+### ==> Test Our error page:
+To be able to view our awsome error page follow the following steps:
+1- Open src folder in the frontend folder and then create a .js file in the pages folder.
+2- copy paste the code in the .js file
+3- import the component using "import {ErrorPage} from ./pages/'filename.js' " in the app.js in the frontend.
+4- specify a route for <ErrorPage/>
+5- open localhost and type the route you specified and that's it !!
 
 
 ### How to use :
 In our project we have two main folders: backend and frontend.
-The **backend folder also contains three main folders: models , controllers, routes:
+The **backend** folder also contains three main folders: models , controllers, routes:
 * **Models** : Is the folder where add .js files that include the schema for the specified Object(instructor , admin , course....). here is a link to help you https://blog.logrocket.com/quickly-build-schema-based-forms-in-react-with-uniforms/
 
 * **Controllers** : this is where you add the functions you want to implement when you recieve a post or delete or get requests.
@@ -62,6 +99,26 @@ The **backend folder also contains three main folders: models , controllers, rou
 * **Routes**: it is where you specify the route for a post or get or etc request.
 for example: "router.get("/" , Home)" => it means when recieve a get request and the path is '/' call the Home function implemented in the controller
 
+and of course the main js file for the backend is the server.
+here is a link to guide you through all steps ==> https://www.freecodecamp.org/news/create-a-react-frontend-a-node-express-backend-and-connect-them-together-c5798926047c/
 
 
+The **frontend** main folder is the src folder, it contains:
+* **components** : which you add .js files for the components you want to use.
+* **pages** : which are the pages that will be visiable in the website.
+here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
+
+### We welcome your contribution:
+we will be grateful to you if uou help us developing the project to make it one of the best E-learning sites.
+**How to contribute ?**
+* You can run the website and check it for any errors or glitches and then report to us.
+* If you have any comments to help enhance our user interface and experience please don't hesitate to contact us.
+
+
+### Credits:
+* **TheNetNinja** youtube channel helped us more than you can imagine building this project. here is the link => https://www.youtube.com/@NetNinja/featured
+* **Stackoverflow website** => https://stackoverflow.com/
+
+### License:
+====> SAHAJ E-learning
