@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSignup } from "../hooks/useSignup"
 import {
     MDBContainer,
@@ -14,12 +15,11 @@ import {
 }
     from 'mdb-react-ui-kit';
 import { useLogin } from '../hooks/useLogin';
-import { getStaticContextFromError } from '@remix-run/router';
 
-const Login = () => {
-    const [email, setEmaill] = useState("")
-    const [justifyActive, setJustifyActive] = useState('tab1');
+const Register = () => {
+    const [justifyActive, setJustifyActive] = useState('tab2');
     const [justifyActive2, setJustifyActive2] = useState('');
+    const navigate = useNavigate()
     const [show, setShow] = useState(false)
     const [flagFname, setflagFname] = useState(false)
     const [flagLname, setflagLname] = useState(false)
@@ -33,21 +33,13 @@ const Login = () => {
     const [Password, setPassword] = useState("")
     var [type, setType] = useState("")
     var [id, setid] = useState("")
-    const [inst, setinst] = useState("")
+    const [errr, seterrr] = useState(false)
     const { signup, error, isLoading } = useSignup()
     const { login, errorL, isLoadingL } = useLogin()
     const [empty, setem] = useState(false)
-    const [sentt, setsentt] = useState(false)
-    const [EmailIndiv, setEmailIndiv] = useState([])
-    const [EmailCoorp, setEmailCoorp] = useState([])
-    const [EmailInst, setEmailInst] = useState([])
-    const [err, seterr] = useState(false);
-    const[errr,seterrr] = useState(false);
-    const [roro,setRoro] = useState(false)
-
-
-    console.log(type)
-
+    const [Indiv,setIndiv] = useState([])
+    const  [Coorp,setCoorp] = useState([])
+    const [Inst,setInst] = useState([])
     useEffect(() => {
 
 
@@ -61,7 +53,7 @@ const Login = () => {
             if (response.ok) {
                 // console.log(json.filter(c => { return c._id === cid }))
                 
-                setEmailIndiv(json)
+                setIndiv(json)
                 console.log(json)
 
             }
@@ -78,7 +70,7 @@ const Login = () => {
             if (response.ok) {
                 // console.log(json.filter(c => { return c._id === cid }))
 
-                setEmailCoorp(json)
+                setCoorp(json)
                 console.log(json)
 
             }
@@ -88,14 +80,14 @@ const Login = () => {
 
         }
         const fetchinst = async () => {
-            const response = await fetch('/api/instructor/')
+            const response = await fetch('/api/coorp/')
 
             const json = await response.json()
 
             if (response.ok) {
                 // console.log(json.filter(c => { return c._id === cid }))
 
-                setEmailInst(json)
+                setInst(json)
                 console.log(json)
 
             }
@@ -122,19 +114,7 @@ const Login = () => {
 
     }, [])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    console.log(type)
 
     const handleJustifyClick = (value) => {
         console.log(value)
@@ -163,9 +143,14 @@ const Login = () => {
     };
     const handleSignup = async (e) => {
         e.preventDefault()
+        if(Indiv.findIndex(e => {return e.Email === Email}) === -1 && Coorp.findIndex(e => {return e.Email === Email}) === -1 && Inst.findIndex(e => {return e.Email === Email}) === -1){
+            seterrr(false)
+            console.log("dsfDFSGv")
+            await signup(Fname, Lname, Email, Password)
+        }
 
-        const res = await signup(Fname, Lname, Email, Password)
-
+        else 
+        seterrr(true)
         // const inst = {Fname,Lname,Email,Password}
 
         // const response = await fetch('/api/instructor/signup' , {
@@ -219,104 +204,13 @@ const Login = () => {
     const handleSigin = async (e) => {
 
         e.preventDefault()
-        // if(Indiv.findIndex(e => {return e.Email === Email}) === -1 && Coorp.findIndex(e => {return e.Email === Email}) === -1 && Inst.findIndex(e => {return e.Email === Email}) === -1){
-            console.log(EmailInst.findIndex(e => {return e.Email === Email}))
-            if(EmailIndiv.findIndex(e => {return e.Email === Email}) !== -1){
-                seterrr(false)
-                setRoro(true)
-                await login(Email, Password, "indiv")
-            } 
-             if(EmailInst.findIndex(e => {return e.Email === Email}) !== -1){
-                setRoro(true)
-                seterrr(false)
-                await login(Email, Password, "instructor")
-            }    
-            if(EmailCoorp.findIndex(e => {return e.Email === Email}) !== -1){
-                setRoro(true)
-                seterrr(false)
-            console.log("hna corpr")
-                await login(Email, Password, "coorp")
-            }
-            if(EmailIndiv.findIndex(e => {return e.Email === Email}) === -1 && EmailInst.findIndex(e => {return e.Email === Email}) === -1 && EmailCoorp.findIndex(e => {return e.Email === Email}) === -1){
-                setRoro(false)
-                seterrr(true)
-                
-            }
-        setem(false)
-        
+        setem(true)
+        await login(Email, Password, type)
 
 
     }
     console.log("Error  !!!!!" + errorL)
-  
-    const senttt = async () => {
-        if (EmailCoorp.findIndex(e => { return e.Email === email}) !== -1) {
-            const i = EmailCoorp.findIndex(e => { return e.Email === email}) 
-            console.log(EmailCoorp[i])
-            const e = { email }
-            console.log(e)
-            await fetch('/api/sendemail/coorp', {
-                method: 'POST',
-                body: JSON.stringify(e),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
 
-
-            })
-           
-                
-            
-            localStorage.setItem('id',EmailCoorp[i]._id )
-            localStorage.setItem('type', "coorp")
-            setsentt(true)
-            seterr(false)
-        }
-        else if (EmailIndiv.findIndex(e => { return e.Email === email }) !== -1) {
-            const i = EmailIndiv.findIndex(e => { return e.Email === email}) 
-            console.log(EmailIndiv[i])
-            const e = { email }
-            console.log(e)
-            await fetch('/api/sendemail/indiv', {
-                method: 'POST',
-                body: JSON.stringify(e),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-
-            })
-            localStorage.setItem('id',EmailIndiv[i]._id )
-            localStorage.setItem('type', "indiv")
-            setsentt(true)
-            seterr(false)
-        }
-        else if (EmailInst.findIndex(e => { return e.Email === email }) !== -1) {
-            const i = EmailInst.findIndex(e => { return e.Email === email}) 
-            console.log(EmailInst[i])
-            const e = { email }
-            
-            console.log(e)
-            await fetch('/api/sendemail/inst', {
-                method: 'POST',
-                body: JSON.stringify(e),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-
-            })
-            localStorage.setItem('id',EmailInst[i]._id )
-            localStorage.setItem('type', "instructor")
-            setsentt(true)
-            seterr(false)
-        }
-        else {
-            seterr(true)
-        }
-
-
-    }
 
     return (
         <div>
@@ -330,18 +224,18 @@ const Login = () => {
             <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
 
                
-
                 <MDBTabsContent>
 
                     <MDBTabsPane show={justifyActive === 'tab1'}>
-                  <strong>  <p>Login:</p> </strong>
-                  <hr />
+                    <strong><p>Register:</p>
+                            </strong>                          <hr />
+                           
                         <div className="text-center mb-3">
-                            
-                            {errorL && roro && <div class="alert alert-danger" role="alert">{errorL}</div>}
-                 {errr &&  <div class="alert alert-danger" role="alert">Invalid Email</div>}
+                            <p>Sign in as:</p>
+                            {errorL && <div class="alert alert-danger" role="alert">{errorL}</div>}
+                            {type === "" && empty && <div class="alert alert-danger" role="alert">Please choose which type of user you are</div>}
                             <div className='d-flex justify-content-between mx-auto' style={{ width: '40%' }}>
-                                {/* <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
+                                <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
                                     <MDBTabsItem>
                                         <MDBTabsLink onClick={() => handleJustifyClick('tab3')} active={justifyActive2 === 'tab3'}>
                                             Instructor
@@ -357,7 +251,7 @@ const Login = () => {
                                             Coorp
                                         </MDBTabsLink>
                                     </MDBTabsItem>
-                                </MDBTabs> */}
+                                </MDBTabs>
                                 {/* <MDBBtn tag='a' color='none' className='m-1' style={{ color: '#1266f1' }}>
                                 <MDBIcon fab icon='facebook-f' size="sm" />
                             </MDBBtn>
@@ -382,42 +276,20 @@ const Login = () => {
                         <MDBInput onChange={(e) => setPassword(e.target.value)} wrapperClass='mb-4' label='Password' id='form2' type='password' />
 
                         <div className="d-flex justify-content-between mx-4 mb-4">
-
-                            <button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-link">Forgot Password?</button>
-                            <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Terms & Policy</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <strong><label>Please Enter Your Email:</label></strong>
-                                            {sentt && <div class="alert alert-success" role="alert">
-                                                An Email has been sent to {email}
-                                            </div>}
-                                            {err && <div class="alert alert-danger" role="alert">
-                                               Incorrect Email
-                                            </div>}
-                                            <input onChange={(e) => setEmaill(e.target.value)} type='email' placeholder='Email' />
-                                            <hr />
-                                            <button onClick={() => senttt()} type="button" class="btn btn-dark">Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+                            <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
+                            <a href="/forgotpassword">Forgot password?</a>
                         </div>
 
                         <MDBBtn onClick={(e) => handleSigin(e)} className="mb-4 w-100">Sign in</MDBBtn>
-                        <p className="text-center">Not a member? <a href="/register">Register</a></p>
+                        <p className="text-center">Not a member? <a href="#!">Register</a></p>
 
                     </MDBTabsPane>
 
                     <MDBTabsPane show={justifyActive === 'tab2'}>
-
+                    <strong><p>Register:</p>
+                            </strong>                         
                         <div className="text-center mb-3">
-
+                            {errr&& <div class="alert alert-danger" role="alert">User already exist try logging in</div>}
                             {error && <div class="alert alert-danger" role="alert">{error}</div>}
                             <div className='d-flex justify-content-between mx-auto' style={{ width: '40%' }}>
 
@@ -426,14 +298,14 @@ const Login = () => {
 
                         </div>
 
-                        <MDBInput onChange={(e) => setFname(e.target.value)} wrapperClass='mb-4' label='First Name' id='form1' type='text' />
-                        <MDBInput onChange={(e) => setLname(e.target.value)} wrapperClass='mb-4' label='Last Name Name' id='form1' type='text' />
+                        <MDBInput onChange={(e) => setFname(e.target.value)} wrapperClass='mb-4' label='Fisrst Name' id='form1' type='text' />
+                        <MDBInput onChange={(e) => setLname(e.target.value)} wrapperClass='mb-4' label='Last Name' id='form1' type='text' />
                         <MDBInput onChange={(e) => setEmail(e.target.value)} wrapperClass='mb-4' label='Email' id='form1' type='email' />
                         <MDBInput onChange={(e) => setPassword(e.target.value)} wrapperClass='mb-4' label='Password' id='form1' type='password' />
+                        <p>By signing up, you agree to our<button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-link">Terms&Privacy</button></p>
 
                         <div className='d-flex justify-content-center mb-4'>
                             {/* <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' /> */}
-                            <p>By signing up, you agree to our<button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-link">Terms&Privacy</button></p>
                         </div>
                         <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
                             <div class="modal-dialog">
@@ -451,8 +323,8 @@ const Login = () => {
 
                         </div>
 
-
                         <MDBBtn disabled={isLoading} onClick={(e) => handleSignup(e)} className="mb-4 w-100">Sign up</MDBBtn>
+                        <button onClick={()=>navigate('/login')}type="button" class="btn btn-link">Already have an account?</button>
 
                     </MDBTabsPane>
 
@@ -463,4 +335,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Register

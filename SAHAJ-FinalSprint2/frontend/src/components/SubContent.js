@@ -47,7 +47,7 @@ const SubContent = () => {
     const [courses, setCourse] = useState([]);
     const [Reviews, setReviews] = useState([])
     const [IReviews, setReviews2] = useState([])
-    const[course_name,setcourse_name] = useState("")
+    const [course_name, setcourse_name] = useState("")
     const [subtitle, setSub] = useState([]);
     const [show, setshow] = useState(false);
     const [show2, setshow2] = useState(false);
@@ -79,9 +79,9 @@ const SubContent = () => {
     const [savepdf, setsavepdf] = useState(false)
     const [notes, setnotes] = useState('')
     const [notestitle, setnotestitle] = useState('')
-    const[coursename,setcoursenamw] = useState('')
+    const [coursename, setcoursenamw] = useState('')
     var usermail = "";
-    const [mailsent , setmailsent] = useState(false);
+    const [mailsent, setmailsent] = useState(false);
     if (user) {
         id = user.id
         usermail = user.Email
@@ -230,7 +230,7 @@ const SubContent = () => {
 
 
     if (coorp[0] && coorp[0].Registered_Course && coorp[0].Registered_Course.findIndex(el => { return el.Course_id === cid && el.IsApproved === true }) === -1) {
-        navigate("/coorprate");
+        navigate("/error404");
     }
 
     const handleRating = (rate) => { //course
@@ -355,7 +355,7 @@ const SubContent = () => {
 
         })
 
-        alert('your rating was successfuly updated from ' + coorpoldrate + ' to ' + newRate)
+
 
 
     }
@@ -457,7 +457,6 @@ const SubContent = () => {
 
         })
 
-        alert('your rating was successfuly saved')
 
 
     }
@@ -488,42 +487,47 @@ const SubContent = () => {
 
         })
 
-        alert('your rating was successfuly updated from ' + coorpoldrate2 + ' to ' + newRate)
 
     }
 
     const handleSave = async () => {
-        const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
-        console.log(JSON.stringify(Reviewss))
-        setReviews(Reviewss)
-        await fetch('/api/course/' + cid, {
+        if (Reviewerreview !== "") {
+            alert("Thanks for your review!!")
+            const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
+            console.log(JSON.stringify(Reviewss))
+            setReviews(Reviewss)
+            await fetch('/api/course/' + cid, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ Reviews: Reviewss }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ Reviews: Reviewss }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-        })
+            })
+        }
     }
 
     const handleSave2 = async () => {
-        const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
-        console.log(JSON.stringify(Reviewss))
-        setReviews2(Reviewss)
-        await fetch('/api/instructor/' + instid, {
+        if (Reviewerreview2 !== "") {
+            alert("Thanks for your review!!")
+            const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
+            console.log(JSON.stringify(Reviewss))
+            setReviews2(Reviewss)
+            await fetch('/api/instructor/' + instid, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ IReviews: Reviewss }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ IReviews: Reviewss }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-        })
+            })
+        }
     }
     const video = async () => {
         // prog+=1;
-        alert(No_subtitles)
+
         console.log(coorp[0].Registered_Course.filter(c => { return c.Course_id === cid })[0].Progress)
         // alert('you clicked')
         var i = 0;
@@ -557,15 +561,15 @@ const SubContent = () => {
             })
             const Registered_Course2 = Registered_Course.filter(c => { return c.Course_id === cid })
             const name = Registered_Course2[0].Course_name
-            alert("name: " + name)
+
             const Amount = Registered_Course2[0].Amount_paid
-            alert("Amount: " + Amount)
+
             const app = Registered_Course2[0].IsApproved
             const watched2 = Registered_Course2[0].Watched + 1
-            alert("Watched: " + watched2)
+
             prog = (watched2 / No_subtitles) * 100
             setprog2(prog)
-            alert("Progress " + prog)
+
             Registered_Course = Registered_Course.filter(c => { return c.Course_id != cid })
             const Sub = [...Registered_Course, { Course_id: cid, Course_name: name, Amount_paid: Amount, Watched: watched2, Progress: prog, IsApproved: app }]
 
@@ -653,38 +657,45 @@ const SubContent = () => {
     }
 
     const handleReport = async () => {
+
         console.log(coorp[0].Registered_Course[0].Progress)
+        if (Report_title !== "" || Report_content !== "") {
+            alert("Your Report has been sent thanks for your patience")
+            const Reportato = [...Reports, { UserId: id, UserType: "Coorprate", Report_title: Report_title, Report_content: Report_content, IsSeen: "Unseen" }]
+
+            await fetch('/api/admin', {
+
+                method: 'PATCH',
+                body: JSON.stringify({ Reports: Reportato }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
 
-        const Reportato = [...Reports, { UserId: id, UserType: "Coorprate", Report_title: Report_title, Report_content: Report_content, IsSeen: "Unseen" }]
+            })
 
-        await fetch('/api/admin', {
+            const My_reportato = [...My_Reports, { Report_title: Report_title, Report_content: Report_content, Report_status: "Report Sent!" }]
+            await fetch('/api/coorp/' + id, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ Reports: Reportato }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-
-        })
-
-        const My_reportato = [...My_Reports, { Report_title: Report_title, Report_content: Report_content, Report_status: "Report Sent!" }]
-        await fetch('/api/coorp/' + id, {
-
-            method: 'PATCH',
-            body: JSON.stringify({ My_Reports: My_reportato }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ My_Reports: My_reportato }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
 
-        })
+            })
+        }
+        else {
+            alert("Please Fill in the field or press cancel")
+        }
+
+
 
 
 
     }
-   
+
     console.log("MAILSENT  :   " + mailsent)
     console.log(usermail)
     // if(prog2 === 100){
@@ -695,17 +706,18 @@ const SubContent = () => {
     //     else{
     //         setmailsent(true);
     //     }
-    
-            
-        
+
+
+
     // }
     const SendEmail = async () => {
         // const email =  usermail 
         console.log("sdFsrgGsGrsgs")
+        alert("An email has been set to you!")
 
-        await fetch('/api/sendemail/' + id + '/'+ coursename , {
+        await fetch('/api/sendemail/' + id + '/' + coursename, {
             method: 'POST',
-            body: JSON.stringify({email: usermail}),
+            body: JSON.stringify({ email: usermail }),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -758,7 +770,7 @@ const SubContent = () => {
                         </CDBSidebarMenu>
                     </CDBSidebarContent>
 
-                   {prog2===100?  <Button data-bs-toggle="modal" data-bs-target="#cetificateModal" type="button" variant="warning">View your certificate</Button> :<p></p>} 
+                    {prog2 === 100 ? <Button data-bs-toggle="modal" data-bs-target="#cetificateModal" type="button" variant="warning">View your certificate</Button> : <p></p>}
                     <br></br>
 
 
@@ -798,7 +810,7 @@ const SubContent = () => {
                             : <YoutubeVideo id={sub.Link} />}
                         <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
                             <div class="container-fluid">
-                                <a class="navbar-brand" href="#">E-learning</a>
+                                <a class="navbar-brand" href="/coorp/mycourses">E-learning</a>
                                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
@@ -816,9 +828,7 @@ const SubContent = () => {
                                             <a class="nav-link" href={examref}>Take Exam</a>
                                         </li>
 
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#">Reviews</a>
-                                        </li>
+                                        
 
                                     </ul>
                                 </div>
@@ -895,14 +905,14 @@ const SubContent = () => {
                                 <div class="modal-body">
 
                                     <PDFcertificate cname={coursename} sname={Fname + " " + Lname} />
-                                    
+
 
                                 </div>
-                              
+
                                 <div class="modal-footer">
-                                <Button variant = "info" onClick={()=>SendEmail()}>Get Certificate by mail</Button>
+                                    <Button data-bs-dismiss="modal" variant="info" onClick={() => SendEmail()}>Get Certificate by mail</Button>
                                 </div>
-                                
+
 
                             </div>
 
@@ -918,6 +928,9 @@ const SubContent = () => {
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
+                                    {show && <div class="alert alert-success" role="alert">
+                                        Thanks for your rating
+                                    </div>}
                                     <div class="sasadiv">
                                         <Rating
                                             onClick={handleRating}
@@ -932,7 +945,7 @@ const SubContent = () => {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={() => handleSave()} type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave()} type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -955,6 +968,9 @@ const SubContent = () => {
                                 </div>
                                 <div class="modal-body">
                                     <div class="sasadiv">
+                                        {show2 && <div class="alert alert-success" role="alert">
+                                            Thanks for your rating
+                                        </div>}
                                         <Rating
                                             onClick={handleRating2}
                                         /* Available Props */
@@ -968,7 +984,7 @@ const SubContent = () => {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={() => handleSave2()} type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave2()} type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                                 </div>
                             </div>
                         </div>

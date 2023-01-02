@@ -21,7 +21,7 @@ export const useSignup = () => {
         if (!response.ok) {
             setIsLoading(false)
             setError(json.error)
-            alert(json.error)
+            console.log(error)
             // return (
             //     <div class="alert alert-danger" role="alert">
             //         {json.error}
@@ -44,6 +44,9 @@ export const useSignup = () => {
     function errii(string) {
       
     }
-
+    
+    console.log(error)
     return { signup, isLoading, error }
+
+   
 }

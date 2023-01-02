@@ -11,12 +11,36 @@ const Home = () => {
 
     const [searchname, setsearch] = useState("")
     const navigate = useNavigate();
-
+    var [ filterrr , setfilterrr] = useState("")
 
     function gotoSearch() {
         console.log("ggf")
         console.log(searchname)
         navigate("/search/" + searchname)
+    }
+    function sort(){
+        
+        
+        setfilterrr("Popular Courses"  )        
+        // window.location.reload() 
+    }
+    function sort2(){
+        
+        
+        setfilterrr("Highest to lowest price"  )        
+        // window.location.reload() 
+    }
+    function sort3(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }
+    function sort4(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
     }
     return (
         <div >
@@ -25,10 +49,10 @@ const Home = () => {
                     <a class="navbar-brand" href="/individual">E-Learning <i class="bi bi-book-half"></i></a>
                     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 
-                        <button class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button onClick={()=>navigate("/login")}class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Login
                         </button>
-                        <button class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button onClick={()=>navigate("/register")} class=" btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Signup
                         </button>
                     </div>
@@ -38,10 +62,14 @@ const Home = () => {
                                 <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filter <i class="bi bi-funnel-fill"></i>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Popular Courses</a></li>
-                                    {/* <li><a onClick={()=>sort("Another action")}class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a onClick={()=>sort("Something else here")}class="dropdown-item" href="#">Something else here</a></li> */}
+                                <ul class="dropdown-menu">  
+                                    <li><a onClick={()=>sort()}class="dropdown-item" href="#">Popular Courses</a></li>
+                                    
+                                    <li><a onClick={()=>sort3()}class="dropdown-item" href="#">Rate</a></li>
+                                    
+                                    <li><a onClick={()=>sort2()}class="dropdown-item" href="#">Highest to lowest price</a></li>
+
+                                    <li><a onClick={()=>sort4()}class="dropdown-item" href="#">lowest to Highest price</a></li>
                                 </ul>
                             </div>
                 <form class="d-flex" role="search">
@@ -51,7 +79,7 @@ const Home = () => {
 
             </nav>
             <br />
-            <AllCourses />
+            <AllCourses filterCourse = {filterrr}/>
         </div>
 
 

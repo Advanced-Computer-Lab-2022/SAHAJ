@@ -66,9 +66,10 @@ const Upload = () => {
 
         var data = '/api/subtitle/' + SubID
         const Sub = { Link }
+        // console.log(Sub.Link.split('v=')[1][0)
         youtubeId = JSON.stringify(Sub).substr(0, 8) + '"' + JSON.stringify(Sub).substr(41)
         console.log(youtubeId)
-        console.log(JSON.stringify(Sub))
+        console.log(JSON.stringify(Sub).substr(0, 8) + '"' + JSON.stringify(Sub).substr(41))
         const response = await fetch(data, {
             method: 'PATCH',
             body: JSON.stringify(Sub).substr(0, 8) + '"' + JSON.stringify(Sub).substr(41),

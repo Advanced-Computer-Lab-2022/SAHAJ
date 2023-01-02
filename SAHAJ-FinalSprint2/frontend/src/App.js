@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route , Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 //pages and components
 import Home from './pages/Home'
 import { useAuthContext } from './hooks/useAuthContext'
@@ -6,12 +6,15 @@ import InstructorCourses from './components/InstructorCourses'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import NavbarGuest from './components/NavbarGuest'
 import Popper from 'popper.js'
+import ForgotI from './components/ForgotIndiv'
+import ForgotC from './components/ForgotC'
 import AddCourseForm from './components/AddCourseForm';
 import AddAdminForm from './components/AddAdminForm';
 import FilterInstructor from './components/FilterInstructor';
 import AddCorpTraineeForm from './components/AddCorpTraineeForm';
 import AddInstructorForm from './components/AdminAddins';
 import Instructor from './pages/Instructor';
+import Forgot from './components/Forgot'
 import Admin2 from './pages/Admin';
 import CoorprateTrainee from './pages/CoorpateTrainee';
 import IndividualTrainee from './pages/IndividualTrainee';
@@ -52,16 +55,22 @@ import Footer from './components/Footer';
 import SubContent2 from './components/SubContent2';
 import Viewcreviews from './components/Viewcreviews';
 import { Resource, Admin, Login } from 'react-admin'
-import Admin3 from './pages/Admin2';
+
 import restProvider from 'ra-data-simple-rest'
 import PostList from './components/PostList';
 import Login2 from './components/login';
+import View from './components/Viewinstcourse'
+
+import ErrorPage from './pages/Errorpage'
+
 import { useState } from 'react'
+import Register from './components/Register'
+import AdminLogin from './components/AdminLogin'
 function App() {
-   var f = true
-  const {user} = useAuthContext()
-  var userId= ""
-  if(user){
+  var f = true
+  const { user } = useAuthContext()
+  var userId = ""
+  if (user) {
     userId = user.id
     console.log(user.UserType === "indiv")
   }
@@ -72,14 +81,14 @@ function App() {
     if (user.UserType == "instructor")
       return "/instructor"
     else if (user.UserType == "admin")
-      return "/adminViewProblems"
+      return "/admin"
     else if (user.UserType == "indiv")
       return "/individual"
     else if (user.UserType == "coorp")
       return "/coorprate"
     else
-      return "/home"
-  }
+      return "/home"
+  }
 
   return (
 
@@ -91,9 +100,11 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Home />}
+            element={!user ? <Home /> : <Navigate to={redirectAfterLogin()} />}
+           
 
           />
+
 
           <Route
             path="/coorprate/course/:idC"
@@ -101,9 +112,31 @@ function App() {
 
           />
 
+
+          <Route
+            path="*"
+            element={<ErrorPage />}
+
+          />
+
           <Route
             path="/search/:name"
             element={<Search />}
+
+          />
+          <Route
+            path="/forgotpassword"
+            element={<Forgot />}
+
+          />
+          <Route
+            path="/forgotpassword"
+            element={<ForgotI />}
+
+          />
+          <Route
+            path="/forgotpassword"
+            element={<ForgotC />}
 
           />
 
@@ -126,11 +159,7 @@ function App() {
 
           />
 
-          {/* <Route
-            path="/admin"
-            element={<NavbarCourse />}
-
-          /> */}
+       
           <Route
             path="/admin"
             element={<Admin2 />}
@@ -157,6 +186,12 @@ function App() {
 
           />
           <Route
+            path="/adminlogin"
+            element={!user ? <Home /> : <Navigate to={redirectAfterLogin()} />}
+           
+
+          />
+          <Route
             path="/instructor/createcourse/:idC/:idS"
             element={<Upload />}
 
@@ -174,6 +209,11 @@ function App() {
           <Route
             path="/instructor/mycourses"
             element={<InstructorCourses />}
+
+          />
+          <Route
+            path="/instructor/1234"
+            element={<View />}
 
           />
           <Route
@@ -214,8 +254,14 @@ function App() {
 
           />
           <Route
-            path="/log"
+            path="/login"
             element={!user ? <Login2 /> : <Navigate to={redirectAfterLogin()} />}
+
+
+          />
+          <Route
+            path="/register"
+            element={!user ? <Register /> : <Navigate to={redirectAfterLogin()} />}
 
 
           />
@@ -228,7 +274,7 @@ function App() {
 
           <Route
             path="/individual/profile"
-            element={<EditProfileIndiv id = {userId} />}
+            element={<EditProfileIndiv id={userId} />}
 
           />
 
@@ -245,7 +291,7 @@ function App() {
           />
           <Route
             path="/individual"
-            element={<IndividualTrainee /> }
+            element={<IndividualTrainee />}
 
           />
           <Route
@@ -328,12 +374,7 @@ function App() {
             element={<SolveTheExamChoosenCoorp />}
 
           />
-          <Route
-
-            path='/aadmin'
-            element={<Admin3 />}
-
-          />
+         
 
 
 

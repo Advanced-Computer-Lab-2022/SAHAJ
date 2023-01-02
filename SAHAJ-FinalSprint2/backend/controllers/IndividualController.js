@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const Indiv = require('../models/individualTrainee')
 const validator = require('validator')
+const nodemailer = require("nodemailer");
 
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 
@@ -40,8 +41,81 @@ const payment =  async (req, res) => {
     res.status(500).json({ error: e.message })
   }
 }
+const sendEmail = async (subject, message, send_to, sent_from, reply_to) => {
 
+    const transporter = nodemailer.createTransport({
 
+      host: process.env.EMAIL_HOST,
+
+      port: "587",
+
+      auth: {
+
+        user: process.env.EMAIL_USER,
+
+        pass: process.env.EMAIL_PASS,
+
+      },
+
+      tls: {
+
+        rejectUnauthorized: false,
+
+      },
+
+    });
+    const options = {
+
+        from: sent_from,
+  
+        to: send_to,
+  
+        replyTo: reply_to,
+  
+        subject: subject,
+  
+        html: message,
+  
+      };
+  
+   
+  
+      // Send Email
+  
+      transporter.sendMail(options, function (err, info) {
+  
+        if (err) {
+  
+          console.log(err);
+  
+        } else {
+  
+          console.log(info);
+  
+        }
+  
+      });
+  
+    };
+
+const updatepassinstructor = async (req,res) =>{
+    const {id} = req.params
+    
+    const salt = await bcrypt.genSalt();
+    const body = await bcrypt.hash(req.body.Password, salt);
+    console.log(body)
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error: 'No such coorp'})
+    }
+     
+    const instructor = await Indiv.findOneAndUpdate({_id:id},{
+        ...{Password:body}
+    })
+    if(!Indiv){
+        return res.status(400).json({error:'No such coorp'})
+    }
+    res.status(200).json(instructor)
+}
 //function to get all instructors
 const getallindiv = async (req, res) => {
     const indiv = await Indiv.find({}).sort({ createdAt: -1 })
@@ -257,6 +331,8 @@ module.exports = {
     updateindiv,
     // logout,
     login,
+    sendEmail,
     signUp,
-    payment
+    payment,
+    updatepassinstructor
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import { useParams, useSearchParams , RedirectFunction , Redirect} from 'react-router-dom';
+import { useParams, useSearchParams , RedirectFunction , Redirect , Navigate, useNavigate} from 'react-router-dom';
 import { useAuthContext } from "../hooks/useAuthContext";
 const AddCoursesForm = () => {
     const params = useParams()
@@ -17,9 +17,17 @@ const AddCoursesForm = () => {
     var [dakhal,setdakhal] = useState(false)
     const [Course_description , setCourse_description] = useState("")
     const [Course_photo , setCourse_photo] = useState("")
+    const navigate = useNavigate()
     if(user){
-        Course_instructor_id = user.id
+        if(user.UserType!== "instructor"){
+            navigate("/error404")
+        }else{
+            Course_instructor_id = user.id
+        }
+       
+       
     }
+   
 
     useEffect(() => {
         const fetchCourses = async () => {

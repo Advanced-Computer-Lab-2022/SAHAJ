@@ -19,7 +19,9 @@ const NotRegIndiv = () => {
     const [cname , setcname] = useState("")
     const [Course_instructor_id,setCourse_instructor_id] = useState("")
     const navigate = useNavigate()
+    const [Course_photo,setCourse_photo] = useState("")
     if(user){
+        if(user)
         id = user.id
     }
     useEffect(() => {
@@ -37,6 +39,7 @@ const NotRegIndiv = () => {
                 setCourse_instructor_id(json.filter(c => { return c._id === cid })[0].Course_instructor_id)
                 setcname(json.filter(c => { return c._id === cid })[0].Course_subject)
                 setEnrolled(json.filter(c => { return c._id === cid })[0].Enrolled)
+                setCourse_photo(json.filter(c => { return c._id === cid })[0].Course_photo)
 
             }
 
@@ -117,7 +120,7 @@ const NotRegIndiv = () => {
 
         // console.log(Registered_Course.includes({Course_id:cid , Course_name:Registered_Course.find(el => el.Course_id ===cid).Course_name}))
         console.log(courses[0])
-        const abc = [...Registered_Course, {  Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0 }]
+        const abc = [...Registered_Course, {  Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0 , Course_photo: Course_photo }]
         console.log(abc)
         setshow(true)
         setReg(abc)
@@ -205,15 +208,13 @@ const NotRegIndiv = () => {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                By Accepting this form you understand that:
-                                <p>If you wanted to request a refund for this course your request will only be approved if your course progress is less than 50%</p>
-                               
+                                This course is {price}$ press continue to checkout                                
                                
                                 <br /> <br />
 
                             </div>
                             <div class="modal-footer">
-                                <button onClick= {()=>handleSubmit()}type="button" class="btn btn-primary">Accept</button>
+                                <button onClick= {()=>handleSubmit()}type="button" class="btn btn-primary">Continue</button>
                                 <button type="button" class="btn btn-secondary" variant = "Warning" data-bs-dismiss="modal">Decline</button>
 
                             </div>

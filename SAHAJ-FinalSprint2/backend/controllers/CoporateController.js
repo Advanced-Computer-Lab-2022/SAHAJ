@@ -6,6 +6,7 @@ const CorporateTrainee = require('../models/coporateTrainee')
 const validator = require('validator')
 const nodemailer = require("nodemailer");
 
+
 const sendEmail = async (subject, message, send_to, sent_from, reply_to) => {
 
     const transporter = nodemailer.createTransport({
@@ -62,6 +63,25 @@ const sendEmail = async (subject, message, send_to, sent_from, reply_to) => {
       });
   
     };
+
+    const updatepassinstructor = async (req,res) =>{
+        const {id} = req.params
+        
+        const salt = await bcrypt.genSalt();
+        const body = await bcrypt.hash(req.body.Password, salt);
+        console.log(body)
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({error: 'No such coorp'})
+        }
+         
+        const instructor = await CorporateTrainee.findOneAndUpdate({_id:id},{
+            ...{Password:body}
+        })
+        if(!CorporateTrainee){
+            return res.status(400).json({error:'No such coorp'})
+        }
+        res.status(200).json(instructor)
+    }
 //function to get all coorp
 const getallcorp = async(req,res) =>{
     const corp = await CorporateTrainee.find({}).sort({createdAt: -1})
@@ -236,6 +256,7 @@ module.exports = {
     updateAllCoorp,
     updateCorp,
     login,
-    sendEmail
+    sendEmail,
+    updatepassinstructor
 
 }

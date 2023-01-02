@@ -11,6 +11,7 @@ const Reports = () => {
     const [typeiii , settypeiii] = useState('')
     const [contentiii , setcontentiii] = useState('')
     const [titleiii , settitleiii] = useState('')
+    var [toggle,setToggle] = useState(false)
     useEffect(() => {
         const fetchAdmin = async () => {
             const response = await fetch('/api/admin')
@@ -39,7 +40,7 @@ const Reports = () => {
         fetchcoorp();
         fetchindiv();
 
-    }, [])
+    }, [toggle])
     const handleResolved = async(id , type, title,content)=>{
 
         if(type === "Coorprate"){
@@ -148,8 +149,11 @@ const Reports = () => {
         settitleiii(title);
         setcontentiii(content);
 
-        Reports[i].IsSeen = "Seen"
-       
+        if(Reports[i]){
+            Reports[i].IsSeen = "Seen"
+        }
+        
+       console.log(Reports[i])
         await fetch('/api/admin/', {
 
             method: 'PATCH',
@@ -160,6 +164,7 @@ const Reports = () => {
 
 
         })
+        setToggle(!toggle)
     }
         
     
@@ -169,16 +174,7 @@ const Reports = () => {
         <main >
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Reports</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                        <span data-feather="calendar" class="align-text-bottom"></span>
-                        This week
-                    </button>
-                </div>
+                
             </div>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
@@ -198,7 +194,7 @@ const Reports = () => {
                                 <td>{report.UserId}</td>
                                 <td>{report.UserType}</td>
                                 <td>{report.Report_title}</td>
-                                <td><button onClick={()=>setattributes(report.UserId,report.UserType,report.Report_title,report.Report_content)}data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" class="btn btn-dark">View</button></td> 
+                                <td><button onClick={()=>setattributes(report.UserId,report.UserType,report.Report_title,report.Report_content,i)}data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" class="btn btn-dark">View</button></td> 
                                 {report.IsSeen === "Unseen"?<td>🔵</td>:<td></td>}
                                 <div class="modal fade  modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">

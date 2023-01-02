@@ -1,9 +1,9 @@
-import { useParams , useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import NavbarCourse from './NavbarCourse'
 import { useState, useEffect } from 'react'
 import { useAuthContext } from '../hooks/useAuthContext'
 const MyCoursesIndiv = () => {
-    const {user} = useAuthContext()
+    const { user } = useAuthContext()
     const params = useParams()
     var cid = ""
     var count = 0;
@@ -11,30 +11,38 @@ const MyCoursesIndiv = () => {
     const [indiv, setindiv] = useState(null);
     const [courses, setcourse] = useState([]);
     const [RegCourses, setReg] = useState([]);
-    var [notregatall , setnotregatall] = useState(false)
+    var [notregatall, setnotregatall] = useState(false)
+    const navigate = useNavigate()
     console.log(cid)
-if(user){
-    cid = user.id
-}
+    if (user) {
+        if (user.UserType !== "indiv") {
+            navigate("/error404")
+        }
+        else {
+            cid = user.id
+        }
+
+    }
     useEffect(() => {
 
 
 
         const fetchindiv = async () => {
 
-            const response = await fetch('/api/indiv/'+cid)
+            const response = await fetch('/api/indiv/' + cid)
 
             const json = await response.json()
 
-            var count=0;
+            var count = 0;
             if (response.ok) {
-                
+
                 setindiv(json)
                 setReg(json.Registered_Course)
-                console.log(RegCourses.findIndex(el => el.IsApproved === true) === -1)
-                    
+                console.log(json.Registered_Course)
 
-               
+
+
+
                 console.log(json)
             }
 
@@ -44,10 +52,10 @@ if(user){
         }
 
 
-        if(user&&user.id!==null){
+        if (user && user.id !== null) {
             fetchindiv();
         }
-        
+
 
 
 
@@ -99,29 +107,32 @@ if(user){
     return (
 
         <div class='row'>
-             <nav class="navbar  navbar-dark bg-dark">
+            <nav class="navbar  navbar-dark bg-dark">
                 <div class="container-fluid">
-                    <span class="navbar-brand mb-0 h1">E-Learning</span>
+                    <a href = "/individual" class="navbar-brand mb-0 h1">E-Learning</a>
                 </div>
             </nav>
             <br />
-                {RegCourses.findIndex(el => el.IsApproved === true) === -1? notregatall = true : <p></p>&&RegCourses.map((x) => (
-                    // {x.IsApproved? }
-                 
-                    <div class='col-3'>
-                        <div class='card'>
-                            <img src="https://img.freepik.com/premium-vector/e-learning-innovative-online-education-internet-technology-concept-wireframe-hand-touching-digital-interface_127544-1189.jpg?w=2000" class="card-img-top" alt="..." />
-                            <div class='card-body'>
-                                <h5 class="card-title">{x.Course_name}</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a onClick={() => window.location.href = "mycourses/course/"+x.Course_id} class="btn btn-primary" key={x.Course_id} >To Course</a>
-                            </div>
+            {RegCourses && RegCourses.length!==0? RegCourses.map((x) => (
+                // {x.IsApproved? }
+
+                <div className='col-3'>
+                    <br />
+                    <div className='card'>
+                        <img src={x.Course_photo} class="card-img-top" width="400"
+                            height="200" alt="..." />
+                        <div className='card-body'>
+                            <h5 class="card-title">{x.Course_name}</h5>
+                            <hr />
+
+                            <a onClick={() => window.location.href = `mycourses/course/${x.Course_id}`} class="btn btn-primary" key={x.Course_id}>View Course</a>
                         </div>
                     </div>
-                ))
-           }
+                </div>
+            )) : <h1 class="abdo">No courses availabe<i class="bi bi-patch-exclamation-fill"></i></h1>
+            }
 
-           {notregatall?  <h1 class = "abdo">No courses availabe<i class="bi bi-patch-exclamation-fill"></i></h1> : <p></p>}
+           
 
         </div>
     )
@@ -155,18 +166,18 @@ if(user){
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // const {user} = useAuthContext()
-    
+
     // var cid =""
     // const [inst, setInst] = useState([]);
     // const [coorp, setcoorp] = useState([]);
     // const [courses, setcourse] = useState([]);
     // const [RegCourses, setReg] = useState([])
     // const navigate = useNavigate()
-    
+
     // if(user){
     //    cid = user.id
     // }
-    
+
 
     // useEffect(() => {
 
@@ -194,7 +205,7 @@ if(user){
     //             fetchcoorp();
     //         }
     //     }
-        
+
 
 
 

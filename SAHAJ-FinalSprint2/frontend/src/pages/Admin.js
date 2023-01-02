@@ -8,17 +8,28 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Report } from "@mui/icons-material"
 import Requests from "../components/Requests";
+import Courses from "../components/CoursesAdmin";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useLogout } from '../hooks/useLogout'
+import { useNavigate } from "react-router-dom";
 
 
 const Admin = () => {
 
-
+    const{user} = useAuthContext()
     const [dashboard, showdash] = useState(false)
-    const [addusers, showdaddusers] = useState(false)
+    const [addusers, showdaddusers] = useState(true)
     const [courses, showcourses] = useState(false)
     const [requests, showrequests] = useState(false)
     const [reports, showreports] = useState(false)
     const [refunds, showrefund] = useState(false)
+    const { logout } = useLogout()
+    const navigate = useNavigate()
+
+    // if(user && user.UserType !== "admin"){
+    //  console.log("Fdd")
+    //     navigate("/error")
+    // }
    
     function dash() {
         showdash(true)
@@ -69,7 +80,11 @@ const Admin = () => {
         showreports(false)
         showrefund(true)
     }
+    const handlelogout = () => {
 
+        logout()
+        navigate("/adminlogin")
+    }
 
     return (
         <div >
@@ -87,10 +102,10 @@ const Admin = () => {
                 <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search" />
+                {/* <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search" /> */}
                 <div class="navbar-nav">
                     <div class="nav-item text-nowrap">
-                        <a class="nav-link px-3" href="#">Sign out</a>
+                        <a onClick={handlelogout} class="nav-link px-3" href="#">Sign out</a>
                     </div>
                 </div>
             </header>
@@ -119,20 +134,9 @@ const Admin = () => {
                             <br />
 
                             <ul class="nav flex-column">
-                                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                                    <span>Home:</span>
-                                    <a class="link-secondary" href="#" aria-label="Add a new report">
-                                        <span data-feather="plus-circle" class="align-text-bottom"></span>
-                                    </a>
-                                </h6>
+                               
 
-                                {dashboard === false ? <button onClick={() => dash()} class="nav-link btn btn-light" href="/dashboard">
-                                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                                    Dashboard
-                                </button> : <button onClick={() => dash()} class="nav-link active btn btn-light" href="/dashboard">
-                                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                                    Dashboard
-                                </button>}
+                               
 
                                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
                                     <span>Actions:</span>
@@ -151,10 +155,10 @@ const Admin = () => {
 
                                 {courses === false ? <button onClick={() => course()} class="nav-link btn btn-light" >
                                     <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                                    Courses
+                                    Add Discount to Courses
                                 </button> : <button onClick={() => course()} class="nav-link active btn btn-light" href="">
                                     <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                                    Courses
+                                    Add Discount to Courses
                                 </button>}
 
 
@@ -234,7 +238,7 @@ const Admin = () => {
                                 </button>
                             </div>
                         </div> */}
-                        {addusers === true ? <AddUser /> : reports === true ? <Reports /> : refunds === true ? <Refund />: requests === true? <Requests/>:<p></p>}
+                        {addusers === true ? <AddUser /> : reports === true ? <Reports /> : refunds === true ? <Refund />: requests === true? <Requests/>: courses === true ? <Courses />:<p></p>}
 
 
                         {/*          <h2>Section title</h2> */}

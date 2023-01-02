@@ -62,15 +62,19 @@ const indvidualTraineeSchema = new Schema({
         default : 0 
     },
     My_Reports:{
-        Report_title:{
-            type:String
-        },
-        Report_content:{
-            type:String
-        }, 
-        Report_status:{
-            type:String
+        type: Array,
+        Reportato:{
+            Report_title:{
+                type:String
+            },
+            Report_content:{
+                type:String
+            }, 
+            Report_status:{
+                type:String
+            }
         }
+       
     },
 })
 

@@ -79,9 +79,9 @@ const SubContent2 = () => {
     const [savepdf, setsavepdf] = useState(false)
     const [notes, setnotes] = useState('')
     const [notestitle, setnotestitle] = useState('')
-    const[coursename,setcoursenamw] = useState('')
+    const [coursename, setcoursenamw] = useState('')
     var usermail = "";
-    const [mailsent , setmailsent] = useState(false);
+    const [mailsent, setmailsent] = useState(false);
     if (user) {
         id = user.id
         usermail = user.Email
@@ -229,8 +229,8 @@ const SubContent2 = () => {
     }, [user])
 
 
-    if (indiv[0] && indiv[0].Registered_Course && indiv[0].Registered_Course.findIndex(el => { return el.Course_id === cid  }) === -1) {
-        navigate("/individual");
+    if (indiv[0] && indiv[0].Registered_Course && indiv[0].Registered_Course.findIndex(el => { return el.Course_id === cid }) === -1) {
+        navigate("/error404");
     }
 
     const handleRating = (rate) => { //course
@@ -322,7 +322,7 @@ const SubContent2 = () => {
 
         })
 
-        alert('your rating was successfuly saved')
+
 
 
     }
@@ -355,7 +355,7 @@ const SubContent2 = () => {
 
         })
 
-        alert('your rating was successfuly updated from ' + coorpoldrate + ' to ' + newRate)
+
 
 
     }
@@ -457,7 +457,7 @@ const SubContent2 = () => {
 
         })
 
-        alert('your rating was successfuly saved')
+
 
 
     }
@@ -488,42 +488,49 @@ const SubContent2 = () => {
 
         })
 
-        alert('your rating was successfuly updated from ' + coorpoldrate2 + ' to ' + newRate)
 
     }
 
     const handleSave = async () => {
-        const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
-        console.log(JSON.stringify(Reviewss))
-        setReviews(Reviewss)
-        await fetch('/api/course/' + cid, {
-
-            method: 'PATCH',
-            body: JSON.stringify({ Reviews: Reviewss }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-        })
+        if(Reviewerreview !== ""){
+            alert("Thanks for your review!!")
+            const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
+            console.log(JSON.stringify(Reviewss))
+            setReviews(Reviewss)
+            await fetch('/api/course/' + cid, {
+    
+                method: 'PATCH',
+                body: JSON.stringify({ Reviews: Reviewss }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+    
+            })
+        }
+       
     }
 
     const handleSave2 = async () => {
-        const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
-        console.log(JSON.stringify(Reviewss))
-        setReviews2(Reviewss)
-        await fetch('/api/instructor/' + instid, {
+        if (Reviewerreview2 !== "") {
+            alert("Thanks for your review!!")
+            const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
+            console.log(JSON.stringify(Reviewss))
+            setReviews2(Reviewss)
+            await fetch('/api/instructor/' + instid, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ IReviews: Reviewss }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ IReviews: Reviewss }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-        })
+            })
+        }
+
     }
     const video = async () => {
         // prog+=1;
-        alert(No_subtitles)
+
         console.log(indiv[0].Registered_Course.filter(c => { return c.Course_id === cid })[0].Progress)
         // alert('you clicked')
         var i = 0;
@@ -557,15 +564,15 @@ const SubContent2 = () => {
             })
             const Registered_Course2 = Registered_Course.filter(c => { return c.Course_id === cid })
             const name = Registered_Course2[0].Course_name
-            alert("name: " + name)
+
             const Amount = Registered_Course2[0].Amount_paid
-            alert("Amount: " + Amount)
-            
+
+
             const watched2 = Registered_Course2[0].Watched + 1
-            alert("Watched: " + watched2)
+
             prog = (watched2 / No_subtitles) * 100
             setprog2(prog)
-            alert("Progress " + prog)
+
             Registered_Course = Registered_Course.filter(c => { return c.Course_id != cid })
             const Sub = [...Registered_Course, { Course_id: cid, Course_name: name, Amount_paid: Amount, Watched: watched2, Progress: prog }]
 
@@ -623,7 +630,7 @@ const SubContent2 = () => {
 
 
                     })
-                    alert("Refund Request Is Pending")
+
                     Registered_Course = Registered_Course.filter(c => { return c.Course_id != cid })
                     await fetch('/api/indiv/' + id, {
 
@@ -641,7 +648,7 @@ const SubContent2 = () => {
                     break
                 }
                 else {
-                    alert("You Cant Refund Since You Have Completed " + prog2 + "%")
+                    alert("You cant refund this course since you exceeded 50%")
                     break
                 }
             }
@@ -654,37 +661,44 @@ const SubContent2 = () => {
 
     const handleReport = async () => {
         console.log(indiv[0].Registered_Course[0].Progress)
+        if (Report_title === "" || Report_content === "") {
+            alert("Please Fill in the field or press cancel")
+        }
+        else {
+            alert("Your Report has been sent thanks for your patience")
+
+            const Reportato = [...Reports, { UserId: id, UserType: "Individual", Report_title: Report_title, Report_content: Report_content, IsSeen: "Unseen" }]
+
+            await fetch('/api/admin', {
+
+                method: 'PATCH',
+                body: JSON.stringify({ Reports: Reportato }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
 
-        const Reportato = [...Reports, { UserId: id, UserType: "Individual", Report_title: Report_title, Report_content: Report_content, IsSeen: "Unseen" }]
+            })
 
-        await fetch('/api/admin', {
+            const My_reportato = [...My_Reports, { Report_title: Report_title, Report_content: Report_content, Report_status: "Report Sent!" }]
+            await fetch('/api/indiv/' + id, {
 
-            method: 'PATCH',
-            body: JSON.stringify({ Reports: Reportato }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-
-        })
-
-        const My_reportato = [...My_Reports, { Report_title: Report_title, Report_content: Report_content, Report_status: "Report Sent!" }]
-        await fetch('/api/indiv/' + id, {
-
-            method: 'PATCH',
-            body: JSON.stringify({ My_Reports: My_reportato }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
+                method: 'PATCH',
+                body: JSON.stringify({ My_Reports: My_reportato }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
 
-        })
+            })
+
+
+        }
 
 
 
     }
-   
+
     console.log("MAILSENT  :   " + mailsent)
     console.log(usermail)
     // if(prog2 === 100){
@@ -695,17 +709,18 @@ const SubContent2 = () => {
     //     else{
     //         setmailsent(true);
     //     }
-    
-            
-        
+
+
+
     // }
     const SendEmail = async () => {
+        alert("Email has been sent to to you!!")
         // const email =  usermail 
         console.log("sdFsrgGsGrsgs")
 
-        await fetch('/api/sendemail/' + id + '/'+ coursename , {
+        await fetch('/api/sendemail/' + id + '/' + coursename, {
             method: 'POST',
-            body: JSON.stringify({email: usermail}),
+            body: JSON.stringify({ email: usermail }),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -758,7 +773,7 @@ const SubContent2 = () => {
                         </CDBSidebarMenu>
                     </CDBSidebarContent>
 
-                   {prog2===100?  <Button data-bs-toggle="modal" data-bs-target="#cetificateModal" type="button" variant="warning">View your certificate</Button> :<p></p>} 
+                    {prog2 === 100 ? <Button data-bs-toggle="modal" data-bs-target="#cetificateModal" type="button" variant="warning">View your certificate</Button> : <p></p>}
                     <br></br>
 
 
@@ -798,7 +813,7 @@ const SubContent2 = () => {
                             : <YoutubeVideo id={sub.Link} />}
                         <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
                             <div class="container-fluid">
-                                <a class="navbar-brand" href="#">E-learning</a>
+                                <a class="navbar-brand" href="/indiv/mycourses">E-learning</a>
                                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
@@ -816,9 +831,7 @@ const SubContent2 = () => {
                                             <a class="nav-link" href={examref}>Take Exam</a>
                                         </li>
 
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#">Reviews</a>
-                                        </li>
+
 
                                     </ul>
                                 </div>
@@ -895,14 +908,14 @@ const SubContent2 = () => {
                                 <div class="modal-body">
 
                                     <PDFcertificate cname={coursename} sname={Fname + " " + Lname} />
-                                    
+
 
                                 </div>
-                              
+
                                 <div class="modal-footer">
-                                <Button variant = "info" onClick={()=>SendEmail()}>Get Certificate by mail</Button>
+                                    <Button   data-bs-dismiss="modal" variant="info" onClick={() => SendEmail()}>Get Certificate by mail</Button>
                                 </div>
-                                
+
 
                             </div>
 
@@ -919,6 +932,9 @@ const SubContent2 = () => {
                                 </div>
                                 <div class="modal-body">
                                     <div class="sasadiv">
+                                        {show && <div class="alert alert-success" role="alert">
+                                            Thanks for your rating
+                                        </div>}
                                         <Rating
                                             onClick={handleRating}
                                         /* Available Props */
@@ -932,7 +948,7 @@ const SubContent2 = () => {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={() => handleSave()} type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave()} type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -954,6 +970,9 @@ const SubContent2 = () => {
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
+                                    {show2 && <div class="alert alert-success" role="alert">
+                                    Thanks for your rating
+                                    </div>}
                                     <div class="sasadiv">
                                         <Rating
                                             onClick={handleRating2}
@@ -968,7 +987,7 @@ const SubContent2 = () => {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button onClick={() => handleSave2()} type="button" class="btn btn-primary">Save</button>
+                                    <button onClick={() => handleSave2()} type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -1016,8 +1035,8 @@ const SubContent2 = () => {
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                                    <button onClick={() => handleReport()} type="button" class="btn btn-primary">Yes</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button onClick={() => handleReport()} type="button" class="btn btn-primary" >Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -1080,645 +1099,645 @@ const SubContent2 = () => {
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // const {user} = useAuthContext()
-//     var jsonSub;
-//     const params = useParams()
-//     const cid = params.cid
-//     const s = params.sid
-//     var id = ""
-//     const [sid, setSid] = useState('')
-//     const navigate = useNavigate()
-//     // const params = new URLSearchParams(window.location.search);
-//     // const courseId = params.get('courseId');
-//     const [courses, setCourse] = useState([]);
-//     const [Reviews, setReviews] = useState([])
-//     const [IReviews, setReviews2] = useState([])
-//     const [indiv,setindiv]  = useState([])
-//     const [subtitle, setSub] = useState([]);
-//     const [show, setshow] = useState(false);
-//     const [show2, setshow2] = useState(false);
-//     const [subtitle2, setSub2] = useState([]);
-//     const [Fname, setFname] = useState("")
-//     const [instid, setinstid] = useState("")
-//     const [instructor, setinstructor] = useState(null)
+    //     var jsonSub;
+    //     const params = useParams()
+    //     const cid = params.cid
+    //     const s = params.sid
+    //     var id = ""
+    //     const [sid, setSid] = useState('')
+    //     const navigate = useNavigate()
+    //     // const params = new URLSearchParams(window.location.search);
+    //     // const courseId = params.get('courseId');
+    //     const [courses, setCourse] = useState([]);
+    //     const [Reviews, setReviews] = useState([])
+    //     const [IReviews, setReviews2] = useState([])
+    //     const [indiv,setindiv]  = useState([])
+    //     const [subtitle, setSub] = useState([]);
+    //     const [show, setshow] = useState(false);
+    //     const [show2, setshow2] = useState(false);
+    //     const [subtitle2, setSub2] = useState([]);
+    //     const [Fname, setFname] = useState("")
+    //     const [instid, setinstid] = useState("")
+    //     const [instructor, setinstructor] = useState(null)
 
-//     const [Reviewerreview, setReviewerRev] = useState("")
-//     const [Reviewerreview2, setReviewerRev2] = useState("")
-//     var [indivoldrate, setindivoldrate] = useState(0)
-//     const [progress,setprogress] = useState(20)
-//     var [indivoldrate2, setindivoldrate2] = useState(0)
+    //     const [Reviewerreview, setReviewerRev] = useState("")
+    //     const [Reviewerreview2, setReviewerRev2] = useState("")
+    //     var [indivoldrate, setindivoldrate] = useState(0)
+    //     const [progress,setprogress] = useState(20)
+    //     var [indivoldrate2, setindivoldrate2] = useState(0)
 
 
-//     const [rated, setrated] = useState(false)
-//     var [index, setindex] = useState(0)
-//     if(user){
-//         id = user.id
-//     }
+    //     const [rated, setrated] = useState(false)
+    //     var [index, setindex] = useState(0)
+    //     if(user){
+    //         id = user.id
+    //     }
 
-//     const examref = "/indiv/solveExam/" + cid + '/' + s
-//     useEffect(() => {
-        
-//         const fetchindiv = async () => {
-//             console.log(id)
-//             const response = await fetch('/api/indiv/'+id)
-           
-//             const json = await response.json()
-//                 console.log(json)
-//             if (response.ok) {
-//                 setindiv(json)
-//                 console.log(json)
-//                 setFname(json[0].Fname)
-//                 // setprogress(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
-//                 // console.log(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
-//             }
+    //     const examref = "/indiv/solveExam/" + cid + '/' + s
+    //     useEffect(() => {
 
-//         }
+    //         const fetchindiv = async () => {
+    //             console.log(id)
+    //             const response = await fetch('/api/indiv/'+id)
 
-//         const fetchCourses = async () => {
+    //             const json = await response.json()
+    //                 console.log(json)
+    //             if (response.ok) {
+    //                 setindiv(json)
+    //                 console.log(json)
+    //                 setFname(json[0].Fname)
+    //                 // setprogress(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
+    //                 // console.log(json.filter(c => { return c._id === cid })[0].Registered_Course.filter(e => {return e.Course_id === cid}))
+    //             }
 
-//             const response = await fetch('/api/course')
-//             console.log(response.json)
-//             const json = await response.json()
+    //         }
 
-       
-            
+    //         const fetchCourses = async () => {
 
-//             if (response.ok) {
+    //             const response = await fetch('/api/course')
+    //             console.log(response.json)
+    //             const json = await response.json()
 
-//                 console.log("edkjaksdk")
-//                 setCourse(json.filter(c => { return c._id === cid }))
-//                 setReviews(json.filter(c => { return c._id === cid })[0].Reviews)
-               
-//                 const response2 = await fetch('/api/instructor/' + json.filter(c => { return c._id === cid })[0].Course_instructor_id)
-//                 const json2 = await response2.json()
-//                 console.log(response2)
-                
-//                 setinstructor(json2)
-//                 setReviews2(json2.IReviews)
-          
 
-//             }
 
-//         }
 
+    //             if (response.ok) {
 
+    //                 console.log("edkjaksdk")
+    //                 setCourse(json.filter(c => { return c._id === cid }))
+    //                 setReviews(json.filter(c => { return c._id === cid })[0].Reviews)
 
+    //                 const response2 = await fetch('/api/instructor/' + json.filter(c => { return c._id === cid })[0].Course_instructor_id)
+    //                 const json2 = await response2.json()
+    //                 console.log(response2)
 
+    //                 setinstructor(json2)
+    //                 setReviews2(json2.IReviews)
 
 
-//         const fetchSubtitles = async () => {
+    //             }
 
-//             const response = await fetch('/api/subtitle')
-//             console.log('ffffffff')
-//             jsonSub = await response.json()
-//             console.log(response)
-//             if (response.ok) {
+    //         }
 
-//                 setSub(jsonSub.filter(c => { return c._id === s }))
 
-//             }
-//             if (!response.ok) {
 
-//                 console.log('ffffffff')
 
-//             }
 
 
+    //         const fetchSubtitles = async () => {
 
+    //             const response = await fetch('/api/subtitle')
+    //             console.log('ffffffff')
+    //             jsonSub = await response.json()
+    //             console.log(response)
+    //             if (response.ok) {
 
-//         }
+    //                 setSub(jsonSub.filter(c => { return c._id === s }))
 
+    //             }
+    //             if (!response.ok) {
 
-//         const fetchSubtitles2 = async () => {
+    //                 console.log('ffffffff')
 
-//             const response = await fetch('/api/subtitle')
-//             console.log('ffffffff')
-//             jsonSub = await response.json()
-//             console.log(response)
-//             if (response.ok) {
+    //             }
 
-//                 setSub2(jsonSub.filter(c => { return c.CourseId === cid }))
 
-//             }
-//             if (!response.ok) {
 
-//                 console.log('ffffffff')
 
-//             }
+    //         }
 
 
+    //         const fetchSubtitles2 = async () => {
 
+    //             const response = await fetch('/api/subtitle')
+    //             console.log('ffffffff')
+    //             jsonSub = await response.json()
+    //             console.log(response)
+    //             if (response.ok) {
 
-//         }
-//         //         if(courses.length !== 0){
-//         //         const fetchinst = async () => {
-//         //             // const ftchid = cou2[0].Course_instructor_id
-//         //             console.log(courses)
+    //                 setSub2(jsonSub.filter(c => { return c.CourseId === cid }))
 
+    //             }
+    //             if (!response.ok) {
 
-//         //         const response = await fetch('/api/instructor/' )
-//         //         jsonSub = await response.json()
-//         //         console.log(response)
-//         //         if (response.ok) {
+    //                 console.log('ffffffff')
 
-//         //             setinstructor(jsonSub)
+    //             }
 
-//         //         }
-//         //         if (!response.ok) {
 
 
-//         //         }
 
-//         // }
+    //         }
+    //         //         if(courses.length !== 0){
+    //         //         const fetchinst = async () => {
+    //         //             // const ftchid = cou2[0].Course_instructor_id
+    //         //             console.log(courses)
 
-//         // fetchinst();  
-//         //         }
-//         if(user){
-//             if(user.id!==null){
-//                 fetchSubtitles2();
-//                 fetchCourses();
-//                 fetchSubtitles();
-//                 fetchindiv();
-//             }
-//         }
-      
 
+    //         //         const response = await fetch('/api/instructor/' )
+    //         //         jsonSub = await response.json()
+    //         //         console.log(response)
+    //         //         if (response.ok) {
 
+    //         //             setinstructor(jsonSub)
 
-//     }, [user])
+    //         //         }
+    //         //         if (!response.ok) {
 
-//     // if(indiv&&indiv.Registered_Course){
-//     //     console.log(indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) )
-//     // }
-    
 
-//     if(indiv&&indiv.Registered_Course&&indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) === -1){
-//         navigate("/individual");
-//     }
+    //         //         }
 
-//     const handleRating = (rate) => { //course
+    //         // }
 
-//         setshow(true)
+    //         // fetchinst();  
+    //         //         }
+    //         if(user){
+    //             if(user.id!==null){
+    //                 fetchSubtitles2();
+    //                 fetchCourses();
+    //                 fetchSubtitles();
+    //                 fetchindiv();
+    //             }
+    //         }
 
-//         if (courses) {
 
-//             console.log(courses)
 
-           
 
-//             const idx = courses[0].Course_rating.findIndex(el => el.RaterId === id && el.RaterType === "individual")
+    //     }, [user])
 
-//             if (idx === -1) {
+    //     // if(indiv&&indiv.Registered_Course){
+    //     //     console.log(indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) )
+    //     // }
 
-//                 const oldrating = courses[0].Course_overAllRate
 
-//                 const Num = courses[0].Course_NumberOfRatings
+    //     if(indiv&&indiv.Registered_Course&&indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) === -1){
+    //         navigate("/individual");
+    //     }
 
-//                 const thh = ((Num * oldrating) + rate) / (Num + 1)
+    //     const handleRating = (rate) => { //course
 
+    //         setshow(true)
 
+    //         if (courses) {
 
-//                 handleSubmitC1(thh, Num + 1, rate)
+    //             console.log(courses)
 
 
 
-//             }
+    //             const idx = courses[0].Course_rating.findIndex(el => el.RaterId === id && el.RaterType === "individual")
 
-//             else {
+    //             if (idx === -1) {
 
-//                 indivoldrate = courses[0].Course_rating[idx].Rate
+    //                 const oldrating = courses[0].Course_overAllRate
 
-//                 setrated(true)
+    //                 const Num = courses[0].Course_NumberOfRatings
 
-//                 console.log(rated)
+    //                 const thh = ((Num * oldrating) + rate) / (Num + 1)
 
-//                 index = idx
 
-//                 const oldrating = courses[0].Course_overAllRate
 
-//                 console.log("old: " + oldrating)
+    //                 handleSubmitC1(thh, Num + 1, rate)
 
-//                 const Numb = courses[0].Course_NumberOfRatings
 
-//                 const ooo = courses[0].Course_rating[idx].Rate
 
-//                 const thh = ((Numb * oldrating) - ooo) + (rate)
+    //             }
 
-//                 console.log(courses[0].Course_rating[idx].Rate)
+    //             else {
 
-//                 const vv = thh / Numb
+    //                 indivoldrate = courses[0].Course_rating[idx].Rate
 
-//                 console.log(vv)
+    //                 setrated(true)
 
+    //                 console.log(rated)
 
+    //                 index = idx
 
-//                 handleSubmitC2(vv, Numb, rate)
+    //                 const oldrating = courses[0].Course_overAllRate
 
+    //                 console.log("old: " + oldrating)
 
+    //                 const Numb = courses[0].Course_NumberOfRatings
 
-//             }
+    //                 const ooo = courses[0].Course_rating[idx].Rate
 
+    //                 const thh = ((Numb * oldrating) - ooo) + (rate)
 
-//         }
-//     }
+    //                 console.log(courses[0].Course_rating[idx].Rate)
 
-//     const handleSubmitC1 = async (rr, nn, newRate) => {
+    //                 const vv = thh / Numb
 
-//         const addition = [...courses[0].Course_rating, { Rate: newRate, RaterType: "individual", RaterId: id }]
+    //                 console.log(vv)
 
-//         console.log(rr)
 
-//         await fetch('/api/course/' + cid, {
 
-//             method: 'PATCH',
+    //                 handleSubmitC2(vv, Numb, rate)
 
-//             url: '/api/course',
 
-//             body: JSON.stringify({ Course_rating: addition, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
 
-//             headers: {
+    //             }
 
-//                 'Content-Type': 'application/json'
 
-//             },
+    //         }
+    //     }
 
-//         })
+    //     const handleSubmitC1 = async (rr, nn, newRate) => {
 
-//         alert('your rating was successfuly saved')
+    //         const addition = [...courses[0].Course_rating, { Rate: newRate, RaterType: "individual", RaterId: id }]
 
-//     }
+    //         console.log(rr)
 
-//     const handleSubmitC2 = async (rr, nn, newRate) => {
+    //         await fetch('/api/course/' + cid, {
 
-//         courses[0].Course_rating[index].Rate = newRate
+    //             method: 'PATCH',
 
-//         console.log("index " + index)
+    //             url: '/api/course',
 
-//         const addition2 = courses[0].Course_rating
+    //             body: JSON.stringify({ Course_rating: addition, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
 
-//         console.log(rr)
+    //             headers: {
 
-//         await fetch('/api/course/' + cid, {
+    //                 'Content-Type': 'application/json'
 
-//             method: 'PATCH',
+    //             },
 
-//             url: '/api/course',
+    //         })
 
-//             body: JSON.stringify({ Course_rating: addition2, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
+    //         alert('your rating was successfuly saved')
 
-//             headers: {
+    //     }
 
-//                 'Content-Type': 'application/json'
+    //     const handleSubmitC2 = async (rr, nn, newRate) => {
 
-//             },
+    //         courses[0].Course_rating[index].Rate = newRate
 
-//         })
+    //         console.log("index " + index)
 
-//         alert('your rating was successfuly updated from ' + indivoldrate + ' to ' + newRate)
+    //         const addition2 = courses[0].Course_rating
 
-//     }
+    //         console.log(rr)
 
+    //         await fetch('/api/course/' + cid, {
 
+    //             method: 'PATCH',
 
-//     const handleRating2 = (rate) => { // instructor
-//         setshow2(true)
-//         console.log(instructor)
-//         if (instructor) {
+    //             url: '/api/course',
 
-//             console.log(instructor)
+    //             body: JSON.stringify({ Course_rating: addition2, Course_overAllRate: rr, Course_NumberOfRatings: nn }),
 
-//             const idx = instructor.rating.findIndex(el => el.RaterId === id && el.RaterType === "individual")
+    //             headers: {
 
-//             console.log(idx)
+    //                 'Content-Type': 'application/json'
 
+    //             },
 
-//             if(idx === -1){
+    //         })
 
-//                 const oldrating = instructor.overAllRate
+    //         alert('your rating was successfuly updated from ' + indivoldrate + ' to ' + newRate)
 
-//                 const Num = instructor.numberofratings
+    //     }
 
-//                 const thh = ((Num*oldrating)+rate) / (Num+1)
 
-//                 console.log(thh)
 
-//                 handleSubmitI1(thh , Num+1 , rate)
+    //     const handleRating2 = (rate) => { // instructor
+    //         setshow2(true)
+    //         console.log(instructor)
+    //         if (instructor) {
 
-           
+    //             console.log(instructor)
 
-//             }
+    //             const idx = instructor.rating.findIndex(el => el.RaterId === id && el.RaterType === "individual")
 
-//             else{
+    //             console.log(idx)
 
-//                 indivoldrate2 = instructor.rating[idx].Rate
 
-//                 setrated(true)
+    //             if(idx === -1){
 
-//                 console.log(rated)
+    //                 const oldrating = instructor.overAllRate
 
-//                 index = idx
+    //                 const Num = instructor.numberofratings
 
-//                 const oldrating = instructor.overAllRate
+    //                 const thh = ((Num*oldrating)+rate) / (Num+1)
 
-//                 console.log("old: "+oldrating)
+    //                 console.log(thh)
 
-//                 const Numb = instructor.numberofratings
+    //                 handleSubmitI1(thh , Num+1 , rate)
 
-//                 const thh = ((Numb*oldrating)-instructor.rating[idx].Rate)+(rate)
 
-//                 console.log(instructor.rating[idx].Rate)
 
-//                 const vv = thh / Numb
+    //             }
 
-//                 console.log(vv)
+    //             else{
 
- 
+    //                 indivoldrate2 = instructor.rating[idx].Rate
 
-//                 handleSubmitI2(vv , Numb , rate)
+    //                 setrated(true)
 
- 
+    //                 console.log(rated)
 
-//             }
+    //                 index = idx
 
+    //                 const oldrating = instructor.overAllRate
 
-//         }
+    //                 console.log("old: "+oldrating)
 
-//     }
+    //                 const Numb = instructor.numberofratings
 
+    //                 const thh = ((Numb*oldrating)-instructor.rating[idx].Rate)+(rate)
 
-    
-//     const handleSubmitI1 = async (rr , nn , newRate) => {
+    //                 console.log(instructor.rating[idx].Rate)
 
-//         const addition = [...instructor.rating, {Rate: newRate , RaterType: "individual" , RaterId : id}]
+    //                 const vv = thh / Numb
 
-//         console.log(rr)
+    //                 console.log(vv)
 
-//         await fetch('/api/instructor/'+instid, {
 
-//             method: 'PATCH',
 
-//             url: '/api/instructor',
+    //                 handleSubmitI2(vv , Numb , rate)
 
-//             body: JSON.stringify({rating: addition , overAllRate: rr , numberofratings: nn}),
 
-//             headers: {
 
-//                 'Content-Type': 'application/json'
+    //             }
 
-//             },
 
-//         })
+    //         }
 
-//         alert('your rating was successfuly saved')
+    //     }
 
-//     }
 
-//     const handleSubmitI2 = async (rr , nn , newRate) => {
 
-//         instructor.rating[index].Rate = newRate
+    //     const handleSubmitI1 = async (rr , nn , newRate) => {
 
-//          console.log("index "+index)
+    //         const addition = [...instructor.rating, {Rate: newRate , RaterType: "individual" , RaterId : id}]
 
-//         const addition2 = instructor.rating
+    //         console.log(rr)
 
-//         console.log(rr)
+    //         await fetch('/api/instructor/'+instid, {
 
-//         await fetch('/api/instructor/'+instid, {
+    //             method: 'PATCH',
 
-//             method: 'PATCH',
+    //             url: '/api/instructor',
 
-//             url: '/api/instructor',
+    //             body: JSON.stringify({rating: addition , overAllRate: rr , numberofratings: nn}),
 
-//             body: JSON.stringify({rating: addition2 , overAllRate: rr , numberofratings: nn}),
+    //             headers: {
 
-//             headers: {
+    //                 'Content-Type': 'application/json'
 
-//                 'Content-Type': 'application/json'
+    //             },
 
-//             },
+    //         })
 
-//         })
+    //         alert('your rating was successfuly saved')
 
-//         alert('your rating was successfuly updated from ' + indivoldrate2 + ' to ' + newRate)
+    //     }
 
-//     }
+    //     const handleSubmitI2 = async (rr , nn , newRate) => {
 
-//     const handleSave = async () => {
-//         const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
-//         console.log(JSON.stringify(Reviewss))
-//         setReviews(Reviewss)
-//         await fetch('/api/course/' + cid, {
+    //         instructor.rating[index].Rate = newRate
 
-//             method: 'PATCH',
-//             body: JSON.stringify({ Reviews: Reviewss }),
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
+    //          console.log("index "+index)
 
-//         })
-//     }
-//     const handleSave2 = async () => {
-//         const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
-//         console.log(JSON.stringify(Reviewss))
-//         setReviews2(Reviewss)
-//         await fetch('/api/instructor/' + instid, {
+    //         const addition2 = instructor.rating
 
-//             method: 'PATCH',
-//             body: JSON.stringify({ IReviews: Reviewss }),
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
+    //         console.log(rr)
 
-//         })
-//     }
+    //         await fetch('/api/instructor/'+instid, {
 
+    //             method: 'PATCH',
 
-//     function gett(c) {
+    //             url: '/api/instructor',
 
-//         ct = c
-//         console.log(ct)
-//         return c
-//     }
+    //             body: JSON.stringify({rating: addition2 , overAllRate: rr , numberofratings: nn}),
 
-//     function handleRefund(){
-//        console.log(indiv.Registered_Course[0].Course_id)
-//        var i =0;
-//        while(i<indiv.Registered_Course.length){
-//         if(indiv.Registered_Course[i].Course_id === cid){
-//             if(indiv.Registered_Course[i].Progress<50){
-//                 alert("Refund Request Is Pending")
-//             }
-//             else{
-//                 alert("You Cant Refund Since You Have Completed "+indiv.Registered_Course[i].Progress+"%")
-//                 break
-//             }
-//         }
-//         else{
-//             i++
-//         }
-//        }
+    //             headers: {
 
-//     }
+    //                 'Content-Type': 'application/json'
 
+    //             },
 
-//     return (
+    //         })
 
-//         <div
-//             style={{ display: 'flex', height: '100vh', overflow: 'scroll initial' }}
-//         >
-//             {courses.map((course) => (
+    //         alert('your rating was successfuly updated from ' + indivoldrate2 + ' to ' + newRate)
 
-//                 <CDBSidebar textColor="#fff" backgroundColor="#333">
-//                     <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
-//                         <a
-//                             href="/"
-//                             className="text-decoration-none"
-//                             style={{ color: 'inherit' }}
-//                         >
-//                             {course.Course_subject}
-//                         </a>
-//                     </CDBSidebarHeader>
+    //     }
 
-//                     <CDBSidebarContent className="sidebar-content">
-//                         <CDBSidebarMenu>
-//                             {subtitle2.map((sub) => (
+    //     const handleSave = async () => {
+    //         const Reviewss = [...Reviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview }]
+    //         console.log(JSON.stringify(Reviewss))
+    //         setReviews(Reviewss)
+    //         await fetch('/api/course/' + cid, {
 
-//                                 <a onClick={() => window.location.href = `/${course._id}/${sub._id}/indiv`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+    //             method: 'PATCH',
+    //             body: JSON.stringify({ Reviews: Reviewss }),
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
 
-//                             ))}
+    //         })
+    //     }
+    //     const handleSave2 = async () => {
+    //         const Reviewss = [...IReviews, { ReviewerID: id, ReviewerName: Fname, ReviewerReview: Reviewerreview2 }]
+    //         console.log(JSON.stringify(Reviewss))
+    //         setReviews2(Reviewss)
+    //         await fetch('/api/instructor/' + instid, {
 
-//                         </CDBSidebarMenu>
-//                     </CDBSidebarContent>
-//                     <button data-bs-toggle="modal" data-bs-target="#exampleModal3"type="button" class="btn btn-danger">Refund Course</button>
-//                     <CDBSidebarFooter style={{ textAlign: 'center' }}>
-//                         <div
-//                             style={{
-//                                 padding: '20px 5px',
-//                             }}
-//                         >
-//                             Copyrights E-Learning ©
-//                         </div>
-//                     </CDBSidebarFooter>
-//                 </CDBSidebar>
+    //             method: 'PATCH',
+    //             body: JSON.stringify({ IReviews: Reviewss }),
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
 
-//             ))}
-//             {subtitle.map((sub) => (
+    //         })
+    //     }
 
-//                 <div>
-//                     <iframe width="1250" height="500" src={"https://www.youtube.com/embed/" + sub.Link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-//                     <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
-//                         <div class="container-fluid">
-//                             <a class="navbar-brand" href="#">E-learning</a>
-//                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-//                                 <span class="navbar-toggler-icon"></span>
-//                             </button>
-//                             <div class="collapse navbar-collapse" id="navbarNavDropdown">
-//                                 <ul class="navbar-nav">
 
-//                                     <li class="nav-item">
-//                                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Rate Course⭐</a>
-//                                     </li>
-//                                     <li class="nav-item">
-//                                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2">Rate Instructor⭐</a>
-//                                     </li>
+    //     function gett(c) {
 
-//                                     <li class="nav-item">
-//                                         <a class="nav-link" href={examref}>Take Exam</a>
-//                                     </li>
+    //         ct = c
+    //         console.log(ct)
+    //         return c
+    //     }
 
-//                                     <li class="nav-item">
-//                                         <a class="nav-link" href="#">Reviews</a>
-//                                     </li>
-//                                 </ul>
-//                             </div>
-//                         </div>
-//                     </nav>
-//                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-//                         <div class="modal-dialog">
-//                             <div class="modal-content">
-//                                 <div class="modal-header">
-//                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Course</h1>
-//                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//                                 </div>
-//                                 <div class="modal-body">
-//                                     <div class="sasadiv">
-//                                         <Rating
-//                                             onClick={handleRating}
-//                                         /* Available Props */
-//                                         />
-//                                     </div>
-//                                     <br /> <br />
-//                                     <div class="input-group">
-//                                         {/* <span class="input-group-text">With textarea</span> */}
-//                                         {show === true ? <textarea onChange={(e) => setReviewerRev(e.target.value)} placeholder="Tell us about your own exprience taking this course. Was it a good match for you?" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
-//                                     </div>
-//                                 </div>
-//                                 <div class="modal-footer">
-//                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-//                                     <button onClick={() => handleSave()} type="button" class="btn btn-primary">Save</button>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-//                         <div class="modal-dialog">
-//                             <div class="modal-content">
-//                                 <div class="modal-header">
-//                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
-//                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//                                 </div>
-//                                 <div class="modal-body">
-//                                     <div class="sasadiv">
-//                                         <Rating
-//                                             onClick={handleRating2}
-//                                         /* Available Props */
-//                                         />
-//                                     </div>
-//                                     <br /> <br />
-//                                     <div class="input-group">
-//                                         {/* <span class="input-group-text">With textarea</span> */}
-//                                         {show2 === true ? <textarea onChange={(e) => setReviewerRev2(e.target.value)} placeholder="Tell us about your own exprience with this instructor" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
-//                                     </div>
-//                                 </div>
-//                                 <div class="modal-footer">
-//                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-//                                     <button onClick={() => handleSave2()} type="button" class="btn btn-primary">Save</button>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-//                         <div class="modal-dialog">
-//                             <div class="modal-content">
-//                                 <div class="modal-header">
-//                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
-//                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//                                 </div>
-//                                 <div class="modal-body">
-//                                     <div class="sasadiv">
-//                                       <h4>Are You Sure You Want To Refund This Course?</h4> 
-//                                     </div>
-//                                     <br /> <br />
-                                   
-//                                 </div>
-//                                 <div class="modal-footer">
-//                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-//                                     <button onClick={() => handleRefund()} type="button" class="btn btn-primary">Yes</button>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
+    //     function handleRefund(){
+    //        console.log(indiv.Registered_Course[0].Course_id)
+    //        var i =0;
+    //        while(i<indiv.Registered_Course.length){
+    //         if(indiv.Registered_Course[i].Course_id === cid){
+    //             if(indiv.Registered_Course[i].Progress<50){
+    //                 alert("Refund Request Is Pending")
+    //             }
+    //             else{
+    //                 alert("You Cant Refund Since You Have Completed "+indiv.Registered_Course[i].Progress+"%")
+    //                 break
+    //             }
+    //         }
+    //         else{
+    //             i++
+    //         }
+    //        }
 
-//                 </div>
-//             ))
-//             }
+    //     }
 
-//         </div>
 
-//     )
+    //     return (
+
+    //         <div
+    //             style={{ display: 'flex', height: '100vh', overflow: 'scroll initial' }}
+    //         >
+    //             {courses.map((course) => (
+
+    //                 <CDBSidebar textColor="#fff" backgroundColor="#333">
+    //                     <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
+    //                         <a
+    //                             href="/"
+    //                             className="text-decoration-none"
+    //                             style={{ color: 'inherit' }}
+    //                         >
+    //                             {course.Course_subject}
+    //                         </a>
+    //                     </CDBSidebarHeader>
+
+    //                     <CDBSidebarContent className="sidebar-content">
+    //                         <CDBSidebarMenu>
+    //                             {subtitle2.map((sub) => (
+
+    //                                 <a onClick={() => window.location.href = `/${course._id}/${sub._id}/indiv`}><CDBSidebarMenuItem icon="table">{sub.Name}</CDBSidebarMenuItem></a>
+
+    //                             ))}
+
+    //                         </CDBSidebarMenu>
+    //                     </CDBSidebarContent>
+    //                     <button data-bs-toggle="modal" data-bs-target="#exampleModal3"type="button" class="btn btn-danger">Refund Course</button>
+    //                     <CDBSidebarFooter style={{ textAlign: 'center' }}>
+    //                         <div
+    //                             style={{
+    //                                 padding: '20px 5px',
+    //                             }}
+    //                         >
+    //                             Copyrights E-Learning ©
+    //                         </div>
+    //                     </CDBSidebarFooter>
+    //                 </CDBSidebar>
+
+    //             ))}
+    //             {subtitle.map((sub) => (
+
+    //                 <div>
+    //                     <iframe width="1250" height="500" src={"https://www.youtube.com/embed/" + sub.Link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    //                     <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+    //                         <div class="container-fluid">
+    //                             <a class="navbar-brand" href="#">E-learning</a>
+    //                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    //                                 <span class="navbar-toggler-icon"></span>
+    //                             </button>
+    //                             <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    //                                 <ul class="navbar-nav">
+
+    //                                     <li class="nav-item">
+    //                                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Rate Course⭐</a>
+    //                                     </li>
+    //                                     <li class="nav-item">
+    //                                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2">Rate Instructor⭐</a>
+    //                                     </li>
+
+    //                                     <li class="nav-item">
+    //                                         <a class="nav-link" href={examref}>Take Exam</a>
+    //                                     </li>
+
+    //                                     <li class="nav-item">
+    //                                         <a class="nav-link" href="#">Reviews</a>
+    //                                     </li>
+    //                                 </ul>
+    //                             </div>
+    //                         </div>
+    //                     </nav>
+    //                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    //                         <div class="modal-dialog">
+    //                             <div class="modal-content">
+    //                                 <div class="modal-header">
+    //                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Course</h1>
+    //                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    //                                 </div>
+    //                                 <div class="modal-body">
+    //                                     <div class="sasadiv">
+    //                                         <Rating
+    //                                             onClick={handleRating}
+    //                                         /* Available Props */
+    //                                         />
+    //                                     </div>
+    //                                     <br /> <br />
+    //                                     <div class="input-group">
+    //                                         {/* <span class="input-group-text">With textarea</span> */}
+    //                                         {show === true ? <textarea onChange={(e) => setReviewerRev(e.target.value)} placeholder="Tell us about your own exprience taking this course. Was it a good match for you?" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
+    //                                     </div>
+    //                                 </div>
+    //                                 <div class="modal-footer">
+    //                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    //                                     <button onClick={() => handleSave()} type="button" class="btn btn-primary">Save</button>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    //                         <div class="modal-dialog">
+    //                             <div class="modal-content">
+    //                                 <div class="modal-header">
+    //                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
+    //                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    //                                 </div>
+    //                                 <div class="modal-body">
+    //                                     <div class="sasadiv">
+    //                                         <Rating
+    //                                             onClick={handleRating2}
+    //                                         /* Available Props */
+    //                                         />
+    //                                     </div>
+    //                                     <br /> <br />
+    //                                     <div class="input-group">
+    //                                         {/* <span class="input-group-text">With textarea</span> */}
+    //                                         {show2 === true ? <textarea onChange={(e) => setReviewerRev2(e.target.value)} placeholder="Tell us about your own exprience with this instructor" class="form-control" aria-label="With textarea"></textarea> : <p></p>}
+    //                                     </div>
+    //                                 </div>
+    //                                 <div class="modal-footer">
+    //                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    //                                     <button onClick={() => handleSave2()} type="button" class="btn btn-primary">Save</button>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                     <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    //                         <div class="modal-dialog">
+    //                             <div class="modal-content">
+    //                                 <div class="modal-header">
+    //                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Rate Instructor</h1>
+    //                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    //                                 </div>
+    //                                 <div class="modal-body">
+    //                                     <div class="sasadiv">
+    //                                       <h4>Are You Sure You Want To Refund This Course?</h4> 
+    //                                     </div>
+    //                                     <br /> <br />
+
+    //                                 </div>
+    //                                 <div class="modal-footer">
+    //                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+    //                                     <button onClick={() => handleRefund()} type="button" class="btn btn-primary">Yes</button>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+
+    //                 </div>
+    //             ))
+    //             }
+
+    //         </div>
+
+    //     )
 }
 
 export let ct = ""

@@ -8,7 +8,8 @@ const {
     updateAllInstructors,
     sendEmail,
     login,
-    logout
+    logout,
+    updatepassinstructor
 
 } = require('../controllers/instructorController')
 
@@ -33,8 +34,9 @@ router.delete('/instructor/:id', deleteinstructor)
 //PATCH
 router.patch('/instructor/:id', updateinstructor)
 router.patch('/instructor', updateAllInstructors)
+router.patch('/instructor/password/:id',updatepassinstructor)
 
-router.post("/sendemail/:id", async (req, res) => {
+router.post("/sendemail/inst", async (req, res) => {
     const { email } = req.body;
     const {id} = req.params
     try {
@@ -44,7 +46,28 @@ router.post("/sendemail/:id", async (req, res) => {
       const subject = "Thank You Message From E-learning Team";
       const message = `
       <h3>Hello </h3>
-      <p>Please change your password from this link  http://localhost:3000/instructor/updatepass/${id} </p>
+      <p>Please change your password from this link  http://localhost:3000/forgotpassword </p>
+      <p>Regards...</p>
+      `;
+
+      await sendEmail(subject, message, send_to, sent_from, reply_to);
+      res.status(200).json({ success: true, message: "Email Sent" });
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  });
+
+  router.post("/sendemail/indiv", async (req, res) => {
+    const { email } = req.body;
+    const {id} = req.params
+    try {
+      const send_to = email;
+      const sent_from = process.env.EMAIL_USER;
+      const reply_to = email;
+      const subject = "Thank You Message From E-learning Team";
+      const message = `
+      <h3>Hello </h3>
+      <p>Please change your password from this link  http://localhost:3000/forgotpassword</p>
       <p>Regards...</p>
       `;
 

@@ -1,6 +1,6 @@
 import { useState ,useEffect } from "react"
 import NavbarInstructor from "./NavbarInstructor"
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, Navigate, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
 import QuestionForm from "./QuestionForm";
@@ -14,10 +14,19 @@ const CreateExam = ({ course }) => {
     const courseid = params.idcourse
     var [ref, setref] = useState(0)
     var [Course_excrcise,setCourseExcercise] = useState(0)
-    // const [Course_excrcise,setCourseExcercise] = useState(0)
+    const navigate = useNavigate()
     if(user){
-        insid = user.id
+        if(user.UserType !== "instructor"){
+            navigate("/error404")
+        }
+        else{
+            insid = user.id
+        }
+        
+        
     }
+
+    
 
 
     const [error, setError] = useState("")

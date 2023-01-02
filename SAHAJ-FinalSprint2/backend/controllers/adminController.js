@@ -1,8 +1,11 @@
-const Admin = require('../models/admin')
+
 const mongoose = require('mongoose')
 const admin = require('../models/admin')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
+
+const jwt = require('jsonwebtoken');
+
 
 const addAdmin = async (req,res) => {
     const { Fname, Lname, Email, Password} = req.body;
@@ -60,7 +63,7 @@ const updateAllAdmin = async (req,res) =>{
     
     try {
      
-        const coorp = await Admin.updateMany({_v:0},{
+        const coorp = await admin.updateMany({_v:0},{
              ...req.body
              
            // $set:{Currency:"usd"}
@@ -76,7 +79,7 @@ const updateAdmin = async (req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: 'No such Admin'})
     }
-    const adm = await Admin.findOneAndUpdate({_id:id},{
+    const adm = await admin.findOneAndUpdate({_id:id},{
         ...req.body
     })
     if(!Admin){
@@ -86,8 +89,49 @@ const updateAdmin = async (req,res) =>{
 }
 
 const getalladmin = async(req,res) =>{
-    const corp = await Admin.find({}).sort({createdAt: -1})
+    const corp = await admin.find({}).sort({createdAt: -1})
     res.status(200).json(corp)
 }
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (name) => {
+    return jwt.sign({ name }, 'supersecret', {
+        expiresIn: maxAge
+    });
+};
+const login = async (req, res) => {
+    // TODO: Login the user
+    
+    try {
+        const { Email, Password } = req.body
+    console.log(req.body)
+    if (!Email || !Password) {
+        throw Error('All fields must be filled')
+      }
+    console.log(req.body)
+    const user = await admin.findOne({ Email: Email })
+    if (user == null) {
+        throw Error('Email not correct')
+      
+        
+    }
+        if (await bcrypt.compare(Password, user.Password)) {
+            const token = createToken(user._id);
+            res.cookie('jwt', token, { httpOnly: false, maxAge: maxAge * 1000 });
+            res.status(200).json({ id:user._id,Email,token,UserType:"admin"  })
+            console.log("LOGGED IN")
+            // res.status(200).json({Email, token})
+        }
+        else{
+            console.log("wkjebdekjbdkj")
+            throw Error('Password not correct')
 
-module.exports= {addAdmin,updateAllAdmin,getalladmin,updateAdmin}
+        }
+    }
+    catch (error) {
+        console.log("NOT hhh CORRECT")
+        res.status(400).json({ error: error.message })
+    }
+}
+
+
+module.exports= {addAdmin,updateAllAdmin,getalladmin,updateAdmin,login}

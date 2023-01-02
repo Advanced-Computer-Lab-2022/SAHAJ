@@ -72,15 +72,33 @@ const IndividualTrainee = () => {
     const handlelogout = () => {
 
         logout()
-        navigate("/log")
+        navigate("/")
     }
+   
     function sort(){
         
         
         setfilterrr("Popular Courses"  )        
         // window.location.reload() 
     }
-
+    function sort2(){
+        
+        
+        setfilterrr("Highest to lowest price"  )        
+        // window.location.reload() 
+    }
+    function sort3(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }
+    function sort4(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }
     return (
 
         <div>
@@ -109,9 +127,14 @@ const IndividualTrainee = () => {
                                 <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Filter <i class="bi bi-funnel-fill"></i>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a onClick={()=>sort()} class="dropdown-item" href="#">Popular Courses</a></li>
-                                  
+                                <ul class="dropdown-menu">  
+                                    <li><a onClick={()=>sort()}class="dropdown-item" href="#">Popular Courses</a></li>
+                                    
+                                    <li><a onClick={()=>sort3()}class="dropdown-item" href="#">Rate</a></li>
+                                    
+                                    <li><a onClick={()=>sort2()}class="dropdown-item" href="#">Highest to lowest price</a></li>
+
+                                    <li><a onClick={()=>sort4()}class="dropdown-item" href="#">lowest to Highest price</a></li>
                                 </ul>
                             </div>
                             <li class="nav-item">

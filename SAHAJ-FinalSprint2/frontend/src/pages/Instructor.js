@@ -34,9 +34,11 @@ const Instructor = () => {
     const [searchname, setsearch] = useState("")
     var [ filterrr , setfilterrr] = useState("")
     const { logout } = useLogout()
+    console.log(user)
     if (user) {
         insid = user.id
     }
+  
     useEffect(() => {
 
         const fetchCourses = async () => {
@@ -107,12 +109,31 @@ const Instructor = () => {
     const handlelogout = () => {
 
         logout()
-        navigate("/log")
+        navigate("/")
     }
+  
     function sort(){
         
         
         setfilterrr("Popular Courses"  )        
+        // window.location.reload() 
+    }
+    function sort2(){
+        
+        
+        setfilterrr("Highest to lowest price"  )        
+        // window.location.reload() 
+    }
+    function sort3(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }
+    function sort4(){
+        
+        
+        setfilterrr("Lowest to highest price"  )        
         // window.location.reload() 
     }
     return (
@@ -122,7 +143,7 @@ const Instructor = () => {
 
             <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">E-Learning <i class="bi bi-book-half"></i></a>
+                    <a class="navbar-brand" >E-Learning <i class="bi bi-book-half"></i></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -144,17 +165,20 @@ const Instructor = () => {
                                 <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filter <i class="bi bi-funnel-fill"></i>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a onClick={()=>sort()} class="dropdown-item" href="#">Popular Courses</a></li>
+                                <ul class="dropdown-menu">  
+                                    <li><a onClick={()=>sort()}class="dropdown-item" href="#">Popular Courses</a></li>
                                     
+                                    <li><a onClick={()=>sort3()}class="dropdown-item" href="#">Rate</a></li>
+                                    
+                                    <li><a onClick={()=>sort2()}class="dropdown-item" href="#">Highest to lowest price</a></li>
+
+                                    <li><a onClick={()=>sort4()}class="dropdown-item" href="#">Lowest to highest price</a></li>
                                 </ul>
                             </div>
                             <li class="nav-item">
                                 <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createCourse" >Create new course</button>
                             </li>
-                            <li class="nav-item">
-                                <button class="btn btn-dark" onClick={setmodal} key={insid} >Filter Courses</button>
-                            </li>
+                        
                             <li class="nav-item">
                                 <button class="btn btn-dark" onClick={Flag} key={insid} >View My Courses</button>
                             </li>
@@ -284,10 +308,7 @@ const Instructor = () => {
 
             </>
 
-            {CourseFlag === false ?  <AllCourses filterCourse = {filterrr}/> :
-                courses2 && courses2.map((course) => (
-                    <CourseDetails key={course._id} course={course} />
-                ))}
+            <AllCourses filterCourse = {filterrr}/>
 
 
             {/* <button onClick={event =>  window.location.href='/'} >View All Courses</button>

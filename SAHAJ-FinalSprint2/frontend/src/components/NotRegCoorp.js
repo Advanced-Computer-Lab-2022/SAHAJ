@@ -1,7 +1,7 @@
 import { Alert } from 'bootstrap'
 import { useState, useEffect } from 'react'
 import { HiSaveAs } from 'react-icons/hi'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams , useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
 const NotRegCoorp = () => {
     const { user } = useAuthContext()
@@ -16,8 +16,17 @@ const NotRegCoorp = () => {
     const loc = "coorp/mycourses/course/" + cid
     const [show3, setshow3] = useState(false)
     const [admin, setadmin] = useState([])
+    const [Course_photo,setCourse_photo] = useState("")
+    const navigate = useNavigate()
     if (user) {
-        id = user.id
+        if(user.UserType !== "coorp"){
+            navigate("/error404")
+        }
+        else
+        {
+            id = user.id
+        }
+       
     }
     useEffect(() => {
         const fetchCourses = async () => {
@@ -31,6 +40,7 @@ const NotRegCoorp = () => {
                 setCourses(json.filter(c => { return c._id === cid }))
                 setPrice(json.filter(c => { return c._id === cid })[0].Course_price)
                 console.log(Registered_Course.findIndex(el => el.Course_id === cid))
+                setCourse_photo(json.filter(c => { return c._id === cid })[0].Course_photo)
             }
 
         }
@@ -77,7 +87,7 @@ const NotRegCoorp = () => {
     // console.log(courses.length)
     const handleSubmit = async (e) => {
         console.log(courses[0])
-        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0, IsApproved: false }]
+        const abc = [...Registered_Course, { Course_id: cid, Course_name: courses[0].Course_subject, Amount_paid: price, Watched: 0, Progress: 0, IsApproved: false , Course_photo:Course_photo}]
         console.log(abc)
         setshow(true)
         setReg(abc)
@@ -121,6 +131,12 @@ const NotRegCoorp = () => {
 
     return (
         <div>
+               <nav class="navbar  navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <a  href= '/coorprate'class="navbar-brand mb-0 h1">E-Learning</a>
+                </div>
+            </nav>
+            <br />
             {courses.map((course) => (
 
                 <main class="container">

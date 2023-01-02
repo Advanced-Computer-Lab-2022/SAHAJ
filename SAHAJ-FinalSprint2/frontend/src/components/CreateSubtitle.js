@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import { useParams, useSearchParams, RedirectFunction, Redirect } from 'react-router-dom';
+import { useParams, useSearchParams, RedirectFunction, Redirect , useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 const CreateSubtitle = () => {
@@ -17,8 +17,16 @@ const CreateSubtitle = () => {
     const [Course_duration,setCourse_duration] = useState(0)
     const [show,setshow] = useState(false)
     var [No_subtitles,setnoSub] = useState(0)
+    const navigate = useNavigate()
     if(user){
-        Course_instructor_id = user.id
+        if(user.UserType !== "instructor"){
+            navigate("/error404")
+        }
+        else{
+            Course_instructor_id = user.id
+        }
+        
+        
     }
     useEffect(() => {
         const fetchCourses = async () => {

@@ -23,6 +23,13 @@ const getinstructor = async(req,res) =>{
    }
    res.status(200).json(instr)
 }
+//function to encrypt
+const EncryptNew = async (req,res) =>{
+    const{Password} = req.body
+
+}
+
+
 //function to delete a instructor
 const deleteinstructor = async (req,res) =>{
     const {id} = req.params
@@ -96,6 +103,24 @@ const updateinstructor = async (req,res) =>{
     }
     const instructor = await Inst.findOneAndUpdate({_id:id},{
         ...req.body
+    })
+    if(!Inst){
+        return res.status(400).json({error:'No such instructor'})
+    }
+    res.status(200).json(instructor)
+}
+const updatepassinstructor = async (req,res) =>{
+    const {id} = req.params
+   
+    const salt = await bcrypt.genSalt();
+    const body = await bcrypt.hash(req.body.Password, salt);
+    console.log(body)
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error: 'No such instructor'})
+    }
+     
+    const instructor = await Inst.findOneAndUpdate({_id:id},{
+        ...{Password:body}
     })
     if(!Inst){
         return res.status(400).json({error:'No such instructor'})
@@ -205,6 +230,7 @@ module.exports = {
     createinstructor,
     updateinstructor,
     updateAllInstructors,
+    updatepassinstructor,
     sendEmail,
     logout,
     login,

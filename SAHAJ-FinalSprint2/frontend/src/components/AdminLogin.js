@@ -16,7 +16,7 @@ import {
 import { useLogin } from '../hooks/useLogin';
 import { getStaticContextFromError } from '@remix-run/router';
 
-const Login = () => {
+const AdminLogin = () => {
     const [email, setEmaill] = useState("")
     const [justifyActive, setJustifyActive] = useState('tab1');
     const [justifyActive2, setJustifyActive2] = useState('');
@@ -65,54 +65,10 @@ const Login = () => {
                 console.log(json)
 
             }
+        }
             // console.log(coorp[0].Fname)
 
-
-
-        }
-        const fetchcoorp = async () => {
-            const response = await fetch('/api/coorp/')
-
-            const json = await response.json()
-
-            if (response.ok) {
-                // console.log(json.filter(c => { return c._id === cid }))
-
-                setEmailCoorp(json)
-                console.log(json)
-
-            }
-            // console.log(coorp[0].Fname)
-
-
-
-        }
-        const fetchinst = async () => {
-            const response = await fetch('/api/instructor/')
-
-            const json = await response.json()
-
-            if (response.ok) {
-                // console.log(json.filter(c => { return c._id === cid }))
-
-                setEmailInst(json)
-                console.log(json)
-
-            }
-            // console.log(coorp[0].Fname)
-
-
-
-        }
-
-
-
-
-        fetchcoorp();
-
-
-        fetchinst();
-        fetchindiv();
+fetchindiv();
 
 
 
@@ -224,24 +180,9 @@ const Login = () => {
             if(EmailIndiv.findIndex(e => {return e.Email === Email}) !== -1){
                 seterrr(false)
                 setRoro(true)
-                await login(Email, Password, "indiv")
+                await login(Email, Password, "admin")
             } 
-             if(EmailInst.findIndex(e => {return e.Email === Email}) !== -1){
-                setRoro(true)
-                seterrr(false)
-                await login(Email, Password, "instructor")
-            }    
-            if(EmailCoorp.findIndex(e => {return e.Email === Email}) !== -1){
-                setRoro(true)
-                seterrr(false)
-            console.log("hna corpr")
-                await login(Email, Password, "coorp")
-            }
-            if(EmailIndiv.findIndex(e => {return e.Email === Email}) === -1 && EmailInst.findIndex(e => {return e.Email === Email}) === -1 && EmailCoorp.findIndex(e => {return e.Email === Email}) === -1){
-                setRoro(false)
-                seterrr(true)
-                
-            }
+            
         setem(false)
         
 
@@ -334,11 +275,12 @@ const Login = () => {
                 <MDBTabsContent>
 
                     <MDBTabsPane show={justifyActive === 'tab1'}>
-                  <strong>  <p>Login:</p> </strong>
+                  <strong>  <p>Login Admin:</p> </strong>
                   <hr />
                         <div className="text-center mb-3">
-                            
-                            {errorL && roro && <div class="alert alert-danger" role="alert">{errorL}</div>}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+</svg>                            {errorL && roro && <div class="alert alert-danger" role="alert">{errorL}</div>}
                  {errr &&  <div class="alert alert-danger" role="alert">Invalid Email</div>}
                             <div className='d-flex justify-content-between mx-auto' style={{ width: '40%' }}>
                                 {/* <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
@@ -383,7 +325,6 @@ const Login = () => {
 
                         <div className="d-flex justify-content-between mx-4 mb-4">
 
-                            <button data-bs-toggle="modal" data-bs-target="#exampleModal4" type="button" class="btn btn-link">Forgot Password?</button>
                             <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -410,7 +351,6 @@ const Login = () => {
                         </div>
 
                         <MDBBtn onClick={(e) => handleSigin(e)} className="mb-4 w-100">Sign in</MDBBtn>
-                        <p className="text-center">Not a member? <a href="/register">Register</a></p>
 
                     </MDBTabsPane>
 
@@ -463,4 +403,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default AdminLogin

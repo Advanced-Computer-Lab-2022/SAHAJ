@@ -24,9 +24,11 @@ const CoorprateTrainee = () => {
     const [searchname, setsearch] = useState("")
     const navigate = useNavigate();
 
+  
     if (user) {
         cid = user.id
     }
+   
     useEffect(() => {
 
 
@@ -65,7 +67,7 @@ const CoorprateTrainee = () => {
     const handlelogout = () => {
 
         logout()
-        navigate("/log")
+        navigate("/")
     }
     function sort(){
         
@@ -73,13 +75,31 @@ const CoorprateTrainee = () => {
         setfilterrr("Popular Courses"  )        
         // window.location.reload() 
     }
+    function sort2(){
+        
+        
+        setfilterrr("Highest to lowest price"  )        
+        // window.location.reload() 
+    }
+    function sort3(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }
+    function sort4(){
+        
+        
+        setfilterrr("Rate"  )        
+        // window.location.reload() 
+    }    
     console.log(filterrr)
     return (
         <div>
             {/* {indiv.map((indiv) => ( */}
             <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">E-Learning <i class="bi bi-book-half"></i></a>
+                    <span class="navbar-brand" >E-Learning <i class="bi bi-book-half"></i></span>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -105,10 +125,14 @@ const CoorprateTrainee = () => {
                                 <button class="btn btn-secondary dropdown-toggle btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filter <i class="bi bi-funnel-fill"></i>
                                 </button>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu">  
                                     <li><a onClick={()=>sort()}class="dropdown-item" href="#">Popular Courses</a></li>
-                                    {/* <li><a onClick={()=>sort("Another action")}class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a onClick={()=>sort("Something else here")}class="dropdown-item" href="#">Something else here</a></li> */}
+                                    
+                                    <li><a onClick={()=>sort3()}class="dropdown-item" href="#">Rate</a></li>
+                                    
+                                    <li><a onClick={()=>sort2()}class="dropdown-item" href="#">Highest to lowest price</a></li>
+
+                                    <li><a onClick={()=>sort4()}class="dropdown-item" href="#">lowest to Highest price</a></li>
                                 </ul>
                             </div>
                             <li class="nav-item">

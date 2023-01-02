@@ -125,7 +125,7 @@ const CourseDetIndiv = () => {
     }
     
     if(indiv&&indiv.Registered_Course&&indiv.Registered_Course.findIndex(el => {return el.Course_id === cid}) === -1){
-        navigate("/individual");
+        navigate("/error404");
     }
 
     return (
@@ -135,10 +135,10 @@ const CourseDetIndiv = () => {
         >
             {courses.map((course) => (
 
-                <CDBSidebar textColor="#fff" backgroundColor="#333">
+                <CDBSidebar textColor="#fff" backgroundColor="#333" >
                     <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
                         <a
-                            href="/"
+                            href="/indiv/mycourses"
                             className="text-decoration-none"
                             style={{ color: 'inherit' }}
                         >
