@@ -15,6 +15,10 @@ We are geeks for knowledge, and we love to make it easy for all people to learn 
 
 ### ==> ScreenShots:
 
+<img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_2.png" width ="400" height = "200">
+<img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_3.png" width ="400" height = "200">
+<img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_4.png" width ="400" height = "200">
+
 
 ### ==> MERN-Stack was used as the framework (Mongo, Express, React, Node)
 
