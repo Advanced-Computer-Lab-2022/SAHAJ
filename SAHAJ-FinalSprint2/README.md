@@ -31,6 +31,8 @@ Our Database can handle a large amount of courses which means a lot of new thing
 ### ==> Code Example:
 **Here is a page example from our project which is the error page :**
 **////////////////////////////////////////// CODE ///////////////////////////////////////////////////////////////**
+
+
 const ErrorPage = () => {
 
     return (
