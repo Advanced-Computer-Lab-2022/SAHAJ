@@ -1,19 +1,19 @@
 # SAHAJ
 
-### ==> SAHAJ Online Learning System
+## ==> SAHAJ Online Learning System
 This website is designed to help people share their knowledge with each other, This is done by our **Online courses system** that allow multiple instructors to post their youtube courses therefore users can register for them and study the videos of the course and take the exams for the courses.
 
 
-### ==> Why did we put our effort in this website?
+## ==> Why did we put our effort in this website?
 We are geeks for knowledge, and we love to make it easy for all people to learn new skills and develop their brain. That is why we were so eagre to complete this project with best user experience possible.
 
-### ==> Build status:
+## ==> Build status:
 * One of the missing features in our project is the user can't select a country that he is living in and change the currency of the prices, thus he can't pay according to his/her preferred currency, he/she can only pay in us dollars.
 * We have a search engine that is used to find the subject(s) of the course that the user is searching for and it works properly but it has a small problem, when selecting the course from the search result to view it's content it goes to an error page (not found) because we didn't handle the route properly.
 * UI is not that professional   
 
 
-### ==> code style:
+## ==> code style:
 * Model View Controller architecture was used.
 * When naming the variables we followed rhe convention that there must not be any dummy names, each name of any variable is self explanatory, we did that so the code can be easily reusable.
 * When naming .js files, the first letter of each file is a Capital litter while the rest are small letters, however, if a file is composed of two words (i.e Filter subject), the first letter of each word is capital while the rest are small -> FilterSubject.js
@@ -40,7 +40,7 @@ The **frontend** main folder is the src folder, it contains:
 * **pages** : which are the pages that will be visiable in the website.
 here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
-### ==> ScreenShots:
+## ==> ScreenShots:
 
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_2.png" width ="400" height = "200">
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_3.png" width ="400" height = "200">
@@ -54,15 +54,15 @@ here is a link to help https://reactjs.org/tutorial/tutorial.html.
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_1.png" width ="400" height = "200">
 
 
-### ==> MERN-Stack was used as the framework (Mongo, Express, React, Node)
+## ==> MERN-Stack was used as the framework (Mongo, Express, React, Node)
 
 
-### ==> Our Features:
+## ==> Our Features:
 In our E-learning system user interface and experience is **Crucial**, Making the website easy for the user to use was our main objective.
 The website is Highly secured and safe for the user to put sensitive information.
 Our Database can handle a large amount of courses which means a lot of new things to learn.
 
-### ==> Code Example:
+## ==> Code Example:
 **Here is a page example from our project which is the Login page :**
 
 
@@ -519,7 +519,7 @@ export const useAuthContext = () => {
 **////////////////////////////////////////// CODE ///////////////////////////////////////////////////////////////**
 
 
-### ==> installations :
+## ==> installations :
 first you want to install VScode and then pull the branch or get the .zip file, then open a new terminal and type the following commands:
 * npm install react ==> or if you using yarn type: yarn add react
 * npm install react-router-dom ==> or if you using yarn type: yarn add react-router-dom
@@ -535,13 +535,13 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 
 
 
-### ==> API references:
+## ==> API references:
 => Stripe API used for payments: https://stripe.com/docs/stripe-js/react
 => Youtube API for playing youtube videos: https://youtube-data-api.readthedocs.io/en/latest/youtube_api.html
 => Nodemailer for sending E-mails API: https://nodemailer.com/about/
 
 
-### ==> Test Our Login page:
+## ==> Test Our Login page:
 To be able to view our awsome error page follow the following steps:
 1- Open src folder in the frontend folder and then create a .js file in the pages folder.
 2- copy paste the code in the .js file
@@ -550,7 +550,7 @@ To be able to view our awsome error page follow the following steps:
 5- open localhost and type the route you specified and that's it !!
 
 
-### How to use :
+## How to use :
 In our project we have two main folders: backend and frontend.
 The **backend** folder also contains three main folders: models , controllers, routes:
 * **Models** : Is the folder where add .js files that include the schema for the specified Object(instructor , admin , course....). here is a link to help you https://blog.logrocket.com/quickly-build-schema-based-forms-in-react-with-uniforms/
@@ -570,7 +570,7 @@ The **frontend** main folder is the src folder, it contains:
 here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
 
-### We welcome your contribution:
+## We welcome your contribution:
 we will be grateful to you if uou help us developing the project to make it one of the best E-learning sites.
 **How to contribute ?**
 * You can run the website and check it for any errors or glitches and then report to us.
@@ -580,9 +580,9 @@ we will be grateful to you if uou help us developing the project to make it one 
 *leemodx@gmail.com
 
 
-### Credits:
+## Credits:
 * **TheNetNinja** youtube channel helped us more than you can imagine building this project. here is the link => https://www.youtube.com/@NetNinja/featured
 * **Stackoverflow website** => https://stackoverflow.com/
 
-### License:
+## License:
 ====> SAHAJ E-learning
