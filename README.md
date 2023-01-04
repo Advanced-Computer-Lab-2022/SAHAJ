@@ -612,6 +612,7 @@ You should get the response as shown in image Which means the login was a succes
 
 ## How to use :
 Here is a simple video that shows you to register and use multiple features in the website:
+https://drive.google.com/file/d/12BoqyLx938P06bXUhRX5JWsThH8zOdPp/view?usp=sharing
 
 
 
