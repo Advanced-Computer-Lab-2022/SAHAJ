@@ -553,9 +553,9 @@ we will be grateful to you if uou help us developing the project to make it one 
 **How to contribute ?**
 * You can run the website and check it for any errors or glitches and then report to us.
 * If you have any comments to help enhance our user interface and experience please don't hesitate to contact us.
- **Mail:** 
-* *abdelrahman.12345@hotmail.com
-* *leemodx@gmail.com
+ **Our E-Maila:** 
+*abdelrahman.12345@hotmail.com
+*leemodx@gmail.com
 
 
 ### Credits:
