@@ -536,9 +536,7 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 
 
 ## ==> API references:
-=> Stripe API used for payments: https://stripe.com/docs/stripe-js/react
-=> Youtube API for playing youtube videos: https://youtube-data-api.readthedocs.io/en/latest/youtube_api.html
-=> Nodemailer for sending E-mails API: https://nodemailer.com/about/
+
 
 
 ## ==> Test Our Login page:
@@ -551,23 +549,7 @@ To be able to view our awsome error page follow the following steps:
 
 
 ## How to use :
-In our project we have two main folders: backend and frontend.
-The **backend** folder also contains three main folders: models , controllers, routes:
-* **Models** : Is the folder where add .js files that include the schema for the specified Object(instructor , admin , course....). here is a link to help you https://blog.logrocket.com/quickly-build-schema-based-forms-in-react-with-uniforms/
 
-* **Controllers** : this is where you add the functions you want to implement when you recieve a post or delete or get requests.
-
-* **Routes**: it is where you specify the route for a post or get or etc request.
-for example: "router.get("/" , Home)" => it means when recieve a get request and the path is '/' call the Home function implemented in the controller
-
-and of course the main js file for the backend is the server.
-here is a link to guide you through all steps ==> https://www.freecodecamp.org/news/create-a-react-frontend-a-node-express-backend-and-connect-them-together-c5798926047c/
-
-
-The **frontend** main folder is the src folder, it contains:
-* **components** : which you add .js files for the components you want to use.
-* **pages** : which are the pages that will be visiable in the website.
-here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
 
 ## We welcome your contribution:
@@ -585,4 +567,7 @@ we will be grateful to you if uou help us developing the project to make it one 
 * **Stackoverflow website** => https://stackoverflow.com/
 
 ## License:
+=> Stripe API used for payments: https://stripe.com/docs/stripe-js/react
+=> Youtube API for playing youtube videos: https://youtube-data-api.readthedocs.io/en/latest/youtube_api.html
+=> Nodemailer for sending E-mails API: https://nodemailer.com/about/
 ====> SAHAJ E-learning
