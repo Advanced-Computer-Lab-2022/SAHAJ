@@ -88,6 +88,8 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 -To start the application open two terminals:
 => Type cd backend in the first terminal and then nodemon server.js
 => Type "cd frontend" in the second terminal and then "npm start"
+**Here is a video to help you with your first setup** https://www.youtube.com/watch?v=-ERWlp828kY
+
 
 
 ### ==> API references:
