@@ -59,10 +59,11 @@ here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
 
 ## ==> Our Features:
-In our E-learning system user interface and experience is **Crucial**, Making the website easy for the user to use was our main objective.
-The website is Highly secured and safe for the user to put sensitive information.
-Our Database can handle a large amount of courses which means a lot of new things to learn.
-
+* In our E-learning system user interface and experience is **Crucial**, Making the website easy for the user to use was our main objective.
+* The website is Highly secured and safe for the user to put sensitive information.
+* Our Database can handle a large amount of courses which means a lot of new things to learn.
+* As a guest you can see all the courses and read their descriptions and then You can Register as a new user or login as an existing one.
+* 
 ## ==> Code Example:
 **Here is a page example from our project which is the Login page :**
 
