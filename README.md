@@ -584,12 +584,12 @@ Here is a link which showes all our API references -> https://drive.google.com/f
 ## ==> Test Our Login page:
 To be able to Test our Login There are two methods that you can do:
 **in both methods you are going to do the following :**
-1-create a new .js file in the backend folder in the controllers folder and name it 'IndividualController.js'
-2-Paste Login method showed above in the folder and export it using 'module.exports = { login }'
-3- create a new .js file in the backend folder in the routes folder and name it 'Indiv.js'
-4- import the login method from the IndividualController to the Indiv using 'const{ login } = require('../controllers/IndividualController')'
-5- define 'const router = express.Router()' in order to be able to be able to recieve http requests
-6- specify the route 'router.post('/indiv/login',login)' which tells the server whenever you get a post request and the path is 'api/indiv/login' use the method 'login'.
+* 1-create a new .js file in the backend folder in the controllers folder and name it 'IndividualController.js'
+* 2-Paste Login method showed above in the folder and export it using 'module.exports = { login }'
+* 3- create a new .js file in the backend folder in the routes folder and name it 'Indiv.js'
+* 4- import the login method from the IndividualController to the Indiv using 'const{ login } = require('../controllers/IndividualController')'
+* 5- define 'const router = express.Router()' in order to be able to be able to recieve http requests
+* 6- specify the route 'router.post('/indiv/login',login)' which tells the server whenever you get a post request and the path is 'api/indiv/login' use the method 'login'.
 
 **Once you finish the following, you test the login using two methods:**
 
@@ -600,13 +600,13 @@ You should get the response as shown in image Which means the login was a succes
 
 
 * **METHOD 2 (Test The frontend):**
-1- Open src folder in the frontend folder and then create a 'login.js' file in the components folder and paste LOGIN COMPONENT code showen above .
-2- Create a folder called 'hooks' and create inside a file and call it 'useLogin.js' and paste our code for USELOGIN HOOK 
-3- create another file in the hooks folder and call it 'useAuthContext.js' and paste our code for useAuthContext
-4- create a folder called 'context' and inside it create a file and call it 'AuthContextProvider.js' and copy our code shown above for AuthContextProvider.
-5- import the 'login; component using "import {Login} from ../components/'login.js' " in the app.js in the frontend.
-6- specify a route for <Login/>
-5- open localhost and type the route you specified and that's it !!
+* 1- Open src folder in the frontend folder and then create a 'login.js' file in the components folder and paste LOGIN COMPONENT code showen above .
+* 2- Create a folder called 'hooks' and create inside a file and call it 'useLogin.js' and paste our code for USELOGIN HOOK 
+* 3- create another file in the hooks folder and call it 'useAuthContext.js' and paste our code for useAuthContext
+* 4- create a folder called 'context' and inside it create a file and call it 'AuthContextProvider.js' and copy our code shown above for AuthContextProvider.
+* 5- import the 'login; component using "import {Login} from ../components/'login.js' " in the app.js in the frontend.
+* 6- specify a route for <Login/>
+* 5- open localhost and type the route you specified and that's it !!
 
 
 ## How to use :
