@@ -596,7 +596,7 @@ To be able to Test our Login There are two methods that you can do:
 
 * **METHOD 1 (Using postman):** Download postman from the following link -> https://www.postman.com/downloads/ ,Open it and then you will be asked to type a path and a body, Type the following:
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot (240).png" width ="400" height = "200">
-You should get the response as shown in image.
+You should get the response as shown in image Which means the login was a success!!.
 
 
 * **METHOD 2 (Test The frontend):**
