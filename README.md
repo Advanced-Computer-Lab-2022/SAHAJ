@@ -63,7 +63,28 @@ here is a link to help https://reactjs.org/tutorial/tutorial.html.
 * The website is Highly secured and safe for the user to put sensitive information.
 * Our Database can handle a large amount of courses which means a lot of new things to learn.
 * As a guest you can see all the courses and read their descriptions and then You can Register as a new user or login as an existing one.
-* 
+* The user can see All the available and can filter courses by price or ratings and can search for a certain subject and then he/she can choose to register for a course
+* Once the user chose to register for a course he/she can pay for it using the credit card.
+* The user can see all the subtitles and topics of the course that he/she is registered to.
+* The user can watch the videos of the relavent course.
+* The user can take an exam about the relavent topic.
+* The user can Write notes and saves them as a pdf while watching video.
+* The user can Rate a Course or an instructor.
+* The user can report any problem that he/she faces.
+* Once The user finishes he/she can download his/her cerificate as a pdf or recieve it via mail.
+* The user can refund a course if his/her progress was less than 50%.
+* The user recieves The money of the refunded course in his/her wallet.
+* The user can edit his/her profile (change name, change password, change Email, etc.....)
+* The can view his/her reported problems.
+* If the user is an instructor, he/she can create a new course and set it's price.
+* If the user is an instructor, he/she can add a promotion fir his/her courses.
+* If the user is an instructor, he/she can view his/her reviews as an instructor
+* If the user is an instructor, he/she can can view his/her course reviews.
+* And many more features to discover!!!
+
+
+
+
 ## ==> Code Example:
 **Here is a page example from our project which is the Login page :**
 
