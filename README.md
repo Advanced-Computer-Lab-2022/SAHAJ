@@ -11,6 +11,7 @@ We are geeks for knowledge, and we love to make it easy for all people to learn 
 * One of the missing features in our project is the user can't select a country that he is living in and change the currency of the prices, thus he can't pay according to his/her preferred currency, he/she can only pay in us dollars.
 * We have a search engine that is used to find the subject(s) of the course that the user is searching for and it works properly but it has a small problem, when selecting the course from the search result to view it's content it goes to an error page (not found) because we didn't handle the route properly.
 * UI is not that professional   
+* There is no option for a user to pay for a course using his/her wallet
 
 
 ## ==> code style:
