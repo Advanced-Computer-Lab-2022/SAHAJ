@@ -628,7 +628,7 @@ we will be grateful to you if uou help us developing the project to make it one 
 * **Stackoverflow website** => https://stackoverflow.com/
 
 ## License:
-=> Stripe API used for payments: https://stripe.com/docs/stripe-js/react
-=> Youtube API for playing youtube videos: https://youtube-data-api.readthedocs.io/en/latest/youtube_api.html
-=> Nodemailer for sending E-mails API: https://nodemailer.com/about/
-====> SAHAJ E-learning
+* => Stripe API used for payments: https://stripe.com/docs/stripe-js/react
+* => Youtube API for playing youtube videos: https://youtube-data-api.readthedocs.io/en/latest/youtube_api.html
+* => Nodemailer for sending E-mails API: https://nodemailer.com/about/
+* ====> SAHAJ E-learning
