@@ -41,7 +41,7 @@ The **frontend** main folder is the src folder, it contains:
 * **pages** : which are the pages that will be visiable in the website.
 here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
-## ==> ScreenShots:
+## ==> ScreenShots from our website:
 
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_2.png" width ="400" height = "200">
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot_3.png" width ="400" height = "200">
@@ -517,6 +517,47 @@ export const useAuthContext = () => {
 
 
 
+**/////////////////// Login method ////////////////**
+const login = async (req, res) => {
+    // TODO: Login the user
+    
+    try {
+        const { Email, Password } = req.body
+    console.log(req.body)
+    if (!Email || !Password) {
+        throw Error('All fields must be filled')
+      }
+    console.log(req.body)
+    const user = await Indiv.findOne({ Email: Email })
+    if (user == null) {
+        throw Error('Email not correct')
+      
+        
+    }
+        if (await bcrypt.compare(Password, user.Password)) {
+            const token = createToken(user._id);
+            res.cookie('jwt', token, { httpOnly: false, maxAge: maxAge * 1000 });
+            res.status(200).json({ id:user._id,Email,token,UserType:"indiv" , courses: user.Registered_Course })
+            console.log("LOGGED IN")
+            // res.status(200).json({Email, token})
+        }
+        else{
+            console.log("wkjebdekjbdkj")
+            throw Error('Password not correct')
+
+        }
+    }
+    catch (error) {
+        console.log("NOT hhh CORRECT")
+        res.status(400).json({ error: error.message })
+    }
+}
+
+
+**////////////// Login Route ////////////////**
+    **router.post('/indiv/login',login)**
+
+
 **////////////////////////////////////////// CODE ///////////////////////////////////////////////////////////////**
 
 
@@ -541,7 +582,19 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 
 
 ## ==> Test Our Login page:
-To be able to view our awsome error page follow the following steps:
+To be able to Test our Login There are two methods that you can do:
+**in both methods you are going to do the following :**
+1-create a new .js file in the backend folder in the controllers folder and name it 'IndividualController.js'
+2-Paste Login method showed above in the folder and export it using 'module.exports = { login }'
+3- create a new .js file in the backend folder in the routes folder and name it 'Indiv.js'
+4- import the login method from the IndividualController to the Indiv using 'const{ login } = require('../controllers/IndividualController')'
+5- define 'const router = express.Router()' in order to be able to be able to recieve http requests
+6- specify the route 'router.post('/indiv/login',login)' which tells the server whenever you get a post request and the path is 'api/indiv/login' use the method 'login'.
+
+**Once you finish the following, you test the login using two methods:**
+* **METHOD 1 (Using postman):** Download postman from the following link -> https://www.postman.com/downloads/ ,Open it and then you will be asked to type a path and a body, Type the following:
+
+
 1- Open src folder in the frontend folder and then create a .js file in the pages folder.
 2- copy paste the code in the .js file
 3- import the component using "import {ErrorPage} from ./pages/'filename.js' " in the app.js in the frontend.
@@ -558,7 +611,7 @@ we will be grateful to you if uou help us developing the project to make it one 
 **How to contribute ?**
 * You can run the website and check it for any errors or glitches and then report to us.
 * If you have any comments to help enhance our user interface and experience please don't hesitate to contact us.
- **Our E-Maila:** 
+ **Our E-Mails:** 
 *abdelrahman.12345@hotmail.com
 *leemodx@gmail.com
 
