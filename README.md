@@ -562,7 +562,7 @@ const login = async (req, res) => {
 
 
 ## ==> installations :
-first you want to install VScode and then pull the branch or get the .zip file, then open a new terminal and type the following commands:
+first you want to install VScode and NodeJs and then pull the branch or get the .zip file, then open a new terminal and type the following commands:
 * npm install react ==> or if you using yarn type: yarn add react
 * npm install react-router-dom ==> or if you using yarn type: yarn add react-router-dom
 * npm install react-scripts ==> or if you using yarn type: yarn add react-scripts
@@ -592,14 +592,20 @@ To be able to Test our Login There are two methods that you can do:
 6- specify the route 'router.post('/indiv/login',login)' which tells the server whenever you get a post request and the path is 'api/indiv/login' use the method 'login'.
 
 **Once you finish the following, you test the login using two methods:**
+
+
 * **METHOD 1 (Using postman):** Download postman from the following link -> https://www.postman.com/downloads/ ,Open it and then you will be asked to type a path and a body, Type the following:
 <img src="https://github.com/Advanced-Computer-Lab-2022/SAHAJ/blob/img/Screenshot (240).png" width ="400" height = "200">
+You should get the response as shown in image.
 
 
-1- Open src folder in the frontend folder and then create a .js file in the pages folder.
-2- copy paste the code in the .js file
-3- import the component using "import {ErrorPage} from ./pages/'filename.js' " in the app.js in the frontend.
-4- specify a route for <ErrorPage/>
+* **METHOD 2 (Test The frontend):**
+1- Open src folder in the frontend folder and then create a 'login.js' file in the components folder and paste LOGIN COMPONENT code showen above .
+2- Create a folder called 'hooks' and create inside a file and call it 'useLogin.js' and paste our code for USELOGIN HOOK 
+3- create another file in the hooks folder and call it 'useAuthContext.js' and paste our code for useAuthContext
+4- create a folder called 'context' and inside it create a file and call it 'AuthContextProvider.js' and copy our code shown above for AuthContextProvider.
+5- import the 'login; component using "import {Login} from ../components/'login.js' " in the app.js in the frontend.
+6- specify a route for <Login/>
 5- open localhost and type the route you specified and that's it !!
 
 
