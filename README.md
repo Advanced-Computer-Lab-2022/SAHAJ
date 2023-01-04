@@ -15,8 +15,30 @@ We are geeks for knowledge, and we love to make it easy for all people to learn 
 
 ### ==> code style:
 * Model View Controller architecture was used.
-* 
+* When naming the variables we followed rhe convention that there must not be any dummy names, each name of any variable is self explanatory, we did that so the code can be easily reusable.
+* When naming .js files, the first letter of each file is a Capital litter while the rest are small letters, however, if a file is composed of two words (i.e Filter subject), the first letter of each word is capital while the rest are small -> FilterSubject.js
+* To make the code organized as possible, whenever we write a piece of code we use the command "ctrl + shift + f" in the keyboard in order to enable auto identation for that piece of code.
+* All the variables and constants are within the first lines of the class, followed by useEffect method with all api requests that we need, followed by all the functions that we want to use.
+* The **fronend** folder contains src folder which contains multiple other folders:
+- **Components** Folder: in that folder we write the components we use frequently (i.e, NAVBAR, Search, etc...)
+- **Pages** Folder: We put inside of it the pages that we want to be displayed (i.e, Admin, Instructor, etc....)
 
+*The **backend** folder also contains three main folders: models , controllers, routes:
+* **Models** : Is the folder where add .js files that include the schema for the specified Object(instructor , admin , course....). here is a link to help you https://blog.logrocket.com/quickly-build-schema-based-forms-in-react-with-uniforms/
+
+* **Controllers** : this is where you add the functions you want to implement when you recieve a post or delete or get requests.
+
+* **Routes**: it is where you specify the route for a post or get or etc request.
+for example: "router.get("/" , Home)" => it means when recieve a get request and the path is '/' call the Home function implemented in the controller
+
+and of course the main js file for the backend is the server.
+here is a link to guide you through all steps ==> https://www.freecodecamp.org/news/create-a-react-frontend-a-node-express-backend-and-connect-them-together-c5798926047c/
+
+
+The **frontend** main folder is the src folder, it contains:
+* **components** : which you add .js files for the components you want to use.
+* **pages** : which are the pages that will be visiable in the website.
+here is a link to help https://reactjs.org/tutorial/tutorial.html.
 
 ### ==> ScreenShots:
 
