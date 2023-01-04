@@ -24,7 +24,7 @@ We are geeks for knowledge, and we love to make it easy for all people to learn 
 
 
 ### ==> Our Features:
-In our E-learning system user interface and experience is **Crusial**, Making the website easy for the user to use was our main objective.
+In our E-learning system user interface and experience is **Crucial**, Making the website easy for the user to use was our main objective.
 The website is Highly secured and safe for the user to put sensitive information.
 Our Database can handle a large amount of courses which means a lot of new things to learn.
 
