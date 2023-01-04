@@ -75,7 +75,7 @@ first you want to install VScode and then pull the branch or get the .zip file, 
 -if there is any missing installations an error will appear in the terminal in the following form "can't resolve xxxx" , just type "npm install xxxx" command.
 -To start the application open two terminals:
 => Type cd backend in the first terminal and then nodemon server.js
-=> Type "cd frontend" in the second terminal and then "nom start"
+=> Type "cd frontend" in the second terminal and then "npm start"
 
 
 ### ==> API references:
