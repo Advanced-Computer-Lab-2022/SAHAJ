@@ -619,8 +619,8 @@ we will be grateful to you if uou help us developing the project to make it one 
 * You can run the website and check it for any errors or glitches and then report to us.
 * If you have any comments to help enhance our user interface and experience please don't hesitate to contact us.
  **Our E-Mails:** 
-*abdelrahman.12345@hotmail.com
-*leemodx@gmail.com
+* abdelrahman.12345@hotmail.com
+* leemodx@gmail.com
 
 
 ## Credits:
